@@ -5,6 +5,7 @@
       <router-view></router-view>
     </main>
     <Footer v-if="!isAuthPage" />
+    <AIChatbot v-if="!isAuthPage" />
   </div>
 </template>
 
@@ -13,6 +14,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
+import AIChatbot from './components/AIChatbot.vue'
 
 const route = useRoute()
 const isAuthPage = computed(() => {

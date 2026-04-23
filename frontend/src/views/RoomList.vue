@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-white">
-    <section class="bg-emerald-950 py-20 text-white relative overflow-hidden">
+    <section class="bg-emerald-950 text-white relative overflow-hidden h-[600px] flex items-center justify-center">
       <div class="absolute inset-0 opacity-10">
         <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" class="w-full h-full object-cover">
       </div>
@@ -26,6 +26,9 @@
           <button v-if="isAdmin" @click="openAddModal" class="bg-emerald-800 hover:bg-emerald-900 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition shadow-xl transform hover:-translate-y-1">
             <i class="fas fa-plus mr-2"></i> Thêm phòng mới
           </button>
+          <router-link v-if="user" to="/my-bookings" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition shadow-xl transform hover:-translate-y-1">
+            <i class="fas fa-history mr-2"></i> Lịch sử đặt phòng
+          </router-link>
         </div>
 
         <div class="flex flex-wrap gap-3 mt-8">
@@ -167,7 +170,7 @@
             <div class="grid grid-cols-2 gap-6">
               <div>
                 <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Sức chứa</label>
-                <input v-model.number="currentRoom.capacity" type="number" min="1" class="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none transition-all" required>
+                <input v-model.number="currentRoom.capacity" type="number" min="1" max="10" class="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none transition-all" required>
               </div>
               <div v-if="currentRoom.id">
                 <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Trạng thái</label>
@@ -212,6 +215,7 @@ const loading = ref(false)
 const showAddModal = ref(false)
 const isAdmin = ref(false)
 const isStaff = ref(false)
+const user = ref(null)
 const categoryOptions = [
   { label: 'Xem tất cả', value: 'All' },
   { label: 'Standard', value: 'Standard' },
@@ -235,7 +239,10 @@ const fetchRooms = async () => {
   loading.value = true
   try {
     const params = {
-      category: route.query.category || undefined
+      category: route.query.category || undefined,
+      numberOfGuests: route.query.capacity || undefined,
+      checkInDate: route.query.checkIn || undefined,
+      checkOutDate: route.query.checkOut || undefined
     }
     const response = await axios.get('/rooms/search', { params })
     rooms.value = response.data
@@ -249,10 +256,14 @@ const fetchRooms = async () => {
 
 const checkUser = () => {
   const userData = localStorage.getItem('user')
-  if (!userData) return
-  const user = JSON.parse(userData)
-  isAdmin.value = user.role === 'ADMIN'
-  isStaff.value = user.role === 'STAFF'
+  if (!userData) {
+    user.value = null
+    return
+  }
+  const parsedUser = JSON.parse(userData)
+  user.value = parsedUser
+  isAdmin.value = parsedUser.role === 'ADMIN'
+  isStaff.value = parsedUser.role === 'STAFF'
 }
 
 const formatPrice = (price) => {
@@ -261,15 +272,33 @@ const formatPrice = (price) => {
 }
 
 const getAvailabilityLabel = (room) => {
-  return room.status === 'MAINTENANCE' || room.status === 'OCCUPIED' ? 'Hết' : 'Còn'
+  switch (room.status) {
+    case 'AVAILABLE': return 'Còn trống'
+    case 'BOOKED': return 'Đã đặt'
+    case 'OCCUPIED': return 'Đang ở'
+    case 'MAINTENANCE': return 'Bảo trì'
+    default: return 'Hết'
+  }
 }
 
 const getAvailabilityClass = (room) => {
-  return room.status === 'MAINTENANCE' || room.status === 'OCCUPIED' ? 'bg-red-500' : 'bg-emerald-500'
+  switch (room.status) {
+    case 'AVAILABLE': return 'bg-emerald-500'
+    case 'BOOKED': return 'bg-blue-500'
+    case 'OCCUPIED': return 'bg-purple-500'
+    case 'MAINTENANCE': return 'bg-red-500'
+    default: return 'bg-gray-500'
+  }
 }
 
 const getAvailabilityTextClass = (room) => {
-  return room.status === 'MAINTENANCE' || room.status === 'OCCUPIED' ? 'text-red-500' : 'text-emerald-700'
+  switch (room.status) {
+    case 'AVAILABLE': return 'text-emerald-700'
+    case 'BOOKED': return 'text-blue-600'
+    case 'OCCUPIED': return 'text-purple-600'
+    case 'MAINTENANCE': return 'text-red-500'
+    default: return 'text-gray-500'
+  }
 }
 
 const getCurrentCategory = () => route.query.category || 'All'

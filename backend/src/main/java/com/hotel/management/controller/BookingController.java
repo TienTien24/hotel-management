@@ -46,6 +46,11 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.submitReview(id, customerId, request));
     }
 
+    @PostMapping("/quick-review")
+    public ResponseEntity<Booking> submitQuickReview(@RequestBody ReviewRequest request) {
+        return ResponseEntity.ok(bookingService.submitQuickReview(request));
+    }
+
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public List<Booking> getAllBookings() {
@@ -61,5 +66,10 @@ public class BookingController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public List<Booking> getCompletedCheckIns() {
         return bookingService.getCompletedCheckIns();
+    }
+
+    @GetMapping("/reviews")
+    public List<Booking> getAllReviews() {
+        return bookingService.getAllReviews();
     }
 }

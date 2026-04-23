@@ -1,5 +1,14 @@
 <template>
-  <div class="pt-24 min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50">
+    <section class="bg-emerald-950 text-white relative overflow-hidden h-[600px] flex items-center justify-center">
+      <div class="absolute inset-0 opacity-10">
+        <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" class="w-full h-full object-cover">
+      </div>
+      <div class="max-w-7xl mx-auto px-4 relative z-10 text-center">
+        <h1 class="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-6">Liên hệ <span class="text-emerald-400">Chúng tôi</span></h1>
+        <p class="text-emerald-100 font-light tracking-[0.3em] uppercase text-sm">Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn</p>
+      </div>
+    </section>
     <div class="max-w-7xl mx-auto px-4 py-12">
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">

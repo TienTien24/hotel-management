@@ -14,6 +14,13 @@ import com.hotel.management.model.Room;
 import com.hotel.management.repository.RoomRepository;
 import com.hotel.management.repository.BookingRepository;
 import com.hotel.management.repository.InvoiceRepository;
+import com.hotel.management.model.Booking;
+import com.hotel.management.enums.BookingStatus;
+import com.hotel.management.enums.PaymentMethod;
+import com.hotel.management.enums.PaymentStatus;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @SpringBootApplication
 public class HotelManagementApplication {
@@ -53,7 +60,10 @@ public class HotelManagementApplication {
                     int roomInFloor = (i <= 10) ? i : i - 10;
                     String roomNum = floor + String.format("%02d", roomInFloor);
                     String type = standardTypes[(i - 1) % standardTypes.length];
-                    roomRepository.save(new Room(null, roomNum, "Standard", type, 2, 50.0, standardDesc, "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", RoomStatus.AVAILABLE));
+                    // Varying capacity and price for "small rooms" (Standard)
+                    int capacity = (i % 3 == 0) ? 1 : 2;
+                    double price = 40.0 + (i % 5) * 5.0;
+                    roomRepository.save(new Room(null, roomNum, "Standard", type, capacity, price, standardDesc, "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", RoomStatus.AVAILABLE));
                 }
                 
                 // Generate 20 Deluxe rooms (Floors 3-4)
@@ -63,7 +73,10 @@ public class HotelManagementApplication {
                     int roomInFloor = (i <= 10) ? i : i - 10;
                     String roomNum = floor + String.format("%02d", roomInFloor);
                     String type = deluxeTypes[(i - 1) % deluxeTypes.length];
-                    roomRepository.save(new Room(null, roomNum, "Deluxe", type, 3, 150.0, deluxeDesc, "https://images.unsplash.com/photo-1582719478250-c89cae4df85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", RoomStatus.AVAILABLE));
+                    // Varying capacity and price for Deluxe
+                    int capacity = 2 + (i % 3); // 2, 3, 4
+                    double price = 100.0 + (i % 10) * 10.0;
+                    roomRepository.save(new Room(null, roomNum, "Deluxe", type, capacity, price, deluxeDesc, "https://images.unsplash.com/photo-1582719478250-c89cae4df85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", RoomStatus.AVAILABLE));
                 }
                 
                 // Generate 20 Suite rooms (Floors 5-6)
@@ -73,11 +86,50 @@ public class HotelManagementApplication {
                     int roomInFloor = (i <= 10) ? i : i - 10;
                     String roomNum = floor + String.format("%02d", roomInFloor);
                     String type = suiteTypes[(i - 1) % suiteTypes.length];
-                    roomRepository.save(new Room(null, roomNum, "Suite", type, 4, 300.0, suiteDesc, "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", RoomStatus.AVAILABLE));
+                    // Varying capacity and price for Suite
+                    int capacity = 4 + (i % 7); // 4 to 10
+                    double price = 250.0 + (i % 5) * 50.0;
+                    roomRepository.save(new Room(null, roomNum, "Suite", type, capacity, price, suiteDesc, "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", RoomStatus.AVAILABLE));
                 }
                 System.out.println("Đã tạo xong 60 phòng mẫu thành công!");
             } else {
                 System.out.println("Dữ liệu đã có đủ 60 phòng, không cần tạo thêm.");
+            }
+
+            // Create sample bookings and reviews if none exist
+            if (bookingRepository.count() == 0) {
+                System.out.println("Đang tạo thêm dữ liệu booking và đánh giá mẫu...");
+                User customer = userRepository.findByUsername("customer").orElseThrow();
+                List<Room> allRooms = roomRepository.findAll();
+
+                if (!allRooms.isEmpty()) {
+                    // Booking 1: Completed with review
+                    Room room1 = allRooms.get(0);
+                    Booking booking1 = new Booking(null, customer, room1, "John Doe", "0111222333", "john@gmail.com", "123 Main St", 2, LocalDate.now().minusDays(10), LocalDate.now().minusDays(7), BookingStatus.COMPLETED, PaymentMethod.VNPAY, PaymentStatus.PAID, room1.getPrice() * 3, LocalDateTime.now().minusDays(11), LocalDateTime.now().minusDays(10), LocalDateTime.now().minusDays(7), "Kỳ nghỉ tuyệt vời", 5, "Phòng rất đẹp và dịch vụ tuyệt vời!", LocalDateTime.now().minusDays(6));
+                    bookingRepository.save(booking1);
+
+                    // Booking 2: Completed with review
+                    Room room2 = allRooms.get(1);
+                    Booking booking2 = new Booking(null, customer, room2, "Jane Smith", "0444555666", "jane@gmail.com", "456 Oak Ave", 1, LocalDate.now().minusDays(5), LocalDate.now().minusDays(3), BookingStatus.COMPLETED, PaymentMethod.MOMO, PaymentStatus.PAID, room2.getPrice() * 2, LocalDateTime.now().minusDays(6), LocalDateTime.now().minusDays(5), LocalDateTime.now().minusDays(3), "Trải nghiệm tốt", 4, "Trải nghiệm tốt, nhưng hơi ồn ào một chút.", LocalDateTime.now().minusDays(2));
+                    bookingRepository.save(booking2);
+
+                    // Booking 3: Completed with review
+                    Room room3 = allRooms.get(2);
+                    Booking booking3 = new Booking(null, customer, room3, "Peter Jones", "0777888999", "peter@gmail.com", "789 Pine Ln", 3, LocalDate.now().minusDays(20), LocalDate.now().minusDays(18), BookingStatus.COMPLETED, PaymentMethod.COD, PaymentStatus.PAID, room3.getPrice() * 2, LocalDateTime.now().minusDays(21), LocalDateTime.now().minusDays(20), LocalDateTime.now().minusDays(18), "Sang trọng và đẳng cấp", 5, "Khách sạn sang trọng, rất đáng tiền!", LocalDateTime.now().minusDays(17));
+                    bookingRepository.save(booking3);
+
+                    // Booking 4: Completed with review
+                    Room room4 = allRooms.size() > 30 ? allRooms.get(30) : allRooms.get(0);
+                    Booking booking4 = new Booking(null, customer, room4, "Lê Thị D", "0123456789", "lethid@gmail.com", "Hà Nội", 2, LocalDate.now().minusDays(12), LocalDate.now().minusDays(10), BookingStatus.COMPLETED, PaymentMethod.VNPAY, PaymentStatus.PAID, room4.getPrice() * 2, LocalDateTime.now().minusDays(13), LocalDateTime.now().minusDays(12), LocalDateTime.now().minusDays(10), "View biển cực đẹp", 5, "Phòng Deluxe có view biển tuyệt đẹp, ngắm bình minh ngay tại giường. Dịch vụ phòng rất nhanh chóng.", LocalDateTime.now().minusDays(9));
+                    bookingRepository.save(booking4);
+
+                    // Booking 5: Completed with review
+                    Room room5 = allRooms.size() > 50 ? allRooms.get(50) : allRooms.get(0);
+                    Booking booking5 = new Booking(null, customer, room5, "Phạm Văn E", "0987654321", "phamvane@gmail.com", "Đà Nẵng", 4, LocalDate.now().minusDays(25), LocalDate.now().minusDays(22), BookingStatus.COMPLETED, PaymentMethod.MOMO, PaymentStatus.PAID, room5.getPrice() * 3, LocalDateTime.now().minusDays(26), LocalDateTime.now().minusDays(25), LocalDateTime.now().minusDays(22), "Kỳ nghỉ gia đình ấm áp", 5, "Chúng tôi đã có một kỳ nghỉ gia đình tuyệt vời tại phòng Suite. Không gian rộng rãi, các con rất thích hồ bơi vô cực của khách sạn.", LocalDateTime.now().minusDays(21));
+                    bookingRepository.save(booking5);
+
+                    System.out.println("Đã tạo xong dữ liệu booking và đánh giá mẫu!");
+                }
             }
         };
     }

@@ -1,7 +1,7 @@
 <template>
   <div class="bg-white">
     <!-- Hero Section -->
-    <section class="relative h-[50vh] md:h-[70vh] min-h-[400px] overflow-hidden">
+    <section class="relative h-[600px] overflow-hidden">
       <div class="absolute inset-0">
         <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" 
              class="w-full h-full object-cover scale-105 animate-slow-zoom" alt="Luxury Hotel">

@@ -48,6 +48,7 @@ public class Booking {
     private LocalDateTime createdAt;
     private LocalDateTime checkedInAt;
     private LocalDateTime checkedOutAt;
+    private String reviewTitle;
     private Integer reviewRating;
 
     @Column(columnDefinition = "TEXT")

@@ -130,9 +130,36 @@ public class BookingService {
             throw new RuntimeException("Điểm đánh giá phải từ 1 đến 5");
         }
 
+        booking.setReviewTitle(request.getTitle());
         booking.setReviewRating(request.getRating());
         booking.setReviewComment(request.getComment());
         booking.setReviewCreatedAt(LocalDateTime.now());
+        return bookingRepository.save(booking);
+    }
+
+    public List<Booking> getAllReviews() {
+        return bookingRepository.findAllReviews();
+    }
+
+    public Booking submitQuickReview(ReviewRequest request) {
+        if (request.getRating() == null || request.getRating() < 1 || request.getRating() > 5) {
+            throw new RuntimeException("Điểm đánh giá phải từ 1 đến 5");
+        }
+
+        Booking booking = new Booking();
+        booking.setGuestFullName(isBlank(request.getGuestFullName()) ? "Khách hàng" : request.getGuestFullName());
+        booking.setReviewTitle(request.getTitle());
+        booking.setReviewRating(request.getRating());
+        booking.setReviewComment(request.getComment());
+        booking.setReviewCreatedAt(LocalDateTime.now());
+        booking.setStatus(BookingStatus.COMPLETED); // Đánh dấu là đã hoàn thành để hiện lên blog
+        
+        // Chọn một phòng ngẫu nhiên để gắn vào blog nếu cần, hoặc để null
+        List<Room> rooms = roomRepository.findAll();
+        if (!rooms.isEmpty()) {
+            booking.setRoom(rooms.get((int) (Math.random() * rooms.size())));
+        }
+
         return bookingRepository.save(booking);
     }
 
