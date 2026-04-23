@@ -114,16 +114,27 @@ const isOpen = ref(false)
 const user = ref(null)
 const isScrolled = ref(false)
 
-const isHome = computed(() => route.path === '/' || route.path === '/about')
+const isHome = computed(() => {
+  const transparentPaths = ['/', '/about', '/rooms', '/services', '/blog', '/contact']
+  return transparentPaths.includes(route.path)
+})
 
-const menuItems = [
-  { name: 'Trang chủ', path: '/' },
-  { name: 'Giới thiệu', path: '/about' },
-  { name: 'Loại Phòng', path: '/rooms' },
-  { name: 'Check-in', path: '/checkin' },
-  { name: 'Dịch vụ', path: '/#services' },
-  { name: 'Liên hệ', path: '/contact' }
-]
+const menuItems = computed(() => {
+  const items = [
+    { name: 'Trang chủ', path: '/' },
+    { name: 'Giới thiệu', path: '/about' },
+    { name: 'Loại Phòng', path: '/rooms' },
+    { name: 'Dịch vụ', path: '/services' },
+    { name: 'Blog', path: '/blog' },
+    { name: 'Liên hệ', path: '/contact' }
+  ]
+  
+  if (user.value && (user.value.role === 'ADMIN' || user.value.role === 'STAFF')) {
+    items.splice(3, 0, { name: 'Check-in', path: '/checkin' })
+  }
+  
+  return items
+})
 
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 50

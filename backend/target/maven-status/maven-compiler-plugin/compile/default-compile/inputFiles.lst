@@ -4,8 +4,10 @@ C:\Users\Laptop\hotel-management\backend\src\main\java\com\hotel\management\serv
 C:\Users\Laptop\hotel-management\backend\src\main\java\com\hotel\management\dto\JwtResponse.java
 C:\Users\Laptop\hotel-management\backend\src\main\java\com\hotel\management\service\AuthService.java
 C:\Users\Laptop\hotel-management\backend\src\main\java\com\hotel\management\security\JwtUtils.java
+C:\Users\Laptop\hotel-management\backend\src\main\java\com\hotel\management\service\PaymentService.java
 C:\Users\Laptop\hotel-management\backend\src\main\java\com\hotel\management\security\AuthTokenFilter.java
 C:\Users\Laptop\hotel-management\backend\src\main\java\com\hotel\management\model\User.java
+C:\Users\Laptop\hotel-management\backend\src\main\java\com\hotel\management\controller\PaymentController.java
 C:\Users\Laptop\hotel-management\backend\src\main\java\com\hotel\management\repository\UserRepository.java
 C:\Users\Laptop\hotel-management\backend\src\main\java\com\hotel\management\enums\RoleName.java
 C:\Users\Laptop\hotel-management\backend\src\main\java\com\hotel\management\model\BookingServiceUsage.java

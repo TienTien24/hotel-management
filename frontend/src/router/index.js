@@ -8,21 +8,29 @@ import Home from '../views/Home.vue'
 import About from '../views/About.vue'
 import Contact from '../views/Contact.vue'
 import RoomDetail from '../views/RoomDetail.vue'
+import Checkin from '../views/Checkin.vue'
+import MyBookings from '../views/MyBookings.vue'
+import Reviews from '../views/Reviews.vue'
+import Services from '../views/Services.vue'
 
 const routes = [
   { path: '/login', component: Login },
   { path: '/register', component: Register },
-  { 
-    path: '/', 
+  {
+    path: '/',
     component: Home
   },
-  { 
-    path: '/about', 
+  {
+    path: '/about',
     component: About
   },
-  { 
-    path: '/contact', 
+  {
+    path: '/contact',
     component: Contact
+  },
+  {
+    path: '/services',
+    component: Services
   },
   { 
     path: '/rooms/:id', 
@@ -42,10 +50,19 @@ const routes = [
     component: BookingList,
     meta: { requiresAuth: true }
   },
-  {
-    path: '/checkin',
-    component: BookingList,
+  { 
+    path: '/checkin', 
+    component: Checkin,
     meta: { requiresAuth: true }
+  },
+  { 
+    path: '/my-bookings', 
+    component: MyBookings,
+    meta: { requiresAuth: true }
+  },
+  { 
+    path: '/blog', 
+    component: Reviews
   }
 ]
 

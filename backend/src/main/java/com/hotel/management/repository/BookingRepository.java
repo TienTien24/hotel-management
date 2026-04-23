@@ -17,4 +17,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findOverlappingBookings(Long roomId, LocalDate startDate, LocalDate endDate);
     
     List<Booking> findByStatus(BookingStatus status);
+
+    @Query("SELECT b FROM Booking b WHERE b.reviewRating IS NOT NULL ORDER BY b.reviewCreatedAt DESC")
+    List<Booking> findAllReviews();
 }

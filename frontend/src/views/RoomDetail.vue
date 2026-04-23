@@ -63,7 +63,7 @@
               </div>
               <div class="bg-gray-50 rounded-2xl p-4">
                 <div class="text-xs font-black text-gray-400 uppercase tracking-widest">Trạng thái</div>
-                <div class="text-lg font-black mt-2" :class="canBook ? 'text-emerald-700' : 'text-red-500'">{{ canBook ? 'Còn phòng' : 'Tạm hết' }}</div>
+                <div class="text-lg font-black mt-2" :class="getStatusColor(room.status)">{{ getStatusLabel(room.status) }}</div>
               </div>
             </div>
 
@@ -205,8 +205,28 @@ const bookingData = ref({
   paymentMethod: 'COD'
 })
 
-const canBook = computed(() => room.value && room.value.status !== 'MAINTENANCE' && room.value.status !== 'OCCUPIED')
+const canBook = computed(() => room.value && room.value.status === 'AVAILABLE')
 const roomSpec = computed(() => getRoomSpec(room.value))
+
+const getStatusLabel = (status) => {
+  switch (status) {
+    case 'AVAILABLE': return 'Còn trống'
+    case 'BOOKED': return 'Đã đặt'
+    case 'OCCUPIED': return 'Đang ở'
+    case 'MAINTENANCE': return 'Bảo trì'
+    default: return 'Tạm hết'
+  }
+}
+
+const getStatusColor = (status) => {
+  switch (status) {
+    case 'AVAILABLE': return 'text-emerald-700'
+    case 'BOOKED': return 'text-blue-600'
+    case 'OCCUPIED': return 'text-purple-600'
+    case 'MAINTENANCE': return 'text-red-500'
+    default: return 'text-gray-500'
+  }
+}
 
 const totalNights = computed(() => {
   if (!bookingData.value.checkInDate || !bookingData.value.checkOutDate) return 0

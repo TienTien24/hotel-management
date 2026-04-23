@@ -56,6 +56,7 @@ public class WebSecurityConfig {
                         auth.requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/api/contact/submit").permitAll()
                                 .requestMatchers("/api/rooms/**").permitAll()
+                                .requestMatchers("/api/payments/**").permitAll()
                                 .requestMatchers("/h2-console/**").permitAll()
                                 .anyRequest().authenticated()
                 );

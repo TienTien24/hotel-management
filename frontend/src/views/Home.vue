@@ -2,24 +2,7 @@
   <div class="min-h-screen bg-white">
     <!-- Hero Section -->
     <HeroSlider />
-
-    <!-- Role-based Welcome Section -->
-    <section v-if="user" class="bg-emerald-50 py-12 border-y border-emerald-100">
-      <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
-        <div class="mb-6 md:mb-0">
-          <h2 class="text-2xl font-black uppercase text-emerald-950">Chào mừng trở lại, {{ user.username }}!</h2>
-          <p class="text-emerald-700 font-medium tracking-widest uppercase text-sm mt-1">Vai trò: {{ user.role }}</p>
-        </div>
-        <div class="flex space-x-4">
-          <router-link v-if="user.role === 'ADMIN' || user.role === 'STAFF'" to="/dashboard" class="bg-emerald-800 text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest hover:bg-emerald-900 transition-all shadow-md">
-            Trang Quản lý
-          </router-link>
-          <router-link to="/rooms" class="bg-white text-emerald-800 border-2 border-emerald-800 px-8 py-3 rounded-full font-bold uppercase tracking-widest hover:bg-emerald-50 transition-all shadow-sm">
-            {{ user.role === 'CUSTOMER' ? 'Đặt phòng ngay' : 'Xem danh sách phòng' }}
-          </router-link>
-        </div>
-      </div>
-    </section>
+    <RoomSearchSection />
 
     <!-- About Section -->
     <section id="about" class="max-w-7xl mx-auto px-4 py-12 border-b border-gray-100">
@@ -147,28 +130,57 @@
       </div>
     </section>
 
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="py-16 bg-white">
+    <!-- Blog/Experience Section -->
+    <section id="blog" class="py-24 bg-gray-50 overflow-hidden">
       <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center mb-12">
-          <h3 class="text-emerald-800 font-bold uppercase tracking-[0.3em] mb-4 text-sm">Đánh giá của khách</h3>
-          <h2 class="text-4xl md:text-5xl font-black uppercase text-emerald-950 tracking-tighter">Khách hàng nói gì về chúng tôi</h2>
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+          <div class="max-w-2xl">
+            <h3 class="text-emerald-800 font-bold uppercase tracking-[0.3em] mb-4 text-xs">BLOG & TRẢI NGHIỆM</h3>
+            <h2 class="text-4xl md:text-6xl font-black uppercase text-emerald-950 tracking-tighter leading-none">
+              CHIA SẺ TỪ <span class="text-emerald-800 italic">KHÁCH HÀNG</span>
+            </h2>
+          </div>
+          <router-link to="/blog" class="group flex items-center gap-3 text-emerald-900 font-black uppercase tracking-widest text-sm hover:text-emerald-700 transition-colors">
+            Xem tất cả bài viết
+            <div class="w-10 h-10 rounded-full border-2 border-emerald-900 flex items-center justify-center group-hover:bg-emerald-900 group-hover:text-white transition-all">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+          </router-link>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-          <div v-for="(testimonial, index) in testimonials" :key="index" class="relative">
-            <div class="absolute -top-6 -left-4 text-6xl text-emerald-100 font-serif">"</div>
-            <div class="relative z-10">
-              <p class="text-gray-600 italic leading-relaxed mb-8 font-light text-lg">
-                {{ testimonial.content }}
+        <div v-if="loadingReviews" class="text-center py-20 text-gray-400 font-bold uppercase tracking-widest text-xs">
+          Đang tải bài viết...
+        </div>
+
+        <div v-else-if="!blogPosts.length" class="text-center py-20 bg-white rounded-[3rem] shadow-sm border border-dashed border-gray-200">
+          <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">Chưa có bài viết trải nghiệm nào.</p>
+        </div>
+
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <div v-for="post in blogPosts" :key="post.id" class="group cursor-pointer" @click="$router.push('/blog')">
+            <div class="relative h-80 mb-8 overflow-hidden rounded-[2.5rem] shadow-2xl">
+              <img :src="post.room?.imageUrl || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80'" 
+                   class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+              <div class="absolute top-6 left-6 bg-red-600 text-white w-14 h-14 rounded-2xl flex flex-col items-center justify-center shadow-xl">
+                <span class="text-xl font-black leading-none">{{ getDay(post.reviewCreatedAt) }}</span>
+                <span class="text-[10px] font-bold uppercase mt-1">{{ getMonth(post.reviewCreatedAt) }}</span>
+              </div>
+            </div>
+            
+            <div class="px-2">
+              <h4 class="text-2xl font-black text-emerald-950 mb-4 group-hover:text-emerald-800 transition-colors line-clamp-2 leading-tight uppercase tracking-tighter">
+                {{ post.reviewTitle || `Kỳ nghỉ tuyệt vời tại phòng ${post.room?.roomNumber}` }}
+              </h4>
+              <p class="text-gray-500 font-light text-base leading-relaxed line-clamp-3 mb-6">
+                {{ post.reviewComment }}
               </p>
-              <div class="flex items-center space-x-4 border-t border-gray-100 pt-6">
-                <img :src="testimonial.avatar" class="w-14 h-14 rounded-full object-cover shadow-md">
+              <div class="flex items-center gap-3 pt-6 border-t border-gray-100">
+                <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center font-black text-emerald-800 text-sm">
+                  {{ post.guestFullName?.charAt(0) || 'K' }}
+                </div>
                 <div>
-                  <h5 class="font-bold text-emerald-900 uppercase text-sm tracking-widest">{{ testimonial.name }}</h5>
-                  <div class="flex text-yellow-400 text-xs mt-1">
-                    <i v-for="i in 5" :key="i" class="fas fa-star"></i>
-                  </div>
+                  <p class="text-sm font-black text-emerald-950 uppercase tracking-widest">{{ post.guestFullName || 'Khách hàng' }}</p>
+                  <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">Người trải nghiệm</p>
                 </div>
               </div>
             </div>
@@ -196,10 +208,68 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import HeroSlider from '../components/HeroSlider.vue'
+import RoomSearchSection from '../components/RoomSearchSection.vue'
 import axios from '../api/axios'
 
 const user = ref(null)
 const rooms = ref([])
+const blogPosts = ref([])
+const loadingReviews = ref(true)
+const submittingReview = ref(false)
+const quickReview = ref({
+  guestFullName: '',
+  title: '',
+  rating: 5,
+  comment: ''
+})
+
+const submitQuickReview = async () => {
+  if (submittingReview.value) return
+  submittingReview.value = true
+  try {
+    await axios.post('/bookings/quick-review', quickReview.value)
+    alert('Cảm ơn bạn đã gửi đánh giá! Đánh giá của bạn sẽ xuất hiện trong phần Blog.')
+    quickReview.value = {
+      guestFullName: '',
+      title: '',
+      rating: 5,
+      comment: ''
+    }
+    await fetchBlogPosts() // Tải lại danh sách blog để hiện bài mới nhất
+  } catch (error) {
+    console.error('Lỗi khi gửi đánh giá:', error)
+    alert('Có lỗi xảy ra khi gửi đánh giá. Vui lòng thử lại sau.')
+  } finally {
+    submittingReview.value = false
+  }
+}
+
+const getDay = (dateStr) => {
+  if (!dateStr) return ''
+  const date = new Date(dateStr)
+  return date.getDate()
+}
+
+const getMonth = (dateStr) => {
+  if (!dateStr) return ''
+  const date = new Date(dateStr)
+  return `TH${date.getMonth() + 1}`
+}
+
+const fetchBlogPosts = async () => {
+  try {
+    const response = await axios.get('/bookings/reviews')
+    blogPosts.value = response.data.slice(0, 3) // Chỉ lấy 3 bài mới nhất cho trang chủ
+  } catch (error) {
+    console.error('Lỗi khi tải bài viết:', error)
+  } finally {
+    loadingReviews.value = false
+  }
+}
+
+onMounted(() => {
+  fetchBlogPosts()
+})
 
 const displayCategories = computed(() => {
   const categories = [
