@@ -33,7 +33,7 @@
           <li><a href="#about" class="hover:text-white transition-colors">Giới thiệu</a></li>
           <li><router-link to="/rooms" class="hover:text-white transition-colors">Loại Phòng</router-link></li>
           <li><a href="#services" class="hover:text-white transition-colors">Dịch vụ</a></li>
-          <li><router-link to="/dashboard" class="hover:text-white transition-colors">Checkin</router-link></li>
+          <li><router-link to="/checkin" class="hover:text-white transition-colors">Check-in</router-link></li>
           <li><a href="#testimonials" class="hover:text-white transition-colors">Đánh giá</a></li>
           <li><router-link to="/contact" class="hover:text-white transition-colors">Liên hệ</router-link></li>
         </ul>

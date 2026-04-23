@@ -18,15 +18,24 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(authService.authenticateUser(loginRequest));
+        System.out.println("Login attempt for user: " + loginRequest.getUsername());
+        try {
+            return ResponseEntity.ok(authService.authenticateUser(loginRequest));
+        } catch (Exception e) {
+            System.out.println("Login failed: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Login failed: " + e.getMessage());
+        }
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest signUpRequest) {
+        System.out.println("Registration attempt for user: " + signUpRequest.getUsername());
         try {
             authService.registerUser(signUpRequest);
+            System.out.println("User registered successfully: " + signUpRequest.getUsername());
             return ResponseEntity.ok("User registered successfully!");
         } catch (RuntimeException e) {
+            System.out.println("Registration failed: " + e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

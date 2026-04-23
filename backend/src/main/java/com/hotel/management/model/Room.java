@@ -15,8 +15,13 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String roomNumber;
+    private String category;
     private String type;
+    private Integer capacity;
     private Double price;
+    @Column(columnDefinition = "TEXT")
+    private String description;
+    private String imageUrl;
     
     @Enumerated(EnumType.STRING)
     private RoomStatus status;

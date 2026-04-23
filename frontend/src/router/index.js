@@ -7,6 +7,7 @@ import Register from '../views/Register.vue'
 import Home from '../views/Home.vue'
 import About from '../views/About.vue'
 import Contact from '../views/Contact.vue'
+import RoomDetail from '../views/RoomDetail.vue'
 
 const routes = [
   { path: '/login', component: Login },
@@ -24,17 +25,25 @@ const routes = [
     component: Contact
   },
   { 
+    path: '/rooms/:id', 
+    component: RoomDetail
+  },
+  { 
     path: '/dashboard', 
     component: Dashboard,
     meta: { requiresAuth: true }
   },
   { 
     path: '/rooms', 
-    component: RoomList,
-    meta: { requiresAuth: true }
+    component: RoomList
   },
   { 
     path: '/bookings', 
+    component: BookingList,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/checkin',
     component: BookingList,
     meta: { requiresAuth: true }
   }
