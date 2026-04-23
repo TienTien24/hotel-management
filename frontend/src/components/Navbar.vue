@@ -37,15 +37,6 @@
           >
             {{ item.name }}
           </router-link>
-          <a 
-            href="#services" 
-            :class="[
-              'font-bold uppercase text-sm tracking-widest transition-all duration-300 hover:text-emerald-500',
-              isScrolled || !isScrolled && isHome ? (isScrolled ? 'text-gray-700' : 'text-white drop-shadow-md') : 'text-gray-700'
-            ]"
-          >
-            Dịch vụ
-          </a>
         </div>
 
         <!-- Auth Button -->
@@ -99,13 +90,9 @@
     <!-- Mobile Menu -->
     <div v-if="isOpen" class="md:hidden bg-white border-t border-gray-100 pb-4">
       <div class="px-2 pt-2 pb-3 space-y-1">
-        <router-link to="/" class="block px-3 py-2 text-gray-700 font-bold uppercase text-sm">Trang chủ</router-link>
-        <router-link to="/about" class="block px-3 py-2 text-gray-700 font-bold uppercase text-sm" @click="isOpen = false">Giới thiệu</router-link>
-        <router-link to="/rooms" class="block px-3 py-2 text-gray-700 font-bold uppercase text-sm">Loại Phòng</router-link>
-        <a href="#services" class="block px-3 py-2 text-gray-700 font-bold uppercase text-sm" @click="isOpen = false">Dịch vụ</a>
-        <router-link to="/dashboard" class="block px-3 py-2 text-gray-700 font-bold uppercase text-sm" @click="isOpen = false">Checkin</router-link>
-        <a href="#testimonials" class="block px-3 py-2 text-gray-700 font-bold uppercase text-sm" @click="isOpen = false">Đánh giá</a>
-        <router-link to="/contact" class="block px-3 py-2 text-gray-700 font-bold uppercase text-sm" @click="isOpen = false">Liên hệ</router-link>
+        <router-link v-for="item in menuItems" :key="item.path" :to="item.path" class="block px-3 py-2 text-gray-700 font-bold uppercase text-sm" @click="isOpen = false">
+          {{ item.name }}
+        </router-link>
         <template v-if="!user">
           <router-link to="/login" class="block px-3 py-2 text-emerald-800 font-bold uppercase text-sm">Đăng nhập</router-link>
         </template>
@@ -133,7 +120,8 @@ const menuItems = [
   { name: 'Trang chủ', path: '/' },
   { name: 'Giới thiệu', path: '/about' },
   { name: 'Loại Phòng', path: '/rooms' },
-  { name: 'Checkin', path: '/dashboard' },
+  { name: 'Check-in', path: '/checkin' },
+  { name: 'Dịch vụ', path: '/#services' },
   { name: 'Liên hệ', path: '/contact' }
 ]
 

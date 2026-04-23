@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -20,6 +21,14 @@ public class RoomController {
     @GetMapping
     public List<Room> getAllRooms() {
         return roomService.getAllRooms();
+    }
+
+    @GetMapping("/search")
+    public List<Room> searchRooms(@RequestParam(required = false) LocalDate checkInDate,
+                                  @RequestParam(required = false) LocalDate checkOutDate,
+                                  @RequestParam(required = false) Integer numberOfGuests,
+                                  @RequestParam(required = false) String category) {
+        return roomService.searchRooms(checkInDate, checkOutDate, numberOfGuests, category);
     }
 
     @GetMapping("/{id}")

@@ -27,9 +27,15 @@
         <div class="md:w-5/12 relative group">
           <div class="absolute -top-10 -left-10 w-40 h-40 bg-emerald-50 rounded-full -z-10 group-hover:scale-110 transition-transform duration-700"></div>
           <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" class="rounded-3xl shadow-2xl relative z-10 w-full h-[480px] object-cover transition-transform duration-700 hover:scale-[1.02]">
-          <div class="absolute -bottom-6 -right-6 bg-white p-8 rounded-2xl shadow-2xl z-20 border border-emerald-50 transform hover:-translate-y-2 transition-all duration-300">
-            <p class="text-4xl font-black text-emerald-800">25+</p>
-            <p class="text-gray-500 uppercase tracking-widest text-[10px] font-bold mt-1">Năm Kinh Nghiệm</p>
+          <div class="absolute -bottom-6 -right-6 bg-white p-8 rounded-2xl shadow-2xl z-20 border border-emerald-50 transform hover:-translate-y-2 transition-all duration-300 flex flex-col gap-4">
+            <div>
+              <p class="text-4xl font-black text-emerald-800">25+</p>
+              <p class="text-gray-500 uppercase tracking-widest text-[10px] font-bold mt-1">Năm Kinh Nghiệm</p>
+            </div>
+            <div class="pt-4 border-t border-gray-100">
+              <p class="text-3xl font-black text-emerald-800">60+</p>
+              <p class="text-gray-500 uppercase tracking-widest text-[10px] font-bold mt-1">Phòng & 6 Tầng</p>
+            </div>
           </div>
         </div>
         <div class="md:w-7/12">
@@ -87,45 +93,34 @@
 
     <!-- Introduction Section (Room Types) -->
     <section id="rooms" class="max-w-7xl mx-auto px-4 py-16">
-      <div class="text-center mb-12">
-        <h3 class="text-emerald-800 font-bold uppercase tracking-[0.3em] mb-4">Loại Phòng</h3>
-        <h2 class="text-4xl md:text-5xl font-black uppercase text-emerald-950 tracking-tighter">Nghỉ dưỡng 5 sao</h2>
-        <div class="w-20 h-1 bg-emerald-800 mx-auto mt-6"></div>
+      <div class="text-center mb-16">
+        <h3 class="text-emerald-800 font-bold uppercase tracking-[0.3em] mb-4 text-xs">LOẠI PHÒNG</h3>
+        <h2 class="text-4xl md:text-5xl font-black uppercase text-emerald-950 tracking-tight">NGHỈ DƯỠNG 5 SAO</h2>
+        <div class="w-24 h-1 bg-emerald-800 mx-auto mt-6"></div>
       </div>
       
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-        <div class="group cursor-pointer">
-          <div class="overflow-hidden rounded-2xl mb-6 shadow-xl relative">
-            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Phòng Suite" class="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-700">
-            <div class="absolute inset-0 bg-emerald-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-              <router-link to="/rooms" class="bg-white text-emerald-900 px-6 py-2 rounded-full font-bold uppercase text-xs tracking-widest shadow-xl">Xem chi tiết</router-link>
-            </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+        <div v-for="category in displayCategories" :key="category.name" class="bg-white group cursor-pointer" @click="$router.push({ path: '/rooms', query: { category: category.name } })">
+          <!-- Image Section -->
+          <div class="relative h-72 mb-8 overflow-hidden rounded-[2rem]">
+            <img :src="category.imageUrl" 
+                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
           </div>
-          <h4 class="text-xl font-bold uppercase tracking-widest text-emerald-900 mb-2">Presidential Suite</h4>
-          <p class="text-gray-600 leading-relaxed font-light">Sự kết hợp hoàn hảo giữa nét cổ điển và hơi thở hiện đại trong từng chi tiết thiết kế.</p>
-        </div>
-        
-        <div class="group cursor-pointer">
-          <div class="overflow-hidden rounded-2xl mb-6 shadow-xl relative">
-            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4df85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Phòng Deluxe" class="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-700">
-            <div class="absolute inset-0 bg-emerald-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-              <router-link to="/rooms" class="bg-white text-emerald-900 px-6 py-2 rounded-full font-bold uppercase text-xs tracking-widest shadow-xl">Xem chi tiết</router-link>
-            </div>
+
+          <!-- Content Section -->
+          <div>
+            <h4 class="text-xl font-bold uppercase text-emerald-950 mb-3 tracking-widest">{{ category.displayTitle }}</h4>
+            <p class="text-gray-500 font-light text-base leading-relaxed">
+              {{ category.description }}
+            </p>
           </div>
-          <h4 class="text-xl font-bold uppercase tracking-widest text-emerald-900 mb-2">Deluxe Ocean View</h4>
-          <p class="text-gray-600 leading-relaxed font-light">Mỗi phòng nghỉ là một ốc đảo riêng tư với đầy đủ tiện nghi cao cấp nhất dành cho bạn.</p>
         </div>
-        
-        <div class="group cursor-pointer">
-          <div class="overflow-hidden rounded-2xl mb-6 shadow-xl relative">
-            <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Phòng Standard" class="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-700">
-            <div class="absolute inset-0 bg-emerald-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-              <router-link to="/rooms" class="bg-white text-emerald-900 px-6 py-2 rounded-full font-bold uppercase text-xs tracking-widest shadow-xl">Xem chi tiết</router-link>
-            </div>
-          </div>
-          <h4 class="text-xl font-bold uppercase tracking-widest text-emerald-900 mb-2">Standard Garden Room</h4>
-          <p class="text-gray-600 leading-relaxed font-light">Thưởng thức những món ăn đặc sắc được chế biến bởi các đầu bếp hàng đầu thế giới.</p>
-        </div>
+      </div>
+
+      <div class="text-center mt-16">
+        <router-link to="/rooms" class="inline-block border-2 border-emerald-900 text-emerald-900 px-10 py-3 rounded-full font-black uppercase tracking-widest text-sm hover:bg-emerald-900 hover:text-white transition-all transform hover:-translate-y-1">
+          XEM TẤT CẢ PHÒNG
+        </router-link>
       </div>
     </section>
 
@@ -134,10 +129,10 @@
       <div class="max-w-7xl mx-auto px-4">
         <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
           <div class="max-w-2xl">
-            <h3 class="text-emerald-800 font-bold uppercase tracking-[0.3em] mb-4 text-sm">Trải nghiệm dịch vụ</h3>
-            <h2 class="text-4xl md:text-5xl font-black uppercase text-emerald-950 tracking-tighter">Tiện nghi đẳng cấp quốc tế</h2>
+            <h3 class="text-emerald-800 font-bold uppercase tracking-[0.3em] mb-4 text-xs">TRẢI NGHIỆM DỊCH VỤ</h3>
+            <h2 class="text-4xl md:text-5xl font-black uppercase text-emerald-950 tracking-tight">TIỆN NGHI ĐẲNG CẤP QUỐC TẾ</h2>
           </div>
-          <p class="text-gray-500 font-light max-w-sm mb-2 italic">"Chúng tôi không chỉ cung cấp chỗ nghỉ, chúng tôi mang đến trải nghiệm."</p>
+          <p class="text-gray-400 font-light max-w-[300px] mb-2 italic text-sm text-right">"Chúng tôi không chỉ cung cấp chỗ nghỉ, chúng tôi mang đến trải nghiệm."</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -199,10 +194,36 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import HeroSlider from '../components/HeroSlider.vue'
+import axios from '../api/axios'
 
 const user = ref(null)
+const rooms = ref([])
+
+const displayCategories = computed(() => {
+  const categories = [
+    { 
+      name: 'Suite', 
+      displayTitle: 'PRESIDENTIAL SUITE',
+      description: 'Phòng Suite là biểu tượng của sự sang trọng và đẳng cấp, nơi bạn được tận hưởng không gian rộng lớn với phòng khách và phòng ngủ riêng biệt. Thiết kế tinh xảo, tiện nghi cao cấp cùng dịch vụ ưu tiên mang đến trải nghiệm như một “ngôi nhà thứ hai” đầy riêng tư và đẳng cấp. Đây là lựa chọn hoàn hảo cho những ai muốn tận hưởng kỳ nghỉ theo phong cách thượng lưu.',
+      imageUrl: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    },
+    { 
+      name: 'Deluxe', 
+      displayTitle: 'DELUXE OCEAN VIEW',
+      description: 'Phòng Deluxe nâng tầm trải nghiệm lưu trú với không gian rộng rãi, nội thất tinh tế và tầm nhìn ấn tượng. Mỗi chi tiết đều được chăm chút nhằm mang lại cảm giác thư giãn tối đa, giúp bạn tận hưởng kỳ nghỉ trọn vẹn hơn. Đây là lựa chọn lý tưởng cho những ai mong muốn sự thoải mái và một chút “đẳng cấp” trong từng khoảnh khắc.',
+      imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    },
+    { 
+      name: 'Standard', 
+      displayTitle: 'STANDARD GARDEN ROOM',
+      description: 'Phòng Standard mang đến không gian nghỉ ngơi ấm cúng và tiện nghi với mức giá hợp lý, là lựa chọn hoàn hảo cho những ai tìm kiếm sự thoải mái đơn giản nhưng đầy đủ. Với thiết kế gọn gàng, trang bị hiện đại và không gian dễ chịu, đây chính là điểm dừng chân lý tưởng sau một ngày dài khám phá hoặc làm việc.',
+      imageUrl: 'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    }
+  ]
+  return categories
+})
 
 const services = [
   {
@@ -245,7 +266,23 @@ const testimonials = [
   }
 ]
 
+const formatPrice = (price) => {
+  if (!price) return '0 đ'
+  const formatted = new Intl.NumberFormat('vi-VN').format(price * 25000)
+  return `${formatted} đ`
+}
+
+const fetchRooms = async () => {
+  try {
+    const response = await axios.get('/rooms')
+    rooms.value = response.data
+  } catch (error) {
+    console.error('Error fetching rooms:', error)
+  }
+}
+
 onMounted(() => {
+  fetchRooms()
   const userData = localStorage.getItem('user')
   if (userData) {
     user.value = JSON.parse(userData)

@@ -1,11 +1,14 @@
 package com.hotel.management.model;
 
 import com.hotel.management.enums.BookingStatus;
+import com.hotel.management.enums.PaymentMethod;
+import com.hotel.management.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -24,11 +27,36 @@ public class Booking {
     @JoinColumn(name = "room_id")
     private Room room;
     
+    private String guestFullName;
+    private String guestPhone;
+    private String guestEmail;
+    private String guestAddress;
+    private Integer numberOfGuests;
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
     
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
     
     private Double totalPrice;
+    private LocalDateTime createdAt;
+    private LocalDateTime checkedInAt;
+    private LocalDateTime checkedOutAt;
+    private Integer reviewRating;
+
+    @Column(columnDefinition = "TEXT")
+    private String reviewComment;
+
+    private LocalDateTime reviewCreatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }

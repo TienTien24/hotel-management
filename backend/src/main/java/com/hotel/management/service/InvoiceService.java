@@ -45,7 +45,10 @@ public class InvoiceService {
         invoice.setRoomCharges(roomCharges);
         invoice.setServiceCharges(serviceCharges);
         invoice.setTotalAmount(roomCharges + serviceCharges);
-        invoice.setPaymentStatus(PaymentStatus.UNPAID);
+        invoice.setPaymentStatus(booking.getPaymentStatus() == null ? PaymentStatus.UNPAID : booking.getPaymentStatus());
+        if (booking.getPaymentStatus() == PaymentStatus.PAID) {
+            invoice.setPaymentDate(LocalDateTime.now());
+        }
 
         return invoiceRepository.save(invoice);
     }
@@ -53,6 +56,8 @@ public class InvoiceService {
     public Invoice checkOut(Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId).get();
         booking.setStatus(BookingStatus.COMPLETED);
+        booking.setCheckedOutAt(LocalDateTime.now());
+        booking.setPaymentStatus(PaymentStatus.PAID);
         
         Room room = booking.getRoom();
         room.setStatus(RoomStatus.AVAILABLE);

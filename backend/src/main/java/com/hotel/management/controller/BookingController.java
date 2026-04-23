@@ -1,5 +1,7 @@
 package com.hotel.management.controller;
 
+import com.hotel.management.dto.BookingRequest;
+import com.hotel.management.dto.ReviewRequest;
 import com.hotel.management.model.Booking;
 import com.hotel.management.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,7 @@ public class BookingController {
     private BookingService bookingService;
 
     @PostMapping
-    public ResponseEntity<Booking> createBooking(@RequestBody Booking booking) {
+    public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest booking) {
         try {
             return ResponseEntity.ok(bookingService.createBooking(booking));
         } catch (RuntimeException e) {
@@ -36,6 +38,14 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.checkIn(id));
     }
 
+    @PostMapping("/{id}/review")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<Booking> submitReview(@PathVariable Long id,
+                                                @RequestParam Long customerId,
+                                                @RequestBody ReviewRequest request) {
+        return ResponseEntity.ok(bookingService.submitReview(id, customerId, request));
+    }
+
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public List<Booking> getAllBookings() {
@@ -45,5 +55,11 @@ public class BookingController {
     @GetMapping("/customer/{id}")
     public List<Booking> getCustomerBookings(@PathVariable Long id) {
         return bookingService.getCustomerBookings(id);
+    }
+
+    @GetMapping("/completed-checkins")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    public List<Booking> getCompletedCheckIns() {
+        return bookingService.getCompletedCheckIns();
     }
 }
