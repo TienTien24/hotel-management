@@ -8,9 +8,6 @@
         <router-link to="/rooms" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700" :class="{'bg-gray-700': $route.path === '/rooms'}">Quản lý Phòng</router-link>
         <router-link to="/bookings" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700" :class="{'bg-gray-700': $route.path === '/bookings'}">Quản lý Đặt phòng</router-link>
       </nav>
-      <div class="mt-auto pt-10">
-        <button @click="logout" class="w-full bg-red-600 hover:bg-red-700 py-2 rounded-md">Đăng xuất</button>
-      </div>
     </aside>
 
     <!-- Main content -->

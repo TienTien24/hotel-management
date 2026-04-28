@@ -152,14 +152,67 @@ public class BookingService {
         booking.setReviewRating(request.getRating());
         booking.setReviewComment(request.getComment());
         booking.setReviewCreatedAt(LocalDateTime.now());
-        booking.setStatus(BookingStatus.COMPLETED); // Đánh dấu là đã hoàn thành để hiện lên blog
-        
-        // Chọn một phòng ngẫu nhiên để gắn vào blog nếu cần, hoặc để null
+        booking.setStatus(BookingStatus.COMPLETED);
+
         List<Room> rooms = roomRepository.findAll();
         if (!rooms.isEmpty()) {
             booking.setRoom(rooms.get((int) (Math.random() * rooms.size())));
         }
 
+        return bookingRepository.save(booking);
+    }
+
+    public Booking cancelBooking(Long bookingId, Long userId, boolean isAdmin) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy booking"));
+
+        if (booking.getStatus() == BookingStatus.CANCELLED) {
+            throw new RuntimeException("Booking đã được hủy trước đó");
+        }
+
+        if (booking.getStatus() == BookingStatus.COMPLETED) {
+            throw new RuntimeException("Không thể hủy booking đã hoàn thành");
+        }
+
+        // Admin có quyền override - hủy bất kỳ lúc nào và hoàn tiền 100% (hoặc theo thỏa thuận)
+        if (isAdmin) {
+            booking.setStatus(BookingStatus.CANCELLED);
+            if (booking.getPaymentStatus() == PaymentStatus.PAID) {
+                booking.setPaymentStatus(PaymentStatus.REFUNDED);
+            }
+            return bookingRepository.save(booking);
+        }
+
+        if (booking.getCustomer() == null || !booking.getCustomer().getId().equals(userId)) {
+            throw new RuntimeException("Bạn không có quyền hủy booking này");
+        }
+
+        if (booking.getStatus() == BookingStatus.CHECKED_IN) {
+            throw new RuntimeException("Không thể hủy booking sau khi đã check-in");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime checkInDateTime = booking.getCheckInDate().atTime(14, 0); // Giả định giờ check-in là 14:00
+
+        long hoursUntilCheckIn = java.time.Duration.between(now, checkInDateTime).toHours();
+
+        if (hoursUntilCheckIn >= 24) {
+            // Hủy trước 24h -> hoàn 100%
+            if (booking.getPaymentStatus() == PaymentStatus.PAID) {
+                booking.setPaymentStatus(PaymentStatus.REFUNDED);
+            }
+        } else if (hoursUntilCheckIn >= 0) {
+            // Hủy trong vòng 24h -> hoàn 50% (giữ lại 50% tiền phòng)
+            booking.setTotalPrice(booking.getTotalPrice() * 0.5);
+            if (booking.getPaymentStatus() == PaymentStatus.PAID) {
+                booking.setPaymentStatus(PaymentStatus.REFUNDED); // Trong thực tế sẽ hoàn lại 50%
+            }
+        } else {
+            // Đã qua giờ check-in nhưng chưa check-in thực tế
+            throw new RuntimeException("Đã quá thời gian check-in. Không thể tự hủy phòng.");
+        }
+
+        booking.setStatus(BookingStatus.CANCELLED);
         return bookingRepository.save(booking);
     }
 

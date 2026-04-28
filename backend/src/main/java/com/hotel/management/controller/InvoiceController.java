@@ -25,4 +25,10 @@ public class InvoiceController {
     public ResponseEntity<Invoice> checkOut(@PathVariable Long bookingId) {
         return ResponseEntity.ok(invoiceService.checkOut(bookingId));
     }
+
+    @GetMapping("/booking/{bookingId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF') or hasRole('CUSTOMER')")
+    public ResponseEntity<Invoice> getInvoiceByBookingId(@PathVariable Long bookingId) {
+        return ResponseEntity.ok(invoiceService.getInvoiceByBookingId(bookingId));
+    }
 }

@@ -113,7 +113,10 @@
                     <div class="flex gap-2">
                       <button v-if="booking.status === 'PENDING'" @click="confirmBooking(booking.id)" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-xl text-xs font-bold">Xác nhận</button>
                       <button v-if="booking.status === 'CONFIRMED'" @click="checkIn(booking.id)" class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-xl text-xs font-bold">Check-in</button>
+                      <button v-if="booking.status === 'CHECKED_IN'" @click="openServiceModal(booking)" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-2 rounded-xl text-xs font-bold">Nâng cấp DV / Hóa đơn</button>
+                      <button v-if="booking.status === 'CHECKED_IN'" @click="viewInvoice(booking.id)" class="bg-blue-400 hover:bg-blue-500 text-white px-3 py-2 rounded-xl text-xs font-bold">Xem hóa đơn</button>
                       <button v-if="booking.status === 'CHECKED_IN'" @click="checkOut(booking.id)" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-xl text-xs font-bold">Check-out</button>
+                      <button v-if="booking.status === 'COMPLETED'" @click="viewInvoice(booking.id)" class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded-xl text-xs font-bold">Hóa đơn</button>
                     </div>
                   </td>
                 </tr>
@@ -136,7 +139,7 @@
                   <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Phòng</th>
                   <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Check-in</th>
                   <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Check-out</th>
-                  <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Đánh giá</th>
+                  <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Thao tác</th>
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
@@ -148,7 +151,9 @@
                   <td class="px-6 py-4 text-sm text-gray-900">Phòng {{ booking.room?.roomNumber }} - {{ booking.room?.category }}</td>
                   <td class="px-6 py-4 text-sm text-gray-900">{{ formatDateTime(booking.checkedInAt) }}</td>
                   <td class="px-6 py-4 text-sm text-gray-900">{{ formatDateTime(booking.checkedOutAt) }}</td>
-                  <td class="px-6 py-4 text-sm text-gray-900">{{ booking.reviewRating ? `${booking.reviewRating}/5` : 'Chưa đánh giá' }}</td>
+                  <td class="px-6 py-4 text-sm font-medium">
+                    <button @click="viewInvoice(booking.id)" class="text-purple-600 hover:text-purple-900 font-bold">Xem hóa đơn</button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -186,6 +191,95 @@
           </form>
         </div>
       </div>
+
+      <!-- Invoice Modal -->
+      <div v-if="showInvoiceModal && selectedInvoice" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-8 border-t-8 border-emerald-800">
+          <div class="flex justify-between items-start mb-8">
+            <div>
+              <h3 class="text-3xl font-black text-emerald-950 uppercase tracking-tighter">Hóa đơn</h3>
+              <p class="text-xs font-bold text-gray-400 mt-1 uppercase tracking-widest">Mã hóa đơn: #{{ selectedInvoice.id }}</p>
+            </div>
+            <button @click="showInvoiceModal = false" class="text-gray-400 hover:text-emerald-800">
+              <i class="fas fa-times text-xl"></i>
+            </button>
+          </div>
+
+          <div class="space-y-6 mb-10">
+            <div class="flex justify-between border-b border-gray-100 pb-3">
+              <span class="text-xs font-black text-gray-400 uppercase tracking-widest">Mã đặt phòng</span>
+              <span class="font-bold text-emerald-950">#{{ selectedInvoice.booking?.id }}</span>
+            </div>
+            <div class="flex justify-between border-b border-gray-100 pb-3">
+              <span class="text-xs font-black text-gray-400 uppercase tracking-widest">Ngày thanh toán</span>
+              <span class="font-bold text-emerald-950">{{ formatDateTime(selectedInvoice.paymentDate) }}</span>
+            </div>
+            <div class="flex justify-between border-b border-gray-100 pb-3">
+              <span class="text-xs font-black text-gray-400 uppercase tracking-widest">Trạng thái</span>
+              <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-black uppercase tracking-widest">
+                {{ selectedInvoice.paymentStatus }}
+              </span>
+            </div>
+            <div class="space-y-3 pt-2">
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Tiền phòng</span>
+                <span class="font-semibold text-gray-800">{{ formatPrice(selectedInvoice.roomCharges) }}</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Phí dịch vụ</span>
+                <span class="font-semibold text-gray-800">{{ formatPrice(selectedInvoice.serviceCharges) }}</span>
+              </div>
+              
+              <!-- Service breakdown -->
+              <div v-if="selectedUsages.length > 0" class="pl-4 border-l-2 border-gray-100 space-y-1">
+                <div v-for="usage in selectedUsages" :key="usage.id" class="flex justify-between text-[10px] text-gray-400">
+                  <span>{{ usage.service.name }} (x{{ usage.quantity }})</span>
+                  <span>{{ formatPrice(usage.service.price * usage.quantity) }}</span>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center pt-4 border-t-2 border-emerald-50">
+                <span class="text-lg font-black text-emerald-950 uppercase tracking-widest">Tổng cộng</span>
+                <span class="text-2xl font-black text-emerald-800">{{ formatPrice(selectedInvoice.totalAmount) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <button @click="window.print()" class="w-full bg-emerald-800 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-900 transition-all flex items-center justify-center gap-2">
+            <i class="fas fa-print"></i> In hóa đơn
+          </button>
+        </div>
+      </div>
+
+      <!-- Service Selection Modal -->
+      <div v-if="showServiceModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-8">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-2xl font-black text-emerald-950">Thêm dịch vụ - #{{ selectedBooking?.id }}</h3>
+            <button @click="showServiceModal = false" class="text-gray-400 hover:text-emerald-800">
+              <i class="fas fa-times text-xl"></i>
+            </button>
+          </div>
+
+          <form @submit.prevent="addService" class="space-y-5">
+            <div>
+              <label class="block text-xs font-black uppercase tracking-widest text-emerald-900 mb-3">Chọn dịch vụ</label>
+              <select v-model="serviceForm.serviceId" class="w-full bg-gray-50 border-0 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-emerald-800">
+                <option v-for="service in availableServices" :key="service.id" :value="service.id">
+                  {{ service.name }} - {{ formatPrice(service.price) }}
+                </option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-black uppercase tracking-widest text-emerald-900 mb-3">Số lượng</label>
+              <input v-model.number="serviceForm.quantity" type="number" min="1" class="w-full bg-gray-50 border-0 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-emerald-800">
+            </div>
+            <button type="submit" class="w-full bg-amber-500 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-amber-600 transition-all">
+              Thêm vào hóa đơn
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -198,6 +292,67 @@ const user = ref(JSON.parse(localStorage.getItem('user') || 'null'))
 const bookings = ref([])
 const completedCheckins = ref([])
 const showReviewModal = ref(false)
+const showInvoiceModal = ref(false)
+const selectedInvoice = ref(null)
+const selectedUsages = ref([])
+const showServiceModal = ref(false)
+const availableServices = ref([])
+const serviceForm = ref({
+  serviceId: null,
+  quantity: 1
+})
+
+const fetchServices = async () => {
+  try {
+    const response = await axios.get('/hotel-services')
+    availableServices.value = response.data
+    if (availableServices.value.length > 0) {
+      serviceForm.value.serviceId = availableServices.value[0].id
+    }
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách dịch vụ:', error)
+  }
+}
+
+const openServiceModal = (booking) => {
+  selectedBooking.value = booking
+  serviceForm.value.quantity = 1
+  showServiceModal.value = true
+}
+
+const addService = async () => {
+  try {
+    await axios.post('/hotel-services/add-to-booking', null, {
+      params: {
+        bookingId: selectedBooking.value.id,
+        serviceId: serviceForm.value.serviceId,
+        quantity: serviceForm.value.quantity
+      }
+    })
+    alert('Đã thêm dịch vụ thành công!')
+    showServiceModal.value = false
+    await refreshAll()
+  } catch (error) {
+    console.error('Lỗi khi thêm dịch vụ:', error)
+    alert('Không thể thêm dịch vụ. Vui lòng thử lại.')
+  }
+}
+
+const viewInvoice = async (bookingId) => {
+  try {
+    const [invoiceRes, usagesRes] = await Promise.all([
+      axios.get(`/invoices/booking/${bookingId}`),
+      axios.get(`/hotel-services/booking/${bookingId}`)
+    ])
+    selectedInvoice.value = invoiceRes.data
+    selectedUsages.value = usagesRes.data
+    showInvoiceModal.value = true
+  } catch (error) {
+    console.error('Lỗi khi lấy hóa đơn:', error)
+    alert('Hóa đơn chưa được tạo hoặc không tìm thấy.')
+  }
+}
+
 const selectedBooking = ref(null)
 const reviewForm = ref({
   rating: 5,
@@ -268,6 +423,7 @@ const refreshAll = async () => {
 const confirmBooking = async (id) => {
   try {
     await axios.put(`/bookings/${id}/confirm`)
+    alert('Đã xác nhận booking thành công!')
     await refreshAll()
   } catch (error) {
     alert('Lỗi khi xác nhận booking')
@@ -277,6 +433,7 @@ const confirmBooking = async (id) => {
 const checkIn = async (id) => {
   try {
     await axios.put(`/bookings/${id}/check-in`)
+    alert('Đã check-in thành công!')
     await refreshAll()
   } catch (error) {
     alert('Lỗi khi check-in')
@@ -286,8 +443,9 @@ const checkIn = async (id) => {
 const checkOut = async (id) => {
   try {
     await axios.put(`/invoices/booking/${id}/check-out`)
-    alert('Check-out thành công!')
+    alert('Đã check-out và tạo hóa đơn thành công!')
     await refreshAll()
+    viewInvoice(id)
   } catch (error) {
     alert('Lỗi khi check-out')
   }
@@ -319,5 +477,6 @@ const submitReview = async () => {
 
 onMounted(() => {
   refreshAll()
+  fetchServices()
 })
 </script>

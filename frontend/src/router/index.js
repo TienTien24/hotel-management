@@ -12,6 +12,7 @@ import Checkin from '../views/Checkin.vue'
 import MyBookings from '../views/MyBookings.vue'
 import Reviews from '../views/Reviews.vue'
 import Services from '../views/Services.vue'
+import ManageServices from '../views/ManageServices.vue'
 
 const routes = [
   { path: '/login', component: Login },
@@ -63,6 +64,11 @@ const routes = [
   { 
     path: '/blog', 
     component: Reviews
+  },
+  { 
+    path: '/manage-services', 
+    component: ManageServices,
+    meta: { requiresAuth: true }
   }
 ]
 

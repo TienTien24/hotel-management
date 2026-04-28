@@ -131,6 +131,7 @@ const menuItems = computed(() => {
   
   if (user.value && (user.value.role === 'ADMIN' || user.value.role === 'STAFF')) {
     items.splice(3, 0, { name: 'Check-in', path: '/checkin' })
+    items.splice(4, 0, { name: 'Quản lý', path: '/manage-services' })
   }
   
   return items
