@@ -122,16 +122,21 @@ const isHome = computed(() => {
 const menuItems = computed(() => {
   const items = [
     { name: 'Trang chủ', path: '/' },
-    { name: 'Giới thiệu', path: '/about' },
     { name: 'Loại Phòng', path: '/rooms' },
     { name: 'Dịch vụ', path: '/services' },
-    { name: 'Blog', path: '/blog' },
-    { name: 'Liên hệ', path: '/contact' }
+    { name: 'Chính sách', path: '/cancellation-policy' },
   ]
   
-  if (user.value && (user.value.role === 'ADMIN' || user.value.role === 'STAFF')) {
-    items.splice(3, 0, { name: 'Check-in', path: '/checkin' })
-    items.splice(4, 0, { name: 'Quản lý', path: '/manage-services' })
+  if (user.value) {
+    if (user.value.role === 'ADMIN' || user.value.role === 'STAFF') {
+      items.push({ name: 'Check-in', path: '/checkin' })
+      items.push({ name: 'Dashboard', path: '/dashboard' })
+    } else {
+      items.push({ name: 'Booking của tôi', path: '/my-bookings' })
+    }
+  } else {
+    items.push({ name: 'Giới thiệu', path: '/about' })
+    items.push({ name: 'Liên hệ', path: '/contact' })
   }
   
   return items

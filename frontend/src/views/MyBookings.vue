@@ -225,22 +225,41 @@ const editBooking = (booking) => {
 }
 
 const cancelBooking = async (booking) => {
-  if (confirm(`Bạn có chắc chắn muốn hủy đặt phòng #${booking.id} không?`)) {
+  const user = JSON.parse(localStorage.getItem('user'))
+  if (!user) return
+
+  const checkInDate = new Date(booking.checkInDate)
+  const now = new Date()
+  const diffTime = checkInDate - now
+  const diffHours = diffTime / (1000 * 60 * 60)
+  const refundPercentage = diffHours < 24 ? 50 : 100
+  const cancellationFee = booking.totalPrice * (1 - refundPercentage / 100)
+
+  let policyText = ''
+  if (diffHours < 0) {
+    alert('Không thể hủy booking sau ngày check-in.')
+    return
+  } else if (diffHours < 24) {
+    policyText = `\n\n📋 Chính sách hủy phòng:\n- Hủy trong 24h trước check-in: Hoàn ${refundPercentage}%\n- Phí hủy: ${formatPrice(cancellationFee)}`
+  } else {
+    policyText = `\n\n📋 Chính sách hủy phòng:\n- Hủy trước 24h: Hoàn ${refundPercentage}%\n- Phí hủy: Không có`
+  }
+
+  if (user.role === 'ADMIN') {
+    policyText += '\n\n⚠️ Bạn là Admin - có quyền hủy không cần áp dụng phí.'
+  }
+
+  const confirmMessage = `Bạn có chắc chắn muốn hủy đặt phòng #${booking.id} không?${policyText}`
+
+  if (confirm(confirmMessage)) {
     try {
-      // Trying PUT instead of POST as it's more consistent with other status updates in this project
-      await axios.put(`/bookings/${booking.id}/cancel`)
+      const isAdmin = user.role === 'ADMIN'
+      await axios.put(`/bookings/${booking.id}/cancel?userId=${user.id}&isAdmin=${isAdmin}`)
       alert('Đặt phòng đã được hủy thành công!')
-      fetchBookings() // Refresh the bookings list
+      fetchBookings()
     } catch (error) {
       console.error('Lỗi khi hủy đặt phòng:', error)
-      // Fallback: try POST if PUT fails, or just show error
-      try {
-        await axios.post(`/bookings/${booking.id}/cancel`)
-        alert('Đặt phòng đã được hủy thành công!')
-        fetchBookings()
-      } catch (postError) {
-        alert('Lỗi khi hủy đặt phòng: ' + (postError.response?.data?.message || 'Vui lòng thử lại sau'))
-      }
+      alert('Lỗi khi hủy đặt phòng: ' + (error.response?.data?.message || 'Vui lòng thử lại sau'))
     }
   }
 }
