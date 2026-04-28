@@ -8,9 +8,9 @@ import Home from '../views/Home.vue'
 import About from '../views/About.vue'
 import Contact from '../views/Contact.vue'
 import RoomDetail from '../views/RoomDetail.vue'
-import Checkin from '../views/Checkin.vue'
 import MyBookings from '../views/MyBookings.vue'
 import Reviews from '../views/Reviews.vue'
+import Blog from '../views/Blog.vue'
 import Services from '../views/Services.vue'
 import StaffManagement from '../views/StaffManagement.vue'
 import ManageServices from '../views/ManageServices.vue'
@@ -54,18 +54,13 @@ const routes = [
     meta: { requiresAuth: true }
   },
   { 
-    path: '/checkin', 
-    component: Checkin,
-    meta: { requiresAuth: true }
-  },
-  { 
     path: '/my-bookings', 
     component: MyBookings,
     meta: { requiresAuth: true }
   },
   { 
     path: '/blog', 
-    component: Reviews
+    component: Blog
   },
   {
     path: '/staff',
@@ -98,10 +93,19 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const loggedIn = localStorage.getItem('user')
+  const user = JSON.parse(localStorage.getItem('user'))
 
-  if (to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
-    next('/login')
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!user) {
+      next('/login')
+    } else {
+      // Check for specific route permissions
+      if ((to.path === '/dashboard' || to.path === '/staff') && user.role !== 'ADMIN') {
+        next('/') // Redirect non-admins away from admin routes
+      } else {
+        next()
+      }
+    }
   } else {
     next()
   }
