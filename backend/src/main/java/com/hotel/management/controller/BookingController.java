@@ -38,6 +38,18 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.checkIn(id));
     }
 
+    @PutMapping("/{id}/cancel")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
+    public ResponseEntity<Booking> cancelBooking(@PathVariable Long id,
+                                                  @RequestParam Long userId,
+                                                  @RequestParam boolean isAdmin) {
+        try {
+            return ResponseEntity.ok(bookingService.cancelBooking(id, userId, isAdmin));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
     @PostMapping("/{id}/review")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<Booking> submitReview(@PathVariable Long id,

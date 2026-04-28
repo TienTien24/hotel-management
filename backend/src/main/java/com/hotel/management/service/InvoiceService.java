@@ -58,19 +58,34 @@ public class InvoiceService {
         booking.setStatus(BookingStatus.COMPLETED);
         booking.setCheckedOutAt(LocalDateTime.now());
         booking.setPaymentStatus(PaymentStatus.PAID);
-        
+
         Room room = booking.getRoom();
         room.setStatus(RoomStatus.AVAILABLE);
         roomRepository.save(room);
-        
+
         bookingRepository.save(booking);
 
         Invoice invoice = invoiceRepository.findByBookingId(bookingId)
-                .orElseGet(() -> generateInvoice(bookingId));
+                .orElse(new Invoice());
         
+        List<BookingServiceUsage> usages = usageRepository.findByBookingId(bookingId);
+        double roomCharges = booking.getTotalPrice();
+        double serviceCharges = usages.stream()
+                .mapToDouble(u -> u.getService().getPrice() * u.getQuantity())
+                .sum();
+
+        invoice.setBooking(booking);
+        invoice.setRoomCharges(roomCharges);
+        invoice.setServiceCharges(serviceCharges);
+        invoice.setTotalAmount(roomCharges + serviceCharges);
         invoice.setPaymentStatus(PaymentStatus.PAID);
         invoice.setPaymentDate(LocalDateTime.now());
-        
+
         return invoiceRepository.save(invoice);
+    }
+
+    public Invoice getInvoiceByBookingId(Long bookingId) {
+        return invoiceRepository.findByBookingId(bookingId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn cho booking này"));
     }
 }

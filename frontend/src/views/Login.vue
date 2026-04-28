@@ -45,14 +45,18 @@ const router = useRouter()
 
 const handleLogin = async () => {
   try {
+    console.log('Sending login request for:', username.value);
     const response = await axios.post('/auth/signin', {
       username: username.value,
       password: password.value
     })
+    console.log('Login response:', response.data);
     localStorage.setItem('user', JSON.stringify(response.data))
     router.push('/')
   } catch (error) {
-    alert('Đăng nhập thất bại: ' + (error.response?.data?.message || 'Sai tên đăng nhập hoặc mật khẩu'))
+    console.error('Login error:', error);
+    const errorMsg = error.response?.data?.message || error.response?.data || 'Sai tên đăng nhập hoặc mật khẩu';
+    alert('LỖI ĐĂNG NHẬP: ' + errorMsg)
   }
 }
 </script>

@@ -18,6 +18,8 @@ import com.hotel.management.model.Booking;
 import com.hotel.management.enums.BookingStatus;
 import com.hotel.management.enums.PaymentMethod;
 import com.hotel.management.enums.PaymentStatus;
+import com.hotel.management.model.HotelService;
+import com.hotel.management.repository.HotelServiceRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,16 +33,27 @@ public class HotelManagementApplication {
     @Bean
     public CommandLineRunner initData(UserRepository userRepository, RoomRepository roomRepository, 
                                     BookingRepository bookingRepository, InvoiceRepository invoiceRepository,
+                                    HotelServiceRepository hotelServiceRepository,
                                     PasswordEncoder passwordEncoder) {
         return args -> {
+            if (hotelServiceRepository.count() == 0) {
+                System.out.println("Đang tạo dữ liệu dịch vụ mẫu...");
+                hotelServiceRepository.save(new HotelService(null, "Ăn sáng tại phòng", 15.0, "Dịch vụ phục vụ bữa sáng tận phòng"));
+                hotelServiceRepository.save(new HotelService(null, "Giặt là", 5.0, "Dịch vụ giặt quần áo (tính theo bộ)"));
+                hotelServiceRepository.save(new HotelService(null, "Massage & Spa", 50.0, "Dịch vụ massage thư giãn 60 phút"));
+                hotelServiceRepository.save(new HotelService(null, "Minibar (Nước ngọt)", 2.0, "Nước ngọt trong tủ lạnh"));
+                hotelServiceRepository.save(new HotelService(null, "Minibar (Bia)", 3.0, "Bia trong tủ lạnh"));
+                hotelServiceRepository.save(new HotelService(null, "Thuê xe máy", 10.0, "Dịch vụ thuê xe máy theo ngày"));
+                System.out.println("Đã tạo xong dữ liệu dịch vụ mẫu!");
+            }
             if (!userRepository.existsByUsername("admin")) {
-                userRepository.save(new User(null, "admin", passwordEncoder.encode("password"), "System Admin", "admin@hotel.com", "0123456789", RoleName.ADMIN));
+                userRepository.save(new User(null, "admin", passwordEncoder.encode("password"), "System Admin", "admin@hotel.com", "0123456789", RoleName.ADMIN, false));
             }
             if (!userRepository.existsByUsername("staff")) {
-                userRepository.save(new User(null, "staff", passwordEncoder.encode("password"), "Hotel Staff", "staff@hotel.com", "0987654321", RoleName.STAFF));
+                userRepository.save(new User(null, "staff", passwordEncoder.encode("password"), "Hotel Staff", "staff@hotel.com", "0987654321", RoleName.STAFF, false));
             }
             if (!userRepository.existsByUsername("customer")) {
-                userRepository.save(new User(null, "customer", passwordEncoder.encode("password"), "John Doe", "john@gmail.com", "0111222333", RoleName.CUSTOMER));
+                userRepository.save(new User(null, "customer", passwordEncoder.encode("password"), "John Doe", "john@gmail.com", "0111222333", RoleName.CUSTOMER, false));
             }
 
             if (roomRepository.count() != 60) {

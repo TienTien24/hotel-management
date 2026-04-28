@@ -20,6 +20,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
 
+        if (Boolean.TRUE.equals(user.getIsLocked())) {
+            throw new UsernameNotFoundException("User account is locked: " + username);
+        }
+
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
