@@ -34,14 +34,6 @@
             </button>
           </div>
         </div>
-        <div class="mb-6">
-          <label class="block text-gray-700 text-sm font-bold mb-2">Vai trò</label>
-          <select v-model="role" class="w-full px-3 py-2 border rounded-md">
-            <option value="CUSTOMER">Khách hàng</option>
-            <option value="STAFF">Lễ tân</option>
-            <option value="ADMIN">Quản trị viên</option>
-          </select>
-        </div>
         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">
           Đăng ký
         </button>
@@ -64,23 +56,32 @@ const showPassword = ref(false)
 const fullName = ref('')
 const email = ref('')
 const phone = ref('')
-const role = ref('CUSTOMER')
 const router = useRouter()
 
 const handleRegister = async () => {
   try {
+    console.log('Sending registration request for:', username.value);
     await axios.post('/auth/signup', {
       username: username.value,
       password: password.value,
       fullName: fullName.value,
       email: email.value,
-      phone: phone.value,
-      role: role.value
+      phone: phone.value
     })
-    alert('Đăng ký thành công!')
+    alert('Đăng ký thành công! Hệ thống sẽ chuyển bạn sang trang Đăng nhập.')
+    
+    // Xóa form sau khi đăng ký thành công
+    username.value = ''
+    password.value = ''
+    fullName.value = ''
+    email.value = ''
+    phone.value = ''
+    
     router.push('/login')
   } catch (error) {
-    alert('Đăng ký thất bại: ' + (error.response?.data || 'Có lỗi xảy ra'))
+    console.error('Registration error:', error);
+    const errorMsg = error.response?.data?.message || error.response?.data || error.message;
+    alert('LỖI ĐĂNG KÝ: ' + errorMsg)
   }
 }
 </script>

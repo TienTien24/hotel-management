@@ -14,7 +14,6 @@ com\hotel\management\enums\PaymentStatus.class
 com\hotel\management\repository\UserRepository.class
 com\hotel\management\controller\InvoiceController.class
 com\hotel\management\dto\RegisterRequest.class
-com\hotel\management\controller\HotelServiceController.class
 com\hotel\management\dto\BookingRequest.class
 com\hotel\management\service\AuthService.class
 com\hotel\management\enums\RoleName.class
@@ -29,7 +28,6 @@ com\hotel\management\controller\PaymentController.class
 com\hotel\management\dto\LoginRequest.class
 com\hotel\management\model\User.class
 com\hotel\management\repository\HotelServiceRepository.class
-com\hotel\management\service\HotelServiceService.class
 com\hotel\management\service\RoomService.class
 com\hotel\management\service\DashboardService.class
 com\hotel\management\model\ContactMessage$MessageStatus.class

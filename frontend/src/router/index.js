@@ -12,6 +12,7 @@ import Checkin from '../views/Checkin.vue'
 import MyBookings from '../views/MyBookings.vue'
 import Reviews from '../views/Reviews.vue'
 import Services from '../views/Services.vue'
+import StaffManagement from '../views/StaffManagement.vue'
 import ManageServices from '../views/ManageServices.vue'
 import CancellationPolicy from '../views/CancellationPolicy.vue'
 
@@ -65,6 +66,11 @@ const routes = [
   { 
     path: '/blog', 
     component: Reviews
+  },
+  {
+    path: '/staff',
+    component: StaffManagement,
+    meta: { requiresAuth: true }
   },
   {
     path: '/manage-services',
