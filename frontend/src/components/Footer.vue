@@ -32,9 +32,9 @@
           <li><router-link to="/" class="hover:text-white transition-colors">Trang chủ</router-link></li>
           <li><a href="#about" class="hover:text-white transition-colors">Giới thiệu</a></li>
           <li><router-link to="/rooms" class="hover:text-white transition-colors">Loại Phòng</router-link></li>
-          <li><a href="#services" class="hover:text-white transition-colors">Dịch vụ</a></li>
-          <li><router-link to="/checkin" class="hover:text-white transition-colors">Check-in</router-link></li>
-          <li><a href="#testimonials" class="hover:text-white transition-colors">Đánh giá</a></li>
+          <li><a href="/services" class="hover:text-white transition-colors">Dịch vụ</a></li>
+          <li><a href="/cancellation-policy" class="hover:text-white transition-colors">Chính sách</a></li>
+          <li><a href="/blog" class="hover:text-white transition-colors">Đánh giá</a></li>
           <li><router-link to="/contact" class="hover:text-white transition-colors">Liên hệ</router-link></li>
         </ul>
       </div>
@@ -56,7 +56,7 @@
         <ul class="space-y-4 text-emerald-100/60 font-light">
           <li class="flex items-start space-x-3">
             <i class="fas fa-map-marker-alt mt-1 text-emerald-500"></i>
-            <span>123 Đường ABC, Quận 1, TP. Hồ Chí Minh</span>
+            <span>170 An Dương Vương, phường Quy Nhơn Nam, tỉnh Gia Lai</span>
           </li>
           <li class="flex items-center space-x-3">
             <i class="fas fa-phone-alt text-emerald-500"></i>
