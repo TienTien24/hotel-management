@@ -16,19 +16,31 @@ public class InvoiceController {
 
     @PostMapping("/booking/{bookingId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
-    public ResponseEntity<Invoice> generateInvoice(@PathVariable Long bookingId) {
-        return ResponseEntity.ok(invoiceService.generateInvoice(bookingId));
+    public ResponseEntity<?> generateInvoice(@PathVariable Long bookingId) {
+        try {
+            return ResponseEntity.ok(invoiceService.generateInvoice(bookingId));
+        } catch (Throwable t) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", t.getMessage()));
+        }
     }
 
     @PutMapping("/booking/{bookingId}/check-out")
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
-    public ResponseEntity<Invoice> checkOut(@PathVariable Long bookingId) {
-        return ResponseEntity.ok(invoiceService.checkOut(bookingId));
+    public ResponseEntity<?> checkOut(@PathVariable Long bookingId) {
+        try {
+            return ResponseEntity.ok(invoiceService.checkOut(bookingId));
+        } catch (Throwable t) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", t.getMessage()));
+        }
     }
 
     @GetMapping("/booking/{bookingId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF') or hasRole('CUSTOMER')")
-    public ResponseEntity<Invoice> getInvoiceByBookingId(@PathVariable Long bookingId) {
-        return ResponseEntity.ok(invoiceService.getInvoiceByBookingId(bookingId));
+    public ResponseEntity<?> getInvoiceByBookingId(@PathVariable Long bookingId) {
+        try {
+            return ResponseEntity.ok(invoiceService.getInvoiceByBookingId(bookingId));
+        } catch (Throwable t) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", t.getMessage()));
+        }
     }
 }

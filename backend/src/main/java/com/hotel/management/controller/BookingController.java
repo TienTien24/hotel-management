@@ -18,35 +18,46 @@ public class BookingController {
     private BookingService bookingService;
 
     @PostMapping
-    public ResponseEntity<Booking> createBooking(@RequestBody BookingRequest booking) {
+    public ResponseEntity<?> createBooking(@RequestBody BookingRequest request) {
         try {
-            return ResponseEntity.ok(bookingService.createBooking(booking));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.ok(bookingService.createBooking(request));
+        } catch (Throwable t) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", t.getMessage()));
         }
     }
 
     @PutMapping("/{id}/confirm")
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
-    public ResponseEntity<Booking> confirmBooking(@PathVariable Long id) {
-        return ResponseEntity.ok(bookingService.confirmBooking(id));
+    public ResponseEntity<?> confirmBooking(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(bookingService.confirmBooking(id));
+        } catch (Throwable t) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", t.getMessage()));
+        }
     }
 
     @PutMapping("/{id}/check-in")
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
-    public ResponseEntity<Booking> checkIn(@PathVariable Long id) {
-        return ResponseEntity.ok(bookingService.checkIn(id));
+    public ResponseEntity<?> checkIn(@PathVariable Long id) {
+        try {
+            System.out.println("Đang thực hiện check-in cho booking ID: " + id);
+            Booking booking = bookingService.checkIn(id);
+            return ResponseEntity.ok(booking);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            String message = t.getMessage() != null ? t.getMessage() : t.getClass().getSimpleName();
+            System.err.println("Lỗi check-in: " + message);
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", message));
+        }
     }
 
     @PutMapping("/{id}/cancel")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
-    public ResponseEntity<Booking> cancelBooking(@PathVariable Long id,
-                                                  @RequestParam Long userId,
-                                                  @RequestParam boolean isAdmin) {
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF') or hasRole('CUSTOMER')")
+    public ResponseEntity<?> cancelBooking(@PathVariable Long id, @RequestParam Long userId, @RequestParam boolean isAdmin) {
         try {
             return ResponseEntity.ok(bookingService.cancelBooking(id, userId, isAdmin));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(null);
+        } catch (Throwable t) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", t.getMessage()));
         }
     }
 

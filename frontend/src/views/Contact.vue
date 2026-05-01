@@ -31,7 +31,7 @@
               </div>
               <div>
                 <h3 class="font-bold text-gray-800">Địa chỉ</h3>
-                <p class="text-gray-600">123 Đường Trần Phú, Quận 1, TP. Hồ Chí Minh</p>
+                <p class="text-gray-600">170 An Dương Vương, phường Quy Nhơn Nam, tỉnh Gia Lai</p>
               </div>
             </div>
 
@@ -43,7 +43,7 @@
               </div>
               <div>
                 <h3 class="font-bold text-gray-800">Điện thoại</h3>
-                <p class="text-gray-600">+84 (0) 28 1234 5678</p>
+                <p class="text-gray-600">+84 123 456 789</p>
               </div>
             </div>
 
@@ -55,7 +55,7 @@
               </div>
               <div>
                 <h3 class="font-bold text-gray-800">Email</h3>
-                <p class="text-gray-600">info@grandhotel.com</p>
+                <p class="text-gray-600">contact@grandhotel.com</p>
               </div>
             </div>
           </div>

@@ -18,6 +18,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     
     List<Booking> findByStatus(BookingStatus status);
 
+    List<Booking> findByRoomIdAndStatusIn(Long roomId, List<BookingStatus> statuses);
+
     @Query("SELECT b FROM Booking b WHERE b.reviewRating IS NOT NULL ORDER BY b.reviewCreatedAt DESC")
     List<Booking> findAllReviews();
 }

@@ -17,7 +17,10 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
             throws IOException, ServletException {
-        logger.error("Unauthorized error: {}", authException.getMessage());
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized");
+        logger.error("Unauthorized error for URI: {} - Message: {}", request.getRequestURI(), authException.getMessage());
+        
+        response.setContentType("application/json");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.getWriter().write("{\"message\": \"Phiên đăng nhập hết hạn hoặc không có quyền. Vui lòng đăng nhập lại. Chi tiết: " + authException.getMessage() + "\"}");
     }
 }

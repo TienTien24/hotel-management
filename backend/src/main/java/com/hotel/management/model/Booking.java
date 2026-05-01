@@ -36,12 +36,15 @@ public class Booking {
     private LocalDate checkOutDate;
     
     @Enumerated(EnumType.STRING)
+    @Column(length = 50)
     private BookingStatus status;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 50)
     private PaymentMethod paymentMethod;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 50)
     private PaymentStatus paymentStatus;
     
     private Double totalPrice;
