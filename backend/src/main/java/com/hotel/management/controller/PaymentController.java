@@ -3,6 +3,7 @@ package com.hotel.management.controller;
 import com.hotel.management.enums.PaymentStatus;
 import com.hotel.management.model.Booking;
 import com.hotel.management.repository.BookingRepository;
+import com.hotel.management.service.BookingService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class PaymentController {
 
     @Autowired
     private BookingRepository bookingRepository;
+
+    @Autowired
+    private BookingService bookingService;
 
     private static final String VNP_TMN_CODE = "YOUR_VNP_TMN_CODE";
     private static final String VNP_HASH_SECRET = "YOUR_VNP_HASH_SECRET";
@@ -75,11 +79,12 @@ public class PaymentController {
         String bookingId = request.getParameter("vnp_TxnRef");
 
         if ("00".equals(vnpResponseCode)) {
-            bookingRepository.findById(Long.parseLong(bookingId)).ifPresent(booking -> {
-                booking.setPaymentStatus(PaymentStatus.PAID);
-                bookingRepository.save(booking);
-            });
-            response.sendRedirect("http://localhost:3002/bookings?payment=success");
+            try {
+                bookingService.processPaymentSuccess(Long.parseLong(bookingId));
+                response.sendRedirect("http://localhost:3002/bookings?payment=success");
+            } catch (Exception e) {
+                response.sendRedirect("http://localhost:3002/bookings?payment=failed&message=" + URLEncoder.encode(e.getMessage(), "UTF-8"));
+            }
         } else {
             response.sendRedirect("http://localhost:3002/bookings?payment=failed");
         }
@@ -121,13 +126,16 @@ public class PaymentController {
         if ("0".equals(resultCode)) {
             String[] parts = request.getParameter("orderId").split("_");
             if (parts.length >= 2) {
-                Long bookingId = Long.parseLong(parts[1]);
-                bookingRepository.findById(bookingId).ifPresent(booking -> {
-                    booking.setPaymentStatus(PaymentStatus.PAID);
-                    bookingRepository.save(booking);
-                });
+                try {
+                    Long bookingId = Long.parseLong(parts[1]);
+                    bookingService.processPaymentSuccess(bookingId);
+                    response.sendRedirect("http://localhost:3002/bookings?payment=success");
+                } catch (Exception e) {
+                    response.sendRedirect("http://localhost:3002/bookings?payment=failed&message=" + URLEncoder.encode(e.getMessage(), "UTF-8"));
+                }
+            } else {
+                response.sendRedirect("http://localhost:3002/bookings?payment=failed");
             }
-            response.sendRedirect("http://localhost:3002/bookings?payment=success");
         } else {
             response.sendRedirect("http://localhost:3002/bookings?payment=failed");
         }

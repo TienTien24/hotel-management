@@ -13,11 +13,13 @@ import com.hotel.management.repository.InvoiceRepository;
 import com.hotel.management.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
+@Transactional
 public class InvoiceService {
     @Autowired
     private InvoiceRepository invoiceRepository;
@@ -29,7 +31,7 @@ public class InvoiceService {
     private BookingServiceUsageRepository usageRepository;
 
     @Autowired
-    private RoomRepository roomRepository;
+    private BookingService bookingService;
 
     public Invoice generateInvoice(Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId).get();
@@ -54,16 +56,23 @@ public class InvoiceService {
     }
 
     public Invoice checkOut(Long bookingId) {
-        Booking booking = bookingRepository.findById(bookingId).get();
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy booking"));
+        
+        if (booking.getStatus() != BookingStatus.CHECKED_IN) {
+            throw new RuntimeException("Chỉ có thể check-out cho booking đã được check-in");
+        }
+        
         booking.setStatus(BookingStatus.COMPLETED);
         booking.setCheckedOutAt(LocalDateTime.now());
         booking.setPaymentStatus(PaymentStatus.PAID);
 
         Room room = booking.getRoom();
-        room.setStatus(RoomStatus.AVAILABLE);
-        roomRepository.save(room);
-
+        // Lưu trạng thái booking trước khi giải phóng phòng
         bookingRepository.save(booking);
+        
+        // Cập nhật trạng thái phòng thông minh
+        bookingService.releaseRoomIfNoOtherActiveBookings(room);
 
         Invoice invoice = invoiceRepository.findByBookingId(bookingId)
                 .orElse(new Invoice());

@@ -130,4 +130,15 @@ public class AuthService {
     public java.util.List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+
+        if (user.getRole() == com.hotel.management.enums.RoleName.ADMIN) {
+            throw new RuntimeException("Không thể xóa tài khoản Admin");
+        }
+
+        userRepository.delete(user);
+    }
 }
