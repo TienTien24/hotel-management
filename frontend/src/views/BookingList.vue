@@ -1,649 +1,536 @@
 <template>
-  <div class="min-h-screen bg-gray-100 py-8">
-    <div class="max-w-7xl mx-auto px-4">
-      <header class="flex flex-col md:flex-row justify-between md:items-center mb-10 gap-4">
-        <div>
-          <h2 class="text-3xl font-black text-emerald-950">{{ isCustomer ? 'Đặt phòng của tôi' : 'Quản lý Booking & Check-in' }}</h2>
-          <p class="text-sm text-gray-500 mt-2">
-            {{ isCustomer ? 'Theo dõi booking, thanh toán và đánh giá sau khi trả phòng' : 'Quản lý xác nhận booking, check-in, check-out và lịch sử khách đã ở' }}
-          </p>
+  <div class="min-h-screen flex bg-gray-50 font-sans">
+    <!-- Sidebar -->
+    <aside class="w-72 bg-[#004d26] text-white min-h-screen flex flex-col shadow-2xl shrink-0">
+      <div class="p-8 mb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center font-black text-2xl border border-white/20">H</div>
+          <h1 class="text-2xl font-black uppercase tracking-tight text-white">Grand Hotel</h1>
         </div>
-        <router-link to="/" class="text-emerald-700 font-bold hover:underline">Quay lại Dashboard</router-link>
+      </div>
+      
+      <nav class="flex-1 px-4 space-y-1">
+        <router-link to="/staff-dashboard" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group hover:bg-white/10">
+          <i class="fas fa-th-large text-xl opacity-70 group-hover:opacity-100"></i>
+          <span class="font-bold text-lg tracking-tight">Tổng quan</span>
+        </router-link>
+
+        <router-link to="/staff-rooms" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group hover:bg-white/10">
+          <i class="fas fa-door-open text-xl opacity-70 group-hover:opacity-100"></i>
+          <span class="font-bold text-lg tracking-tight">Quản lý Phòng</span>
+        </router-link>
+
+        <router-link to="/bookings" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group bg-white/10">
+          <i class="fas fa-calendar-alt text-xl opacity-100"></i>
+          <span class="font-bold text-lg tracking-tight">Quản lý Đặt phòng</span>
+        </router-link>
+
+        <router-link to="/manage-services" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group hover:bg-white/10">
+          <i class="fas fa-bell text-xl opacity-70 group-hover:opacity-100"></i>
+          <span class="font-bold text-lg tracking-tight">Quản lý Dịch vụ</span>
+        </router-link>
+      </nav>
+
+      <div class="p-6 border-t border-white/10">
+        <button @click="logout" class="flex items-center gap-4 py-4 px-6 w-full rounded-xl transition-all duration-300 hover:bg-white/10 group text-white uppercase tracking-widest font-black text-sm">
+          <span>Đăng xuất</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-10 overflow-y-auto">
+      <header class="flex justify-between items-center mb-10">
+        <div class="flex items-center gap-6">
+          <div class="w-14 h-14 bg-[#004d26] text-white rounded-2xl flex items-center justify-center shadow-xl cursor-pointer hover:rotate-180 transition-all duration-500" @click="fetchBookings" title="Làm mới dữ liệu">
+            <i class="fas fa-sync-alt text-2xl"></i>
+          </div>
+          <div>
+            <h2 class="text-4xl font-black text-gray-900 uppercase tracking-tight mb-2">Quản lý đặt phòng</h2>
+            <p class="text-gray-500 font-medium">Hệ thống quản lý lưu trú, check-in và hồ sơ khách hàng</p>
+          </div>
+        </div>
+        <button @click="openCreateModal" class="bg-[#004d26] hover:bg-[#003d1e] text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-xl shadow-green-200 flex items-center gap-3">
+          <i class="fas fa-plus"></i>
+          Tạo booking mới
+        </button>
       </header>
 
-      <template v-if="isCustomer">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div v-for="booking in bookings" :key="booking.id" class="bg-white rounded-[2rem] shadow-lg overflow-hidden border border-gray-100">
-            <img :src="booking.room?.imageUrl || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80'" class="w-full h-56 object-cover">
-            <div class="p-8">
-              <div class="flex items-start justify-between gap-4 mb-5">
-                <div>
-                  <h3 class="text-2xl font-black text-emerald-950">Phòng {{ booking.room?.roomNumber }}</h3>
-                  <p class="text-sm text-gray-500 mt-2">{{ booking.room?.category }} - {{ booking.room?.type }}</p>
-                </div>
-                <span :class="getStatusClass(booking.status)" class="px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest">
-                  {{ formatStatus(booking.status) }}
-                </span>
-              </div>
-
-              <div class="grid grid-cols-2 gap-4 text-sm text-gray-600 mb-6">
-                <div class="bg-gray-50 rounded-2xl p-4">
-                  <div class="text-xs font-black uppercase tracking-widest text-gray-400">Check-in</div>
-                  <div class="mt-2 font-bold">{{ booking.checkInDate }}</div>
-                </div>
-                <div class="bg-gray-50 rounded-2xl p-4">
-                  <div class="text-xs font-black uppercase tracking-widest text-gray-400">Check-out</div>
-                  <div class="mt-2 font-bold">{{ booking.checkOutDate }}</div>
-                </div>
-                <div class="bg-gray-50 rounded-2xl p-4">
-                  <div class="text-xs font-black uppercase tracking-widest text-gray-400">Thanh toán</div>
-                  <div class="mt-2 font-bold">{{ booking.paymentMethod }} / {{ booking.paymentStatus }}</div>
-                </div>
-                <div class="bg-gray-50 rounded-2xl p-4">
-                  <div class="text-xs font-black uppercase tracking-widest text-gray-400">Tổng tiền</div>
-                  <div class="mt-2 font-bold text-emerald-700">{{ formatPrice(booking.totalPrice) }}</div>
-                </div>
-              </div>
-
-              <div class="text-sm text-gray-600 space-y-2 mb-6">
-                <p><span class="font-bold text-gray-800">Khách đặt:</span> {{ booking.guestFullName || booking.customer?.fullName }}</p>
-                <p><span class="font-bold text-gray-800">Số điện thoại:</span> {{ booking.guestPhone || booking.customer?.phone }}</p>
-                <p><span class="font-bold text-gray-800">Số người:</span> {{ booking.numberOfGuests }}</p>
-              </div>
-
-              <div v-if="booking.reviewRating" class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 mb-5">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-black uppercase tracking-widest text-emerald-700">Đánh giá của bạn</span>
-                  <span class="font-black text-emerald-800">{{ booking.reviewRating }}/5</span>
-                </div>
-                <p class="text-sm text-gray-700 mt-3">{{ booking.reviewComment || 'Không có nhận xét thêm' }}</p>
-              </div>
-
-              <button
-                v-if="booking.status === 'COMPLETED' && !booking.reviewRating"
-                @click="openReviewModal(booking)"
-                class="w-full bg-emerald-800 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-900 transition-all"
-              >
-                Đánh giá sau lưu trú
-              </button>
-            </div>
+      <!-- Stats Quick View -->
+      <div class="grid grid-cols-4 gap-6 mb-10">
+        <div v-for="tab in tabs" :key="tab.value" 
+          @click="filters.status = tab.value"
+          :class="filters.status === tab.value ? 'bg-[#004d26] text-white shadow-lg shadow-green-100' : 'bg-white text-gray-500 hover:bg-gray-50'"
+          class="p-6 rounded-[2rem] cursor-pointer transition-all border border-transparent"
+        >
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black uppercase tracking-widest">{{ tab.label }}</span>
+            <i :class="tab.icon" class="text-xl opacity-20"></i>
           </div>
-        </div>
-      </template>
-
-      <template v-else-if="isAdmin || isStaff">
-        <div class="bg-white rounded-[2rem] shadow-lg p-6 mb-8 border border-gray-100">
-          <h3 class="text-xl font-black text-emerald-950 mb-4 uppercase tracking-tight">Bộ lọc tìm kiếm</h3>
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label class="block text-xs font-black uppercase tracking-widest text-gray-500 mb-2">Ngày Check-in</label>
-              <input type="date" v-model="filters.checkInDate" class="w-full bg-gray-50 border-0 rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-800 text-sm font-bold">
-            </div>
-            <div>
-              <label class="block text-xs font-black uppercase tracking-widest text-gray-500 mb-2">Ngày Check-out</label>
-              <input type="date" v-model="filters.checkOutDate" class="w-full bg-gray-50 border-0 rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-800 text-sm font-bold">
-            </div>
-            <div>
-              <label class="block text-xs font-black uppercase tracking-widest text-gray-500 mb-2">Khách hàng</label>
-              <input type="text" v-model="filters.customerName" placeholder="Tìm theo tên..." class="w-full bg-gray-50 border-0 rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-800 text-sm font-bold">
-            </div>
-            <div>
-              <label class="block text-xs font-black uppercase tracking-widest text-gray-500 mb-2">Trạng thái</label>
-              <select v-model="filters.status" class="w-full bg-gray-50 border-0 rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-800 text-sm font-bold">
-                <option value="">Tất cả trạng thái</option>
-                <option value="PENDING">Chờ xác nhận</option>
-                <option value="CONFIRMED">Đã xác nhận</option>
-                <option value="CHECKED_IN">Đã check-in</option>
-                <option value="COMPLETED">Đã trả phòng</option>
-                <option value="CANCELLED">Đã hủy</option>
-              </select>
-            </div>
-          </div>
-          <div class="mt-4 flex gap-3">
-            <button @click="applyFilters" class="bg-emerald-800 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-900 transition-all shadow-lg">Lọc kết quả</button>
-            <button @click="clearFilters" class="bg-gray-100 text-gray-500 px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-gray-200 transition-all">Xóa bộ lọc</button>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-[2rem] shadow-lg overflow-hidden mb-10 border border-gray-100">
-          <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center">
-            <h3 class="text-2xl font-black text-emerald-950 uppercase tracking-tight">Danh sách booking</h3>
-            <span class="bg-emerald-50 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest">
-              {{ filteredBookings.length }} kết quả
-            </span>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Mã</th>
-                  <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Khách hàng</th>
-                  <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Phòng</th>
-                  <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Lưu trú</th>
-                  <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Thanh toán</th>
-                  <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Trạng thái</th>
-                  <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider text-center">Thao tác</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr v-for="booking in filteredBookings" :key="booking.id" class="hover:bg-gray-50 transition-colors">
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">#{{ booking.id }}</td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm text-gray-900 font-black uppercase tracking-tight">{{ booking.guestFullName || booking.customer?.fullName }}</div>
-                    <div class="text-xs text-gray-500 font-bold mt-1">{{ booking.guestPhone || booking.customer?.phone }}</div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm text-emerald-900 font-black uppercase tracking-tight">Phòng {{ booking.room?.roomNumber }}</div>
-                    <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-1">{{ booking.room?.category }}</div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-xs text-gray-900 font-black">{{ booking.checkInDate }}</div>
-                    <div class="text-[10px] text-gray-400 font-bold">đến {{ booking.checkOutDate }}</div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-xs font-black text-emerald-800 uppercase tracking-widest">{{ booking.paymentMethod }}</div>
-                    <div class="text-[10px] font-black uppercase tracking-widest mt-1" :class="booking.paymentStatus === 'PAID' ? 'text-green-500' : 'text-red-400'">
-                      {{ booking.paymentStatus }}
-                    </div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span :class="getStatusClass(booking.status)" class="px-3 py-1.5 text-[10px] font-black rounded-full uppercase tracking-widest">
-                      {{ formatStatus(booking.status) }}
-                    </span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div class="flex flex-wrap justify-center gap-2">
-                      <button v-if="booking.status === 'PENDING'" @click="openPaymentModal(booking)" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm">Thanh toán</button>
-                      <button v-if="booking.status === 'PENDING'" @click="confirmBooking(booking.id)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm">Xác nhận</button>
-                      <button v-if="booking.status === 'PENDING' || booking.status === 'CONFIRMED'" @click="checkIn(booking.id)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm">Check-in</button>
-                      
-                      <button v-if="booking.status === 'CHECKED_IN'" @click="openServiceModal(booking)" class="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm">Dịch vụ</button>
-                      <button v-if="booking.status === 'CHECKED_IN'" @click="viewInvoice(booking.id)" class="bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm">Tạm tính</button>
-                      <button v-if="booking.status === 'CHECKED_IN'" @click="checkOut(booking.id)" class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm">Check-out</button>
-                      
-                      <button v-if="booking.status === 'COMPLETED'" @click="viewInvoice(booking.id)" class="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm">Hóa đơn</button>
-                      <button v-if="['PENDING', 'CONFIRMED', 'CHECKED_IN'].includes(booking.status) && (isAdmin || isStaff || booking.status !== 'CHECKED_IN')" @click="cancelBooking(booking.id)" class="bg-white border border-red-100 text-red-500 hover:bg-red-50 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm">Hủy</button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div v-if="filteredBookings.length === 0" class="px-8 py-12 text-center">
-              <div class="text-gray-400 mb-2 font-black uppercase tracking-widest text-xs">Không tìm thấy dữ liệu</div>
-              <p class="text-sm text-gray-400">Vui lòng điều chỉnh lại bộ lọc tìm kiếm.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-[2rem] shadow-lg overflow-hidden">
-          <div class="px-8 py-6 border-b border-gray-100">
-            <h3 class="text-2xl font-black text-emerald-950">Lịch sử check-in khách hàng</h3>
-            <p class="text-sm text-gray-500 mt-2">Hiển thị các khách đã ở và đã trả phòng trước đó</p>
-          </div>
-          <div v-if="!completedCheckins.length" class="px-8 py-10 text-sm text-gray-500">Chưa có lịch sử check-in hoàn tất.</div>
-          <div v-else class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Khách</th>
-                  <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Phòng</th>
-                  <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Check-in</th>
-                  <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Check-out</th>
-                  <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Đánh giá</th>
-                  <th class="px-6 py-4 text-left text-xs font-black text-gray-500 uppercase tracking-wider">Thao tác</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr v-for="booking in completedCheckins" :key="booking.id">
-                  <td class="px-6 py-4">
-                    <div class="text-sm font-semibold text-gray-900">{{ booking.guestFullName || booking.customer?.fullName }}</div>
-                    <div class="text-xs text-gray-500">{{ booking.guestPhone || booking.customer?.phone }}</div>
-                  </td>
-                  <td class="px-6 py-4 text-sm text-gray-900">Phòng {{ booking.room?.roomNumber }} - {{ booking.room?.category }}</td>
-                  <td class="px-6 py-4 text-sm text-gray-900">{{ formatDateTime(booking.checkedInAt) }}</td>
-                  <td class="px-6 py-4 text-sm text-gray-900">{{ formatDateTime(booking.checkedOutAt) }}</td>
-                  <td class="px-6 py-4 text-sm text-gray-900">
-                    <div v-if="booking.reviewRating" class="flex items-center text-amber-500 font-bold">
-                      <i class="fas fa-star mr-1"></i> {{ booking.reviewRating }}/5
-                    </div>
-                    <span v-else class="text-gray-400 italic">Chưa đánh giá</span>
-                  </td>
-                  <td class="px-6 py-4 text-sm font-medium">
-                    <button @click="viewInvoice(booking.id)" class="text-purple-600 hover:text-purple-900 font-bold">Xem hóa đơn</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </template>
-
-      <div v-if="showReviewModal && selectedBooking" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-xl p-8">
-          <div class="flex items-center justify-between mb-6">
-            <h3 class="text-2xl font-black text-emerald-950">Đánh giá lưu trú</h3>
-            <button @click="closeReviewModal" class="text-gray-400 hover:text-emerald-800">
-              <i class="fas fa-times text-xl"></i>
-            </button>
-          </div>
-
-          <form @submit.prevent="submitReview" class="space-y-5">
-            <div>
-              <label class="block text-xs font-black uppercase tracking-widest text-emerald-900 mb-3">Số sao</label>
-              <select v-model.number="reviewForm.rating" class="w-full bg-gray-50 border-0 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-emerald-800">
-                <option :value="5">5 sao</option>
-                <option :value="4">4 sao</option>
-                <option :value="3">3 sao</option>
-                <option :value="2">2 sao</option>
-                <option :value="1">1 sao</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-black uppercase tracking-widest text-emerald-900 mb-3">Nhận xét</label>
-              <textarea v-model="reviewForm.comment" rows="5" class="w-full bg-gray-50 border-0 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-emerald-800"></textarea>
-            </div>
-            <button type="submit" class="w-full bg-emerald-800 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-900 transition-all">
-              Gửi đánh giá
-            </button>
-          </form>
+          <div class="text-3xl font-black mt-2">{{ getBookingCount(tab.value) }}</div>
         </div>
       </div>
 
-      <!-- Invoice Modal -->
-      <div v-if="showInvoiceModal && selectedInvoice" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-8 border-t-8 border-emerald-800">
-          <div class="flex justify-between items-start mb-8">
-            <div>
-              <h3 class="text-3xl font-black text-emerald-950 uppercase tracking-tighter">Hóa đơn</h3>
-              <p class="text-xs font-bold text-gray-400 mt-1 uppercase tracking-widest">Mã hóa đơn: #{{ selectedInvoice.id }}</p>
+      <!-- Search and Filter Bar -->
+      <div class="bg-white rounded-[2.5rem] shadow-xl p-8 mb-10 border border-gray-50">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="space-y-3">
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Tìm kiếm khách hàng</label>
+            <div class="relative group">
+              <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#004d26] transition-colors"></i>
+              <input type="text" v-model="filters.customerName" placeholder="Nhập tên khách hàng..." class="w-full bg-gray-50 border-0 rounded-2xl pl-14 pr-6 py-4 outline-none focus:ring-2 focus:ring-[#004d26] text-sm font-bold transition-all">
             </div>
-            <button @click="showInvoiceModal = false" class="text-gray-400 hover:text-emerald-800">
+          </div>
+          <div class="space-y-3">
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Tìm theo phòng</label>
+            <div class="relative group">
+              <i class="fas fa-door-open absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#004d26] transition-colors"></i>
+              <input type="text" v-model="filters.roomNumber" placeholder="Nhập số phòng..." class="w-full bg-gray-50 border-0 rounded-2xl pl-14 pr-6 py-4 outline-none focus:ring-2 focus:ring-[#004d26] text-sm font-bold transition-all">
+            </div>
+          </div>
+          <div class="space-y-3">
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Lọc theo ngày</label>
+            <div class="relative group">
+              <i class="fas fa-calendar-alt absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#004d26] transition-colors"></i>
+              <input type="date" v-model="filters.date" class="w-full bg-gray-50 border-0 rounded-2xl pl-14 pr-6 py-4 outline-none focus:ring-2 focus:ring-[#004d26] text-sm font-bold transition-all">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bookings Table -->
+      <div class="bg-white rounded-[3rem] shadow-2xl shadow-gray-200 overflow-hidden border border-gray-100">
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead>
+              <tr class="bg-[#004d26] text-white">
+                <th class="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[0.2em] opacity-60">ID</th>
+                <th class="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Khách hàng</th>
+                <th class="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Thông tin phòng</th>
+                <th class="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Check-in</th>
+                <th class="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Check-out</th>
+                <th class="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Trạng thái</th>
+                <th class="px-8 py-6 text-center text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+              <tr v-for="booking in filteredBookings" :key="booking.id" class="hover:bg-gray-50/50 transition-all group">
+                <td class="px-8 py-6 text-sm font-black text-gray-900">#{{ booking.id }}</td>
+                <td class="px-8 py-6">
+                  <div class="text-sm font-black text-gray-900 uppercase tracking-tight">{{ booking.guestFullName || booking.customer?.fullName }}</div>
+                  <div class="text-[10px] font-bold text-gray-400 mt-1 flex items-center gap-2">
+                    <i class="fas fa-phone-alt text-[8px]"></i>
+                    {{ booking.guestPhone || booking.customer?.phone || 'N/A' }}
+                  </div>
+                </td>
+                <td class="px-8 py-6">
+                  <div class="flex items-center gap-3">
+                    <div :class="getRoomStatusBgClass(booking.room?.status)" class="px-4 py-2 rounded-xl flex items-center gap-3 border shadow-sm transition-all">
+                      <span class="text-sm font-black uppercase tracking-tight">P.{{ booking.room?.roomNumber }}</span>
+                      <div class="w-px h-3 bg-black/10"></div>
+                      <span class="text-[9px] font-black uppercase tracking-widest opacity-70">{{ booking.room?.category }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-8 py-6">
+                  <div class="text-sm font-bold text-gray-700">{{ formatDate(booking.checkInDate) }}</div>
+                </td>
+                <td class="px-8 py-6">
+                  <div class="text-sm font-bold text-gray-700">{{ formatDate(booking.checkOutDate) }}</div>
+                </td>
+                <td class="px-8 py-6">
+                  <span :class="getStatusClass(booking.status)" class="px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-[0.1em] shadow-sm inline-block">
+                    {{ formatStatus(booking.status) }}
+                  </span>
+                </td>
+                <td class="px-8 py-6">
+                  <div class="flex justify-center gap-3">
+                    <button v-if="['PENDING', 'CONFIRMED'].includes(booking.status)" @click="openCheckInModal(booking)" class="w-11 h-11 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all shadow-sm" title="Check-in">
+                      <i class="fas fa-sign-in-alt"></i>
+                    </button>
+                    <button v-if="booking.status === 'CHECKED_IN'" @click="handleCheckOut(booking.id)" class="w-11 h-11 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all shadow-sm" title="Check-out">
+                      <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                    <button v-if="!['COMPLETED', 'CANCELLED'].includes(booking.status)" @click="openUpdateModal(booking)" class="w-11 h-11 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center hover:bg-amber-600 hover:text-white transition-all shadow-sm" title="Sửa / Đổi phòng">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button v-if="!['COMPLETED', 'CANCELLED'].includes(booking.status)" @click="handleCancel(booking.id)" class="w-11 h-11 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center hover:bg-rose-600 hover:text-white transition-all shadow-sm" title="Hủy booking">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div v-if="filteredBookings.length === 0" class="p-32 text-center">
+            <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-8 border-2 border-dashed border-gray-100">
+              <i class="fas fa-folder-open text-3xl text-gray-200"></i>
+            </div>
+            <h4 class="text-xl font-black text-gray-300 uppercase tracking-widest">Không có dữ liệu</h4>
+            <p class="text-sm text-gray-400 mt-3 font-medium">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modal Tạo/Cập nhật Booking -->
+    <div v-if="showModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md">
+      <div class="bg-white rounded-[3.5rem] max-w-2xl w-full overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+        <div class="bg-[#004d26] p-12 text-white relative">
+          <div class="absolute top-12 right-12">
+            <button @click="closeModal" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 text-white hover:bg-rose-500 transition-all">
               <i class="fas fa-times text-xl"></i>
             </button>
           </div>
+          <h3 class="text-4xl font-black uppercase tracking-tighter mb-2">{{ isEditing ? 'Cập nhật Booking' : 'Tạo Booking mới' }}</h3>
+          <p class="text-green-100/60 font-bold">Vui lòng điền chính xác thông tin đặt phòng</p>
+        </div>
 
-          <div class="space-y-6 mb-10">
-            <div class="flex justify-between border-b border-gray-100 pb-3">
-              <span class="text-xs font-black text-gray-400 uppercase tracking-widest">Mã đặt phòng</span>
-              <span class="font-bold text-emerald-950">#{{ selectedInvoice.booking?.id }}</span>
+        <form @submit.prevent="handleSubmit" class="p-12 space-y-8">
+          <div class="grid grid-cols-2 gap-8">
+            <div class="space-y-3">
+              <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Tên khách hàng</label>
+              <input v-model="form.guestFullName" type="text" required placeholder="Họ và tên..." class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 outline-none focus:border-[#004d26] transition-all font-bold">
             </div>
-            <div class="flex justify-between border-b border-gray-100 pb-3">
-              <span class="text-xs font-black text-gray-400 uppercase tracking-widest">Ngày thanh toán</span>
-              <span class="font-bold text-emerald-950">{{ formatDateTime(selectedInvoice.paymentDate) }}</span>
-            </div>
-            <div class="flex justify-between border-b border-gray-100 pb-3">
-              <span class="text-xs font-black text-gray-400 uppercase tracking-widest">Trạng thái</span>
-              <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-black uppercase tracking-widest">
-                {{ selectedInvoice.paymentStatus }}
-              </span>
-            </div>
-            <div class="space-y-3 pt-2">
-              <div class="flex justify-between text-sm">
-                <span class="text-gray-500">Tiền phòng</span>
-                <span class="font-semibold text-gray-800">{{ formatPrice(selectedInvoice.roomCharges) }}</span>
-              </div>
-              <div class="flex justify-between text-sm">
-                <span class="text-gray-500">Phí dịch vụ</span>
-                <span class="font-semibold text-gray-800">{{ formatPrice(selectedInvoice.serviceCharges) }}</span>
-              </div>
-              
-              <!-- Service breakdown -->
-              <div v-if="selectedUsages.length > 0" class="pl-4 border-l-2 border-gray-100 space-y-1">
-                <div v-for="usage in selectedUsages" :key="usage.id" class="flex justify-between text-[10px] text-gray-400">
-                  <span>{{ usage.service.name }} (x{{ usage.quantity }})</span>
-                  <span>{{ formatPrice(usage.service.price * usage.quantity) }}</span>
-                </div>
-              </div>
-
-              <div class="flex justify-between items-center pt-4 border-t-2 border-emerald-50">
-                <span class="text-lg font-black text-emerald-950 uppercase tracking-widest">Tổng cộng</span>
-                <span class="text-2xl font-black text-emerald-800">{{ formatPrice(selectedInvoice.totalAmount) }}</span>
-              </div>
+            <div class="space-y-3">
+              <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">SĐT / Email</label>
+              <input v-model="form.guestContact" type="text" required placeholder="Liên hệ..." class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 outline-none focus:border-[#004d26] transition-all font-bold">
             </div>
           </div>
 
-          <button @click="window.print()" class="w-full bg-emerald-800 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-900 transition-all flex items-center justify-center gap-2">
-            <i class="fas fa-print"></i> In hóa đơn
+          <div class="grid grid-cols-2 gap-8">
+            <div class="space-y-3">
+              <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Ngày nhận phòng</label>
+              <input v-model="form.checkInDate" type="date" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 outline-none focus:border-[#004d26] transition-all font-bold">
+            </div>
+            <div class="space-y-3">
+              <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Ngày trả phòng</label>
+              <input v-model="form.checkOutDate" type="date" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 outline-none focus:border-[#004d26] transition-all font-bold">
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Chọn phòng (Số phòng / Loại phòng)</label>
+            <select v-model="form.roomId" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 outline-none focus:border-[#004d26] transition-all font-bold">
+              <option value="">-- Chọn phòng còn trống --</option>
+              <option v-for="room in availableRooms" :key="room.id" :value="room.id">
+                Phòng {{ room.roomNumber }} - {{ room.category }} ({{ formatPrice(room.price) }}/đêm)
+              </option>
+            </select>
+          </div>
+
+          <button type="submit" class="w-full bg-[#004d26] hover:bg-[#003d1e] text-white py-6 rounded-[2.5rem] font-black uppercase tracking-widest transition-all shadow-xl shadow-green-100 flex items-center justify-center gap-4">
+            <i class="fas fa-check-circle"></i>
+            <span>{{ isEditing ? 'Lưu thay đổi' : 'Xác nhận Booked' }}</span>
           </button>
-        </div>
+        </form>
       </div>
+    </div>
 
-      <!-- Service Selection Modal -->
-      <div v-if="showServiceModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-8">
-          <div class="flex items-center justify-between mb-6">
-            <h3 class="text-2xl font-black text-emerald-950">Thêm dịch vụ - #{{ selectedBooking?.id }}</h3>
-            <button @click="showServiceModal = false" class="text-gray-400 hover:text-emerald-800">
+    <!-- Modal Check-in (Lưu hồ sơ khách hàng) -->
+    <div v-if="showCheckInModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md">
+      <div class="bg-white rounded-[3.5rem] max-w-xl w-full overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+        <div class="bg-indigo-600 p-12 text-white relative">
+          <div class="absolute top-12 right-12">
+            <button @click="showCheckInModal = false" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 text-white hover:bg-rose-500 transition-all">
               <i class="fas fa-times text-xl"></i>
             </button>
           </div>
-
-          <form @submit.prevent="addService" class="space-y-5">
-            <div>
-              <label class="block text-xs font-black uppercase tracking-widest text-emerald-900 mb-3">Chọn dịch vụ</label>
-              <select v-model="serviceForm.serviceId" class="w-full bg-gray-50 border-0 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-emerald-800">
-                <option v-for="service in availableServices" :key="service.id" :value="service.id">
-                  {{ service.name }} - {{ formatPrice(service.price) }}
-                </option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-black uppercase tracking-widest text-emerald-900 mb-3">Số lượng</label>
-              <input v-model.number="serviceForm.quantity" type="number" min="1" class="w-full bg-gray-50 border-0 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-emerald-800">
-            </div>
-            <button type="submit" class="w-full bg-amber-500 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-amber-600 transition-all">
-              Thêm vào hóa đơn
-            </button>
-          </form>
+          <h3 class="text-4xl font-black uppercase tracking-tighter mb-2">Thủ tục Check-in</h3>
+          <p class="text-indigo-100/60 font-bold">Lưu trữ hồ sơ khách hàng (CCCD/Passport)</p>
         </div>
+
+        <form @submit.prevent="handleCheckIn" class="p-12 space-y-8">
+          <div class="space-y-3">
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Số CCCD / Passport</label>
+            <input v-model="checkInForm.guestIdNumber" type="text" required placeholder="Nhập số định danh..." class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 outline-none focus:border-indigo-600 transition-all font-bold">
+          </div>
+
+          <div class="space-y-3">
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Hình ảnh giấy tờ (Upload/URL)</label>
+            <div class="space-y-4">
+              <div class="w-full h-56 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] flex flex-col items-center justify-center overflow-hidden group hover:border-indigo-600 transition-all">
+                <template v-if="!checkInForm.guestIdImageUrl">
+                  <i class="fas fa-camera text-4xl text-slate-200 group-hover:text-indigo-600 transition-all mb-4"></i>
+                  <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Chọn ảnh hoặc nhập link bên dưới</span>
+                </template>
+                <img v-else :src="checkInForm.guestIdImageUrl" class="w-full h-full object-cover">
+              </div>
+              <input v-model="checkInForm.guestIdImageUrl" type="text" placeholder="Dán URL hình ảnh hồ sơ..." class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 outline-none focus:border-indigo-600 transition-all font-bold">
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-6 rounded-[2.5rem] font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-100 flex items-center justify-center gap-4">
+            <i class="fas fa-user-check"></i>
+            <span>Hoàn tất nhận phòng</span>
+          </button>
+        </form>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from '../api/axios'
 
-const user = ref(JSON.parse(localStorage.getItem('user') || 'null'))
+const router = useRouter()
 const bookings = ref([])
-const completedCheckins = ref([])
-const showReviewModal = ref(false)
-const showInvoiceModal = ref(false)
-const selectedInvoice = ref(null)
-const selectedUsages = ref([])
-const showServiceModal = ref(false)
-const availableServices = ref([])
-const showPaymentModal = ref(false)
+const availableRooms = ref([])
+const showModal = ref(false)
+const showCheckInModal = ref(false)
+const isEditing = ref(false)
 const selectedBooking = ref(null)
 
 const filters = ref({
-  checkInDate: '',
-  checkOutDate: '',
   customerName: '',
+  roomNumber: '',
+  date: '',
   status: ''
 })
 
+const tabs = [
+  { label: 'Tất cả booking', value: '', icon: 'fas fa-list' },
+  { label: 'Sắp nhận phòng (Booked)', value: 'CONFIRMED', icon: 'fas fa-calendar-check' },
+  { label: 'Đang lưu trú', value: 'CHECKED_IN', icon: 'fas fa-user-clock' },
+  { label: 'Đã hoàn tất', value: 'COMPLETED', icon: 'fas fa-check-double' }
+]
+
+const form = ref({
+  guestFullName: '',
+  guestContact: '',
+  checkInDate: '',
+  checkOutDate: '',
+  roomId: ''
+})
+
+const checkInForm = ref({
+  guestIdNumber: '',
+  guestIdImageUrl: ''
+})
+
+const fetchBookings = async () => {
+  try {
+    const response = await axios.get('/bookings')
+    bookings.value = response.data
+  } catch (error) {
+    console.error('Error fetching bookings:', error)
+  }
+}
+
+const fetchRooms = async () => {
+  try {
+    const response = await axios.get('/rooms')
+    availableRooms.value = response.data.filter(r => r.status === 'AVAILABLE')
+  } catch (error) {
+    console.error('Error fetching rooms:', error)
+  }
+}
+
+const getBookingCount = (status) => {
+  if (!status) return bookings.value.length
+  return bookings.value.filter(b => b.status === status).length
+}
+
 const filteredBookings = computed(() => {
-  if (isCustomer.value) return bookings.value
-  
-  return bookings.value.filter(booking => {
-    if (filters.value.status && booking.status !== filters.value.status) return false
-    if (filters.value.customerName) {
-      const name = (booking.guestFullName || booking.customer?.fullName || '').toLowerCase()
-      if (!name.includes(filters.value.customerName.toLowerCase())) return false
-    }
-    if (filters.value.checkInDate && booking.checkInDate !== filters.value.checkInDate) return false
-    if (filters.value.checkOutDate && booking.checkOutDate !== filters.value.checkOutDate) return false
-    return true
+  return bookings.value.filter(b => {
+    const matchName = !filters.value.customerName || 
+      (b.guestFullName || b.customer?.fullName || '').toLowerCase().includes(filters.value.customerName.toLowerCase())
+    const matchRoom = !filters.value.roomNumber || 
+      (b.room?.roomNumber || '').toString().includes(filters.value.roomNumber)
+    const matchDate = !filters.value.date || 
+      b.checkInDate === filters.value.date || b.checkOutDate === filters.value.date
+    const matchStatus = !filters.value.status || b.status === filters.value.status
+    
+    return matchName && matchRoom && matchDate && matchStatus
   })
 })
 
-const applyFilters = () => {}
-
-const clearFilters = () => {
-  filters.value = { checkInDate: '', checkOutDate: '', customerName: '', status: '' }
+const formatDate = (dateStr) => {
+  if (!dateStr) return ''
+  const d = new Date(dateStr)
+  return d.toLocaleDateString('vi-VN')
 }
-
-const openPaymentModal = (booking) => {
-  selectedBooking.value = booking
-  showPaymentModal.value = true
-}
-
-const closePaymentModal = () => {
-  showPaymentModal.value = false
-  selectedBooking.value = null
-}
-
-const payWithVnpay = async (bookingId) => {
-  try {
-    const response = await axios.post(`/payments/vnpay/${bookingId}`)
-    window.location.href = response.data.paymentUrl
-  } catch (error) {
-    alert(error.response?.data || 'Lỗi khi tạo thanh toán VNPay')
-  }
-}
-
-const payWithMomo = async (bookingId) => {
-  try {
-    const response = await axios.post(`/payments/momo/${bookingId}`)
-    window.location.href = response.data.payUrl
-  } catch (error) {
-    alert(error.response?.data || 'Lỗi khi tạo thanh toán Momo')
-  }
-}
-
-const payWithCod = async (bookingId) => {
-  try {
-    await axios.put(`/bookings/${bookingId}/confirm`)
-    alert('Xác nhận thanh toán COD thành công!')
-    closePaymentModal()
-    await refreshAll()
-  } catch (error) {
-    alert(error.response?.data || 'Lỗi khi xác nhận thanh toán COD')
-  }
-}
-
-const serviceForm = ref({
-  serviceId: null,
-  quantity: 1
-})
-
-const fetchServices = async () => {
-  try {
-    const response = await axios.get('/hotel-services')
-    availableServices.value = response.data
-    if (availableServices.value.length > 0) {
-      serviceForm.value.serviceId = availableServices.value[0].id
-    }
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách dịch vụ:', error)
-  }
-}
-
-const openServiceModal = (booking) => {
-  selectedBooking.value = booking
-  serviceForm.value.quantity = 1
-  showServiceModal.value = true
-}
-
-const addService = async () => {
-  try {
-    await axios.post('/hotel-services/add-to-booking', null, {
-      params: {
-        bookingId: selectedBooking.value.id,
-        serviceId: serviceForm.value.serviceId,
-        quantity: serviceForm.value.quantity
-      }
-    })
-    alert('Đã thêm dịch vụ thành công!')
-    showServiceModal.value = false
-    await refreshAll()
-  } catch (error) {
-    console.error('Lỗi khi thêm dịch vụ:', error)
-    alert('Không thể thêm dịch vụ. Vui lòng thử lại.')
-  }
-}
-
-const viewInvoice = async (bookingId) => {
-  try {
-    const [invoiceRes, usagesRes] = await Promise.all([
-      axios.get(`/invoices/booking/${bookingId}`),
-      axios.get(`/hotel-services/booking/${bookingId}`)
-    ])
-    selectedInvoice.value = invoiceRes.data
-    selectedUsages.value = usagesRes.data
-    showInvoiceModal.value = true
-  } catch (error) {
-    console.error('Lỗi khi lấy hóa đơn:', error)
-    alert('Hóa đơn chưa được tạo hoặc không tìm thấy.')
-  }
-}
-
-const reviewForm = ref({
-  rating: 5,
-  comment: ''
-})
-
-const isAdmin = computed(() => user.value?.role === 'ADMIN')
-const isStaff = computed(() => user.value?.role === 'STAFF')
-const isCustomer = computed(() => user.value?.role === 'CUSTOMER')
 
 const formatPrice = (price) => {
-  if (!price) return '0 đ'
-  return `${new Intl.NumberFormat('vi-VN').format(price * 25000)} đ`
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price * 25000)
+}
+
+const getStatusClass = (status) => {
+  switch (status) {
+    case 'CONFIRMED': return 'bg-emerald-50 text-emerald-600 border-emerald-100'
+    case 'CHECKED_IN': return 'bg-blue-50 text-blue-600 border-blue-100'
+    case 'COMPLETED': return 'bg-gray-100 text-gray-400 border-gray-200'
+    case 'CANCELLED': return 'bg-rose-50 text-rose-500 border-rose-100'
+    default: return 'bg-amber-50 text-amber-600 border-amber-100'
+  }
+}
+
+const getRoomStatusBgClass = (status) => {
+  switch (status) {
+    case 'AVAILABLE': return 'bg-green-50 text-green-700 border-green-100';
+    case 'OCCUPIED': return 'bg-rose-50 text-rose-700 border-rose-100';
+    case 'CLEANING': return 'bg-amber-50 text-amber-700 border-amber-100';
+    case 'MAINTENANCE': return 'bg-gray-50 text-gray-700 border-gray-100';
+    case 'BOOKED': return 'bg-blue-50 text-blue-700 border-blue-100';
+    default: return 'bg-white border-gray-100 text-gray-900';
+  }
 }
 
 const formatStatus = (status) => {
   switch (status) {
     case 'PENDING': return 'Chờ xác nhận'
-    case 'CONFIRMED': return 'Đã xác nhận'
-    case 'CHECKED_IN': return 'Đã check-in'
-    case 'COMPLETED': return 'Đã trả phòng'
-    case 'CANCELLED': return 'Đã hủy'
+    case 'CONFIRMED': return 'Booked'
+    case 'CHECKED_IN': return 'Checked-in'
+    case 'COMPLETED': return 'Completed'
+    case 'CANCELLED': return 'Cancelled'
     default: return status
   }
 }
 
-const getStatusClass = (status) => {
-  switch (status) {
-    case 'PENDING': return 'bg-yellow-100 text-yellow-800'
-    case 'CONFIRMED': return 'bg-blue-100 text-blue-800'
-    case 'CHECKED_IN': return 'bg-purple-100 text-purple-800'
-    case 'COMPLETED': return 'bg-green-100 text-green-800'
-    case 'CANCELLED': return 'bg-red-100 text-red-800'
-    default: return 'bg-gray-100 text-gray-800'
+const openCreateModal = () => {
+  isEditing.value = false
+  form.value = {
+    guestFullName: '',
+    guestContact: '',
+    checkInDate: '',
+    checkOutDate: '',
+    roomId: ''
   }
+  showModal.value = true
+  fetchRooms()
 }
 
-const formatDateTime = (value) => {
-  if (!value) return '--'
-  return new Date(value).toLocaleString('vi-VN')
-}
-
-const fetchBookings = async () => {
-  try {
-    const url = isCustomer.value ? `/bookings/customer/${user.value.id}` : '/bookings'
-    const response = await axios.get(url)
-    bookings.value = response.data
-  } catch (error) {
-    console.error('Lỗi khi lấy danh sách đặt phòng:', error)
-  }
-}
-
-const fetchCompletedCheckins = async () => {
-  if (isCustomer.value) return
-  try {
-    const response = await axios.get('/bookings/completed-checkins')
-    completedCheckins.value = response.data
-  } catch (error) {
-    console.error('Lỗi khi lấy lịch sử check-in:', error)
-  }
-}
-
-const refreshAll = async () => {
-  await fetchBookings()
-  await fetchCompletedCheckins()
-}
-
-const confirmBooking = async (id) => {
-  try {
-    await axios.put(`/bookings/${id}/confirm`)
-    alert('Xác nhận booking thành công!')
-    await refreshAll()
-  } catch (error) {
-    console.error('Lỗi xác nhận:', error)
-    const serverMsg = error.response?.data
-    const message = typeof serverMsg === 'string' ? serverMsg : (serverMsg?.message || error.message || 'Lỗi không xác định')
-    alert('Lỗi khi xác nhận booking: ' + message)
-  }
-}
-
-const checkIn = async (id) => {
-  if (!id) {
-    alert('Lỗi: ID booking không hợp lệ')
-    return
-  }
-  try {
-    console.log('Bắt đầu check-in cho ID:', id)
-    const response = await axios.put(`/bookings/${id}/check-in`)
-    console.log('Kết quả check-in:', response.data)
-    alert('Check-in thành công!')
-    await refreshAll()
-  } catch (error) {
-    console.error('Lỗi check-in chi tiết:', error)
-    const serverData = error.response?.data
-    let message = 'Lỗi không xác định'
-    
-    if (serverData) {
-      if (typeof serverData === 'string') {
-        message = serverData
-      } else if (serverData.message) {
-        message = serverData.message
-      }
-    } else {
-      message = error.message
-    }
-    
-    alert('Lỗi khi check-in: ' + message)
-  }
-}
-
-const checkOut = async (id) => {
-  try {
-    await axios.put(`/invoices/booking/${id}/check-out`)
-    alert('Check-out thành công!')
-    await refreshAll()
-  } catch (error) {
-    console.error('Lỗi check-out:', error)
-    const serverMsg = error.response?.data
-    const message = typeof serverMsg === 'string' ? serverMsg : (serverMsg?.message || error.message || 'Lỗi không xác định')
-    alert('Lỗi khi check-out: ' + message)
-  }
-}
-
-const cancelBooking = async (id) => {
-  if (!confirm('Bạn có chắc chắn muốn hủy đặt phòng này?')) return
-  try {
-    await axios.put(`/bookings/${id}/cancel`, null, {
-      params: {
-        userId: user.value.id,
-        isAdmin: !isCustomer.value
-      }
-    })
-    alert('Hủy đặt phòng thành công!')
-    await refreshAll()
-  } catch (error) {
-    alert(error.response?.data || 'Lỗi khi hủy đặt phòng')
-  }
-}
-
-const openReviewModal = (booking) => {
+const openUpdateModal = (booking) => {
+  isEditing.value = true
   selectedBooking.value = booking
-  reviewForm.value = { rating: 5, comment: '' }
-  showReviewModal.value = true
+  form.value = {
+    guestFullName: booking.guestFullName || booking.customer?.fullName,
+    guestContact: booking.guestPhone || booking.customer?.phone || booking.guestEmail || booking.customer?.email,
+    checkInDate: booking.checkInDate,
+    checkOutDate: booking.checkOutDate,
+    roomId: booking.room?.id
+  }
+  showModal.value = true
+  fetchRooms()
+  if (!availableRooms.value.find(r => r.id === booking.room?.id)) {
+    availableRooms.value.push(booking.room)
+  }
 }
 
-const closeReviewModal = () => {
-  showReviewModal.value = false
+const closeModal = () => {
+  showModal.value = false
   selectedBooking.value = null
 }
 
-const submitReview = async () => {
+const handleSubmit = async () => {
   try {
-    await axios.post(`/bookings/${selectedBooking.value.id}/review`, reviewForm.value, {
-      params: { customerId: user.value.id }
-    })
-    alert('Gửi đánh giá thành công!')
-    closeReviewModal()
-    await refreshAll()
+    const user = JSON.parse(localStorage.getItem('user'))
+    const payload = {
+      ...form.value,
+      userId: user.id,
+      guestPhone: form.value.guestContact.includes('@') ? '' : form.value.guestContact,
+      guestEmail: form.value.guestContact.includes('@') ? form.value.guestContact : ''
+    }
+
+    if (isEditing.value) {
+      await axios.put(`/bookings/${selectedBooking.value.id}/update`, payload)
+      if (form.value.roomId !== selectedBooking.value.room?.id) {
+        await axios.put(`/bookings/${selectedBooking.value.id}/change-room?newRoomId=${form.value.roomId}`)
+      }
+    } else {
+      await axios.post('/bookings', payload)
+    }
+    
+    showModal.value = false
+    fetchBookings()
+    alert(isEditing.value ? 'Cập nhật thành công!' : 'Đã tạo booking thành công!')
   } catch (error) {
-    alert('Không thể gửi đánh giá')
+    alert('Lỗi: ' + (error.response?.data?.message || 'Không thể thực hiện'))
   }
 }
 
+const openCheckInModal = (booking) => {
+  selectedBooking.value = booking
+  checkInForm.value = {
+    guestIdNumber: '',
+    guestIdImageUrl: ''
+  }
+  showCheckInModal.value = true
+}
+
+const handleCheckIn = async () => {
+  try {
+    await axios.put(`/bookings/${selectedBooking.value.id}/check-in`, checkInForm.value)
+    showCheckInModal.value = false
+    fetchBookings()
+    alert('Khách đã nhận phòng thành công!')
+  } catch (error) {
+    alert('Lỗi: ' + (error.response?.data?.message || 'Check-in thất bại'))
+  }
+}
+
+const handleCheckOut = async (id) => {
+  if (!confirm('Xác nhận trả phòng (Check-out) cho khách?')) return
+  try {
+    await axios.put(`/bookings/${id}/check-out`)
+    fetchBookings()
+    alert('Đã hoàn tất trả phòng. Trạng thái phòng: Đang dọn dẹp.')
+  } catch (error) {
+    alert('Lỗi: ' + (error.response?.data?.message || 'Check-out thất bại'))
+  }
+}
+
+const handleCancel = async (id) => {
+  if (!confirm('Bạn có chắc chắn muốn hủy đặt phòng này?')) return
+  try {
+    const user = JSON.parse(localStorage.getItem('user'))
+    await axios.put(`/bookings/${id}/cancel?userId=${user.id}&isAdmin=true`)
+    fetchBookings()
+    alert('Đã hủy booking.')
+  } catch (error) {
+    alert('Lỗi: ' + (error.response?.data?.message || 'Hủy thất bại'))
+  }
+}
+
+const logout = () => {
+  localStorage.removeItem('user')
+  router.push('/login')
+}
+
 onMounted(() => {
-  refreshAll()
-  fetchServices()
+  fetchBookings()
 })
 </script>
+
+<style scoped>
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
+main::-webkit-scrollbar {
+  width: 8px;
+}
+main::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+main::-webkit-scrollbar-thumb {
+  background: #004d26;
+  border-radius: 10px;
+}
+
+.animate-in {
+  animation: animate-in 0.3s ease-out;
+}
+
+@keyframes animate-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+</style>

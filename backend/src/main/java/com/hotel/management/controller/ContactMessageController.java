@@ -33,4 +33,12 @@ public class ContactMessageController {
         contactMessageService.updateStatus(id, status);
         return ResponseEntity.ok("Status updated successfully");
     }
+
+    @PostMapping("/messages/{id}/reply")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    public ResponseEntity<?> replyMessage(@PathVariable Long id, @RequestBody java.util.Map<String, String> payload) {
+        String replyContent = payload.get("replyContent");
+        contactMessageService.replyMessage(id, replyContent);
+        return ResponseEntity.ok("Replied successfully");
+    }
 }

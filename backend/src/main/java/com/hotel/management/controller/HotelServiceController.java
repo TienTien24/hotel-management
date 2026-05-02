@@ -1,5 +1,6 @@
 package com.hotel.management.controller;
 
+import com.hotel.management.enums.ServiceStatus;
 import com.hotel.management.model.BookingServiceUsage;
 import com.hotel.management.model.HotelService;
 import com.hotel.management.service.HotelServiceService;
@@ -23,13 +24,28 @@ public class HotelServiceController {
         return hotelServiceService.getAllServices();
     }
 
+    @GetMapping("/usages")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    public List<BookingServiceUsage> getAllUsages() {
+        return hotelServiceService.getAllUsages();
+    }
+
     @PostMapping("/add-to-booking")
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<BookingServiceUsage> addServiceToBooking(
             @RequestParam Long bookingId,
             @RequestParam Long serviceId,
-            @RequestParam Integer quantity) {
-        return ResponseEntity.ok(hotelServiceService.addServiceToBooking(bookingId, serviceId, quantity));
+            @RequestParam Integer quantity,
+            @RequestParam(required = false) String note) {
+        return ResponseEntity.ok(hotelServiceService.addServiceToBooking(bookingId, serviceId, quantity, note));
+    }
+
+    @PutMapping("/usages/{id}/status")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    public ResponseEntity<BookingServiceUsage> updateUsageStatus(
+            @PathVariable Long id,
+            @RequestParam ServiceStatus status) {
+        return ResponseEntity.ok(hotelServiceService.updateUsageStatus(id, status));
     }
 
     @GetMapping("/booking/{bookingId}")

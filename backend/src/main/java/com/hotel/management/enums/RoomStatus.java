@@ -1,5 +1,5 @@
 package com.hotel.management.enums;
 
 public enum RoomStatus {
-    AVAILABLE, BOOKED, OCCUPIED, MAINTENANCE
+    AVAILABLE, BOOKED, OCCUPIED, MAINTENANCE, CLEANING
 }

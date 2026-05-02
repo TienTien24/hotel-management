@@ -38,16 +38,48 @@ public class BookingController {
 
     @PutMapping("/{id}/check-in")
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
-    public ResponseEntity<?> checkIn(@PathVariable Long id) {
+    public ResponseEntity<?> checkIn(@PathVariable Long id, @RequestBody java.util.Map<String, String> payload) {
         try {
+            String idNumber = payload.get("guestIdNumber");
+            String idImageUrl = payload.get("guestIdImageUrl");
             System.out.println("Đang thực hiện check-in cho booking ID: " + id);
-            Booking booking = bookingService.checkIn(id);
+            Booking booking = bookingService.checkIn(id, idNumber, idImageUrl);
             return ResponseEntity.ok(booking);
         } catch (Throwable t) {
             t.printStackTrace();
             String message = t.getMessage() != null ? t.getMessage() : t.getClass().getSimpleName();
             System.err.println("Lỗi check-in: " + message);
             return ResponseEntity.badRequest().body(java.util.Map.of("message", message));
+        }
+    }
+
+    @PutMapping("/{id}/check-out")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    public ResponseEntity<?> checkOut(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(bookingService.checkOut(id));
+        } catch (Throwable t) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", t.getMessage()));
+        }
+    }
+
+    @PutMapping("/{id}/update")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    public ResponseEntity<?> updateBooking(@PathVariable Long id, @RequestBody BookingRequest request) {
+        try {
+            return ResponseEntity.ok(bookingService.updateBooking(id, request));
+        } catch (Throwable t) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", t.getMessage()));
+        }
+    }
+
+    @PutMapping("/{id}/change-room")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    public ResponseEntity<?> changeRoom(@PathVariable Long id, @RequestParam Long newRoomId) {
+        try {
+            return ResponseEntity.ok(bookingService.changeRoom(id, newRoomId));
+        } catch (Throwable t) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", t.getMessage()));
         }
     }
 

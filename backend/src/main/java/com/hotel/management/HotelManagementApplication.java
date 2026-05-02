@@ -56,8 +56,8 @@ public class HotelManagementApplication {
                 userRepository.save(new User(null, "customer", passwordEncoder.encode("password"), "John Doe", "john@gmail.com", "0111222333", RoleName.CUSTOMER, false));
             }
 
-            if (roomRepository.count() != 60) {
-                System.out.println("Đang tạo lại dữ liệu mẫu 60 phòng...");
+            if (roomRepository.count() != 64) {
+                System.out.println("Đang tạo lại dữ liệu mẫu 64 phòng...");
                 invoiceRepository.deleteAll();
                 bookingRepository.deleteAll();
                 roomRepository.deleteAll();
@@ -66,11 +66,11 @@ public class HotelManagementApplication {
                 String deluxeDesc = "Phòng Deluxe nâng tầm trải nghiệm lưu trú với không gian rộng rãi, nội thất tinh tế và tầm nhìn ấn tượng. Mỗi chi tiết đều được chăm chút nhằm mang lại cảm giác thư giãn tối đa, giúp bạn tận hưởng kỳ nghỉ trọn vẹn hơn. Đây là lựa chọn lý tưởng cho những ai mong muốn sự thoải mái và một chút “đẳng cấp” trong từng khoảnh khắc.";
                 String suiteDesc = "Phòng Suite là biểu tượng của sự sang trọng và đẳng cấp, nơi bạn được tận hưởng không gian rộng lớn với phòng khách và phòng ngủ riêng biệt. Thiết kế tinh xảo, tiện nghi cao cấp cùng dịch vụ ưu tiên mang đến trải nghiệm như một ngôi nhà thứ hai đầy riêng tư và đẳng cấp. Đây là lựa chọn hoàn hảo cho những ai muốn tận hưởng kỳ nghỉ theo phong cách thượng lưu.";
 
-                // Generate 20 Standard rooms (Floors 1-2)
+                // Generate 24 Standard rooms (Floors 1-2)
                 String[] standardTypes = {"Single", "Double", "Twin"};
-                for (int i = 1; i <= 20; i++) {
-                    int floor = (i <= 10) ? 1 : 2;
-                    int roomInFloor = (i <= 10) ? i : i - 10;
+                for (int i = 1; i <= 24; i++) {
+                    int floor = (i <= 12) ? 1 : 2;
+                    int roomInFloor = (i <= 12) ? i : i - 12;
                     String roomNum = floor + String.format("%02d", roomInFloor);
                     String type = standardTypes[(i - 1) % standardTypes.length];
                     // Varying capacity and price for "small rooms" (Standard)
@@ -104,9 +104,9 @@ public class HotelManagementApplication {
                     double price = 250.0 + (i % 5) * 50.0;
                     roomRepository.save(new Room(null, roomNum, "Suite", type, capacity, price, suiteDesc, "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", RoomStatus.AVAILABLE));
                 }
-                System.out.println("Đã tạo xong 60 phòng mẫu thành công!");
+                System.out.println("Đã tạo xong 64 phòng mẫu thành công!");
             } else {
-                System.out.println("Dữ liệu đã có đủ 60 phòng, không cần tạo thêm.");
+                System.out.println("Dữ liệu đã có đủ 64 phòng, không cần tạo thêm.");
             }
 
             // Create sample bookings and reviews if none exist
@@ -118,27 +118,27 @@ public class HotelManagementApplication {
                 if (!allRooms.isEmpty()) {
                     // Booking 1: Completed with review
                     Room room1 = allRooms.get(0);
-                    Booking booking1 = new Booking(null, customer, room1, "John Doe", "0111222333", "john@gmail.com", "123 Main St", 2, LocalDate.now().minusDays(10), LocalDate.now().minusDays(7), BookingStatus.COMPLETED, PaymentMethod.VNPAY, PaymentStatus.PAID, room1.getPrice() * 3, LocalDateTime.now().minusDays(11), LocalDateTime.now().minusDays(10), LocalDateTime.now().minusDays(7), "Kỳ nghỉ tuyệt vời", 5, "Phòng rất đẹp và dịch vụ tuyệt vời!", LocalDateTime.now().minusDays(6));
+                    Booking booking1 = new Booking(null, customer, room1, "John Doe", "0111222333", "john@gmail.com", "123 Main St", 2, LocalDate.now().minusDays(10), LocalDate.now().minusDays(7), BookingStatus.COMPLETED, PaymentMethod.VNPAY, PaymentStatus.PAID, room1.getPrice() * 3, LocalDateTime.now().minusDays(11), LocalDateTime.now().minusDays(10), LocalDateTime.now().minusDays(7), "Kỳ nghỉ tuyệt vời", 5, "Phòng rất đẹp và dịch vụ tuyệt vời!", LocalDateTime.now().minusDays(6), null, null);
                     bookingRepository.save(booking1);
 
                     // Booking 2: Completed with review
                     Room room2 = allRooms.get(1);
-                    Booking booking2 = new Booking(null, customer, room2, "Jane Smith", "0444555666", "jane@gmail.com", "456 Oak Ave", 1, LocalDate.now().minusDays(5), LocalDate.now().minusDays(3), BookingStatus.COMPLETED, PaymentMethod.MOMO, PaymentStatus.PAID, room2.getPrice() * 2, LocalDateTime.now().minusDays(6), LocalDateTime.now().minusDays(5), LocalDateTime.now().minusDays(3), "Trải nghiệm tốt", 4, "Trải nghiệm tốt, nhưng hơi ồn ào một chút.", LocalDateTime.now().minusDays(2));
+                    Booking booking2 = new Booking(null, customer, room2, "Jane Smith", "0444555666", "jane@gmail.com", "456 Oak Ave", 1, LocalDate.now().minusDays(5), LocalDate.now().minusDays(3), BookingStatus.COMPLETED, PaymentMethod.MOMO, PaymentStatus.PAID, room2.getPrice() * 2, LocalDateTime.now().minusDays(6), LocalDateTime.now().minusDays(5), LocalDateTime.now().minusDays(3), "Trải nghiệm tốt", 4, "Trải nghiệm tốt, nhưng hơi ồn ào một chút.", LocalDateTime.now().minusDays(2), null, null);
                     bookingRepository.save(booking2);
 
                     // Booking 3: Completed with review
                     Room room3 = allRooms.get(2);
-                    Booking booking3 = new Booking(null, customer, room3, "Peter Jones", "0777888999", "peter@gmail.com", "789 Pine Ln", 3, LocalDate.now().minusDays(20), LocalDate.now().minusDays(18), BookingStatus.COMPLETED, PaymentMethod.COD, PaymentStatus.PAID, room3.getPrice() * 2, LocalDateTime.now().minusDays(21), LocalDateTime.now().minusDays(20), LocalDateTime.now().minusDays(18), "Sang trọng và đẳng cấp", 5, "Khách sạn sang trọng, rất đáng tiền!", LocalDateTime.now().minusDays(17));
+                    Booking booking3 = new Booking(null, customer, room3, "Peter Jones", "0777888999", "peter@gmail.com", "789 Pine Ln", 3, LocalDate.now().minusDays(20), LocalDate.now().minusDays(18), BookingStatus.COMPLETED, PaymentMethod.COD, PaymentStatus.PAID, room3.getPrice() * 2, LocalDateTime.now().minusDays(21), LocalDateTime.now().minusDays(20), LocalDateTime.now().minusDays(18), "Sang trọng và đẳng cấp", 5, "Khách sạn sang trọng, rất đáng tiền!", LocalDateTime.now().minusDays(17), null, null);
                     bookingRepository.save(booking3);
 
                     // Booking 4: Completed with review
                     Room room4 = allRooms.size() > 30 ? allRooms.get(30) : allRooms.get(0);
-                    Booking booking4 = new Booking(null, customer, room4, "Lê Thị D", "0123456789", "lethid@gmail.com", "Hà Nội", 2, LocalDate.now().minusDays(12), LocalDate.now().minusDays(10), BookingStatus.COMPLETED, PaymentMethod.VNPAY, PaymentStatus.PAID, room4.getPrice() * 2, LocalDateTime.now().minusDays(13), LocalDateTime.now().minusDays(12), LocalDateTime.now().minusDays(10), "View biển cực đẹp", 5, "Phòng Deluxe có view biển tuyệt đẹp, ngắm bình minh ngay tại giường. Dịch vụ phòng rất nhanh chóng.", LocalDateTime.now().minusDays(9));
+                    Booking booking4 = new Booking(null, customer, room4, "Lê Thị D", "0123456789", "lethid@gmail.com", "Hà Nội", 2, LocalDate.now().minusDays(12), LocalDate.now().minusDays(10), BookingStatus.COMPLETED, PaymentMethod.VNPAY, PaymentStatus.PAID, room4.getPrice() * 2, LocalDateTime.now().minusDays(13), LocalDateTime.now().minusDays(12), LocalDateTime.now().minusDays(10), "View biển cực đẹp", 5, "Phòng Deluxe có view biển tuyệt đẹp, ngắm bình minh ngay tại giường. Dịch vụ phòng rất nhanh chóng.", LocalDateTime.now().minusDays(9), null, null);
                     bookingRepository.save(booking4);
 
                     // Booking 5: Completed with review
                     Room room5 = allRooms.size() > 50 ? allRooms.get(50) : allRooms.get(0);
-                    Booking booking5 = new Booking(null, customer, room5, "Phạm Văn E", "0987654321", "phamvane@gmail.com", "Đà Nẵng", 4, LocalDate.now().minusDays(25), LocalDate.now().minusDays(22), BookingStatus.COMPLETED, PaymentMethod.MOMO, PaymentStatus.PAID, room5.getPrice() * 3, LocalDateTime.now().minusDays(26), LocalDateTime.now().minusDays(25), LocalDateTime.now().minusDays(22), "Kỳ nghỉ gia đình ấm áp", 5, "Chúng tôi đã có một kỳ nghỉ gia đình tuyệt vời tại phòng Suite. Không gian rộng rãi, các con rất thích hồ bơi vô cực của khách sạn.", LocalDateTime.now().minusDays(21));
+                    Booking booking5 = new Booking(null, customer, room5, "Phạm Văn E", "0987654321", "phamvane@gmail.com", "Đà Nẵng", 4, LocalDate.now().minusDays(25), LocalDate.now().minusDays(22), BookingStatus.COMPLETED, PaymentMethod.MOMO, PaymentStatus.PAID, room5.getPrice() * 3, LocalDateTime.now().minusDays(26), LocalDateTime.now().minusDays(25), LocalDateTime.now().minusDays(22), "Kỳ nghỉ gia đình ấm áp", 5, "Chúng tôi đã có một kỳ nghỉ gia đình tuyệt vời tại phòng Suite. Không gian rộng rãi, các con rất thích hồ bơi vô cực của khách sạn.", LocalDateTime.now().minusDays(21), null, null);
                     bookingRepository.save(booking5);
 
                     System.out.println("Đã tạo xong dữ liệu booking và đánh giá mẫu!");

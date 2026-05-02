@@ -1,5 +1,6 @@
 package com.hotel.management.model;
 
+import com.hotel.management.enums.ServiceStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,4 +26,14 @@ public class BookingServiceUsage {
     
     private Integer quantity;
     private LocalDateTime usedDate;
+    private String note;
+
+    @Enumerated(EnumType.STRING)
+    private ServiceStatus status;
+
+    @PrePersist
+    protected void onCreate() {
+        if (usedDate == null) usedDate = LocalDateTime.now();
+        if (status == null) status = ServiceStatus.PENDING;
+    }
 }

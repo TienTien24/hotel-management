@@ -29,32 +29,74 @@ public class DashboardService {
     @Autowired
     private InvoiceRepository invoiceRepository;
 
+    @Autowired
+    private RoomService roomService;
+
     public Map<String, Object> getStats() {
-        Map<String, Object> stats = new HashMap<>();
+        try {
+            Map<String, Object> stats = new HashMap<>();
 
-        long totalRooms = roomRepository.count();
-        long occupiedRooms = roomRepository.findAll().stream()
-                .filter(r -> r.getStatus() == RoomStatus.OCCUPIED)
-                .count();
+            // getAllRooms() tự động đồng bộ trạng thái phòng dựa trên booking hiện tại
+            List<Room> allRooms = roomService.getAllRooms();
+            
+            long totalRooms = allRooms.size();
+            long occupiedRooms = 0;
+            long cleaningRooms = 0;
+            long maintenanceRooms = 0;
+            long availableRooms = 0;
+            long bookedRooms = 0;
 
-        double occupancyRate = totalRooms > 0 ? (double) occupiedRooms / totalRooms * 100 : 0;
+            for (Room r : allRooms) {
+                String statusStr = String.valueOf(r.getStatus());
+                if ("OCCUPIED".equals(statusStr)) occupiedRooms++;
+                else if ("CLEANING".equals(statusStr)) cleaningRooms++;
+                else if ("MAINTENANCE".equals(statusStr)) maintenanceRooms++;
+                else if ("BOOKED".equals(statusStr)) bookedRooms++;
+                else if ("AVAILABLE".equals(statusStr)) availableRooms++;
+            }
 
-        double totalRevenue = invoiceRepository.findAll().stream()
-                .filter(i -> i.getPaymentStatus() == PaymentStatus.PAID)
-                .mapToDouble(Invoice::getTotalAmount)
-                .sum();
+            double occupancyRate = totalRooms > 0 ? (double) occupiedRooms / totalRooms * 100 : 0;
+            
+            double totalRevenue = 0;
+            try {
+                totalRevenue = invoiceRepository.findAll().stream()
+                        .filter(i -> i.getPaymentStatus() == PaymentStatus.PAID)
+                        .mapToDouble(i -> i.getTotalAmount() != null ? i.getTotalAmount() : 0.0)
+                        .sum();
+            } catch (Exception e) {
+                System.err.println("Lỗi tính doanh thu: " + e.getMessage());
+            }
 
-        long newBookings = bookingRepository.findAll().stream()
-                .filter(b -> b.getStatus() == BookingStatus.PENDING || b.getStatus() == BookingStatus.CONFIRMED)
-                .count();
+            LocalDateTime todayStart = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+            LocalDateTime todayEnd = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+            long newBookings = 0;
+            try {
+                newBookings = bookingRepository.findAll().stream()
+                        .filter(b -> b.getCreatedAt() != null)
+                        .filter(b -> !b.getCreatedAt().isBefore(todayStart) && !b.getCreatedAt().isAfter(todayEnd))
+                        .count();
+            } catch (Exception e) {
+                System.err.println("Lỗi tính booking mới: " + e.getMessage());
+            }
 
-        stats.put("totalRooms", totalRooms);
-        stats.put("occupiedRooms", occupiedRooms);
-        stats.put("occupancyRate", occupancyRate);
-        stats.put("totalRevenue", totalRevenue);
-        stats.put("newBookings", newBookings);
+            stats.put("totalRooms", totalRooms);
+            stats.put("occupiedRooms", occupiedRooms);
+            stats.put("cleaningRooms", cleaningRooms);
+            stats.put("maintenanceRooms", maintenanceRooms);
+            stats.put("availableRooms", availableRooms);
+            stats.put("bookedRooms", bookedRooms);
+            stats.put("occupancyRate", occupancyRate);
+            stats.put("totalRevenue", totalRevenue);
+            stats.put("newBookings", newBookings);
+            
+            System.out.println("Stats calculated: " + stats);
 
-        return stats;
+            return stats;
+        } catch (Exception e) {
+            System.err.println("Lỗi nghiêm trọng trong getStats: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public Map<String, Object> getRevenueReport(LocalDate fromDate, LocalDate toDate) {

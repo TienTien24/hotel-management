@@ -31,6 +31,9 @@ public class InvoiceService {
     private BookingServiceUsageRepository usageRepository;
 
     @Autowired
+    private RoomRepository roomRepository;
+
+    @Autowired
     private BookingService bookingService;
 
     public Invoice generateInvoice(Long bookingId) {
@@ -71,8 +74,9 @@ public class InvoiceService {
         // Lưu trạng thái booking trước khi giải phóng phòng
         bookingRepository.save(booking);
         
-        // Cập nhật trạng thái phòng thông minh
-        bookingService.releaseRoomIfNoOtherActiveBookings(room);
+        // Cập nhật trạng thái phòng thành CLEANING
+        room.setStatus(RoomStatus.CLEANING);
+        roomRepository.save(room);
 
         Invoice invoice = invoiceRepository.findByBookingId(bookingId)
                 .orElse(new Invoice());

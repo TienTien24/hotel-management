@@ -24,7 +24,55 @@ public class RoomService {
     private BookingRepository bookingRepository;
 
     public List<Room> getAllRooms() {
-        return roomRepository.findAll();
+        List<Room> rooms = roomRepository.findAll();
+        // Tự động đồng bộ trạng thái cho tất cả các phòng dựa trên booking hiện tại
+        for (Room room : rooms) {
+            syncRoomStatus(room);
+        }
+        return rooms;
+    }
+
+    public void syncRoomStatus(Room room) {
+        LocalDate today = LocalDate.now();
+        // Tìm các booking đang hoạt động (Chờ xác nhận, Đã xác nhận, Đã check-in)
+        List<com.hotel.management.enums.BookingStatus> activeStatuses = List.of(
+            com.hotel.management.enums.BookingStatus.PENDING, 
+            com.hotel.management.enums.BookingStatus.CONFIRMED, 
+            com.hotel.management.enums.BookingStatus.CHECKED_IN
+        );
+        List<Booking> activeBookings = bookingRepository.findByRoomIdAndStatusIn(room.getId(), activeStatuses);
+
+        System.out.println("Syncing Room " + room.getRoomNumber() + " (ID: " + room.getId() + ") - Today: " + today + " - Active Bookings: " + activeBookings.size());
+
+        if (activeBookings.isEmpty()) {
+            if (room.getStatus() != RoomStatus.MAINTENANCE && room.getStatus() != RoomStatus.CLEANING) {
+                room.setStatus(RoomStatus.AVAILABLE);
+            }
+        } else {
+            boolean isOccupied = activeBookings.stream()
+                    .anyMatch(b -> b.getStatus() == com.hotel.management.enums.BookingStatus.CHECKED_IN);
+            
+            if (isOccupied) {
+                room.setStatus(RoomStatus.OCCUPIED);
+            } else {
+                boolean isBookedForToday = activeBookings.stream()
+                        .anyMatch(b -> {
+                            boolean match = !b.getCheckInDate().isAfter(today) && !b.getCheckOutDate().isBefore(today);
+                            System.out.println("  Booking #" + b.getId() + ": " + b.getCheckInDate() + " to " + b.getCheckOutDate() + " - Match: " + match);
+                            return match;
+                        });
+                
+                if (isBookedForToday) {
+                    room.setStatus(RoomStatus.BOOKED);
+                } else {
+                    if (room.getStatus() != RoomStatus.MAINTENANCE && room.getStatus() != RoomStatus.CLEANING) {
+                        room.setStatus(RoomStatus.AVAILABLE);
+                    }
+                }
+            }
+        }
+        System.out.println("  Final Status: " + room.getStatus());
+        roomRepository.save(room);
     }
 
     public Optional<Room> getRoomById(Long id) {
