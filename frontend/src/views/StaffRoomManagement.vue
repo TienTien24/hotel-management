@@ -29,6 +29,11 @@
           <i class="fas fa-bell text-xl opacity-70 group-hover:opacity-100"></i>
           <span class="font-bold text-lg tracking-tight">Quản lý Dịch vụ</span>
         </router-link>
+
+        <router-link to="/staff-messages" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group hover:bg-white/10">
+          <i class="fas fa-envelope text-xl opacity-70 group-hover:opacity-100"></i>
+          <span class="font-bold text-lg tracking-tight">Phản hồi khách hàng</span>
+        </router-link>
       </nav>
 
       <div class="p-6 border-t border-white/10">

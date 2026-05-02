@@ -29,6 +29,11 @@
           <i class="fas fa-bell text-xl opacity-100"></i>
           <span class="font-bold text-lg tracking-tight">Quản lý Dịch vụ</span>
         </router-link>
+
+        <router-link to="/staff-messages" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group hover:bg-white/10">
+          <i class="fas fa-envelope text-xl opacity-70 group-hover:opacity-100"></i>
+          <span class="font-bold text-lg tracking-tight">Phản hồi khách hàng</span>
+        </router-link>
       </nav>
 
       <div class="p-10 mt-auto">
@@ -44,7 +49,6 @@
       <header class="flex justify-between items-center mb-10">
         <div>
           <h2 class="text-3xl font-black text-slate-800 uppercase tracking-tight">Quản lý dịch vụ</h2>
-          <p class="text-slate-500 font-medium mt-1">Xem và quản lý các yêu cầu dịch vụ của khách sạn</p>
         </div>
       </header>
 

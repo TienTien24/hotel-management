@@ -29,6 +29,11 @@
           <i class="fas fa-bell text-xl opacity-70 group-hover:opacity-100"></i>
           <span class="font-bold text-lg tracking-tight">Quản lý Dịch vụ</span>
         </router-link>
+
+        <router-link to="/staff-messages" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group hover:bg-white/10">
+          <i class="fas fa-envelope text-xl opacity-70 group-hover:opacity-100"></i>
+          <span class="font-bold text-lg tracking-tight">Phản hồi khách hàng</span>
+        </router-link>
       </nav>
 
       <div class="p-6 border-t border-white/10">
@@ -47,7 +52,6 @@
           </div>
           <div>
             <h2 class="text-4xl font-black text-gray-900 uppercase tracking-tight mb-2">Quản lý đặt phòng</h2>
-            <p class="text-gray-500 font-medium">Hệ thống quản lý lưu trú, check-in và hồ sơ khách hàng</p>
           </div>
         </div>
         <button @click="openCreateModal" class="bg-[#004d26] hover:bg-[#003d1e] text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-xl shadow-green-200 flex items-center gap-3">

@@ -4,9 +4,13 @@ import com.hotel.management.enums.BookingStatus;
 import com.hotel.management.enums.PaymentStatus;
 import com.hotel.management.enums.RoomStatus;
 import com.hotel.management.model.Booking;
+import com.hotel.management.model.BookingServiceUsage;
+import com.hotel.management.model.ContactMessage;
 import com.hotel.management.model.Invoice;
 import com.hotel.management.model.Room;
+import com.hotel.management.repository.BookingServiceUsageRepository;
 import com.hotel.management.repository.BookingRepository;
+import com.hotel.management.repository.ContactMessageRepository;
 import com.hotel.management.repository.InvoiceRepository;
 import com.hotel.management.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,12 @@ public class DashboardService {
 
     @Autowired
     private InvoiceRepository invoiceRepository;
+
+    @Autowired
+    private BookingServiceUsageRepository bookingServiceUsageRepository;
+
+    @Autowired
+    private ContactMessageRepository contactMessageRepository;
 
     @Autowired
     private RoomService roomService;
@@ -89,6 +99,14 @@ public class DashboardService {
             stats.put("totalRevenue", totalRevenue);
             stats.put("newBookings", newBookings);
             
+            // Thêm thống kê tin nhắn liên hệ mới
+            try {
+                long pendingMessages = contactMessageRepository.countByStatus(ContactMessage.MessageStatus.PENDING);
+                stats.put("pendingMessages", pendingMessages);
+            } catch (Exception e) {
+                stats.put("pendingMessages", 0);
+            }
+            
             System.out.println("Stats calculated: " + stats);
 
             return stats;
@@ -146,6 +164,47 @@ public class DashboardService {
             }
         }
 
+        Map<String, Double> roomTypeRevenue = new java.util.LinkedHashMap<>();
+        for (Invoice invoice : invoices) {
+            if (invoice.getBooking() == null || invoice.getBooking().getRoom() == null) {
+                continue;
+            }
+
+            String roomType = invoice.getBooking().getRoom().getType();
+            if (roomType == null || roomType.isBlank()) {
+                roomType = "Khác";
+            }
+
+            double roomRevenue = invoice.getRoomCharges() != null
+                    ? invoice.getRoomCharges()
+                    : Math.max((invoice.getTotalAmount() != null ? invoice.getTotalAmount() : 0.0)
+                    - (invoice.getServiceCharges() != null ? invoice.getServiceCharges() : 0.0), 0.0);
+
+            roomTypeRevenue.put(roomType, roomTypeRevenue.getOrDefault(roomType, 0.0) + roomRevenue);
+        }
+
+        List<BookingServiceUsage> completedUsagesInRange = bookingServiceUsageRepository.findAll().stream()
+                .filter(usage -> usage.getUsedDate() != null)
+                .filter(usage -> !usage.getUsedDate().isBefore(startDateTime) && !usage.getUsedDate().isAfter(endDateTime))
+                .filter(usage -> usage.getStatus() == com.hotel.management.enums.ServiceStatus.COMPLETED)
+                .toList();
+
+        Map<String, Double> serviceRevenue = new java.util.LinkedHashMap<>();
+        for (BookingServiceUsage usage : completedUsagesInRange) {
+            if (usage.getService() == null) {
+                continue;
+            }
+
+            String serviceName = usage.getService().getName();
+            if (serviceName == null || serviceName.isBlank()) {
+                serviceName = "Dịch vụ khác";
+            }
+
+            double serviceAmount = (usage.getService().getPrice() != null ? usage.getService().getPrice() : 0.0)
+                    * (usage.getQuantity() != null ? usage.getQuantity() : 0);
+            serviceRevenue.put(serviceName, serviceRevenue.getOrDefault(serviceName, 0.0) + serviceAmount);
+        }
+
         List<Map<String, Object>> details = new java.util.ArrayList<>();
         dailyRevenue.keySet().stream().sorted().forEach(date -> {
             Map<String, Object> dayData = new HashMap<>();
@@ -160,6 +219,10 @@ public class DashboardService {
         report.put("totalRevenue", totalRevenue);
         report.put("totalBookings", bookingsInRange.size());
         report.put("invoiceCount", invoices.size());
+        report.put("totalRoomRevenue", roomTypeRevenue.values().stream().mapToDouble(Double::doubleValue).sum());
+        report.put("totalServiceRevenue", serviceRevenue.values().stream().mapToDouble(Double::doubleValue).sum());
+        report.put("roomTypeRevenue", roomTypeRevenue);
+        report.put("serviceRevenue", serviceRevenue);
         report.put("details", details);
 
         return report;
