@@ -8,10 +8,9 @@ import com.hotel.management.enums.PaymentStatus;
 import com.hotel.management.enums.RoomStatus;
 import com.hotel.management.model.Booking;
 import com.hotel.management.model.Room;
+import com.hotel.management.model.BookingServiceUsage;
 import com.hotel.management.model.User;
-import com.hotel.management.repository.BookingRepository;
-import com.hotel.management.repository.RoomRepository;
-import com.hotel.management.repository.UserRepository;
+import com.hotel.management.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +31,12 @@ public class BookingService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private BookingServiceUsageRepository bookingServiceUsageRepository;
+
+    @Autowired
+    private RoomService roomService;
 
     public Booking createBooking(BookingRequest request) {
         if (request.getCheckInDate() == null || request.getCheckOutDate() == null) {
@@ -81,7 +86,12 @@ public class BookingService {
         booking.setStatus(BookingStatus.PENDING);
         booking.setTotalPrice(room.getPrice() * nights);
 
-        return bookingRepository.save(booking);
+        Booking savedBooking = bookingRepository.save(booking);
+        
+        // Cập nhật trạng thái phòng ngay khi có booking mới
+        roomService.syncRoomStatus(room);
+        
+        return savedBooking;
     }
 
     public Booking confirmBooking(Long bookingId) {
@@ -96,7 +106,7 @@ public class BookingService {
         
         Room room = booking.getRoom();
         // Cập nhật trạng thái phòng thông minh dựa trên tất cả các booking active
-        releaseRoomIfNoOtherActiveBookings(room);
+        roomService.syncRoomStatus(room);
         
         return bookingRepository.save(booking);
     }
@@ -115,17 +125,17 @@ public class BookingService {
         
         Room room = booking.getRoom();
         // Cập nhật trạng thái phòng thông minh dựa trên tất cả các booking active
-        releaseRoomIfNoOtherActiveBookings(room);
+        roomService.syncRoomStatus(room);
         
         bookingRepository.save(booking);
     }
 
-    public Booking checkIn(Long bookingId) {
+    public Booking checkIn(Long bookingId, String guestIdNumber, String guestIdImageUrl) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy booking với ID: " + bookingId));
         
         if (booking.getStatus() == BookingStatus.CHECKED_IN) {
-            return booking; // Đã check-in rồi thì không làm gì thêm
+            return booking;
         }
 
         if (booking.getStatus() != BookingStatus.CONFIRMED && booking.getStatus() != BookingStatus.PENDING) {
@@ -138,35 +148,33 @@ public class BookingService {
             throw new RuntimeException("Phòng " + room.getRoomNumber() + " đang trong quá trình bảo trì. Không thể thực hiện check-in.");
         }
 
+        if (room.getStatus() == RoomStatus.CLEANING) {
+            throw new RuntimeException("Phòng " + room.getRoomNumber() + " đang được dọn dẹp. Vui lòng đợi.");
+        }
+
         // Kiểm tra xem có ai đang ở phòng này không
         if (room.getStatus() == RoomStatus.OCCUPIED) {
-            // Tìm xem booking nào đang occupy phòng này
             List<Booking> currentOccupants = bookingRepository.findByRoomIdAndStatusIn(room.getId(), List.of(BookingStatus.CHECKED_IN));
             if (!currentOccupants.isEmpty()) {
                 Booking occupant = currentOccupants.get(0);
                 throw new RuntimeException("Phòng " + room.getRoomNumber() + " đang có khách (#" + occupant.getId() + ": " + occupant.getGuestFullName() + ") đang lưu trú. Vui lòng thực hiện Check-out cho khách cũ trước.");
-            } else {
-                // Nếu room status là OCCUPIED nhưng không tìm thấy booking nào đang CHECKED_IN
-                // thì tự động sửa lại status room và cho phép check-in
-                room.setStatus(RoomStatus.AVAILABLE);
-                roomRepository.save(room);
             }
         }
-        
+
         booking.setStatus(BookingStatus.CHECKED_IN);
         booking.setCheckedInAt(LocalDateTime.now());
+        booking.setGuestIdNumber(guestIdNumber);
+        booking.setGuestIdImageUrl(guestIdImageUrl);
         
-        // Lưu trạng thái booking trước khi cập nhật phòng để đảm bảo query trong releaseRoom nhìn thấy trạng thái mới
-        Booking savedBooking = bookingRepository.save(booking);
-
-        // Cập nhật trực tiếp trạng thái phòng thành OCCUPIED khi check-in
         room.setStatus(RoomStatus.OCCUPIED);
         roomRepository.save(room);
-
-        return savedBooking;
+        
+        return bookingRepository.save(booking);
     }
 
     public List<Booking> getAllBookings() {
+        // Đồng bộ trạng thái phòng trước khi lấy danh sách booking để đảm bảo dữ liệu room bên trong booking là mới nhất
+        roomService.getAllRooms();
         return bookingRepository.findAllByOrderByCreatedAtDesc();
     }
 
@@ -286,33 +294,106 @@ public class BookingService {
 
         // Giải phóng phòng nếu cần
         if (shouldReleaseRoom) {
-            releaseRoomIfNoOtherActiveBookings(room);
+            roomService.syncRoomStatus(room);
         }
 
         return savedBooking;
     }
 
-    public void releaseRoomIfNoOtherActiveBookings(Room room) {
-        // Kiểm tra xem còn booking nào khác đang active (CONFIRMED hoặc CHECKED_IN) cho phòng này không
-        List<BookingStatus> activeStatuses = List.of(BookingStatus.CONFIRMED, BookingStatus.CHECKED_IN);
-        List<Booking> activeBookings = bookingRepository.findByRoomIdAndStatusIn(room.getId(), activeStatuses);
+    public Booking checkOut(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy booking với ID: " + bookingId));
 
-        if (activeBookings.isEmpty()) {
-            // Nếu không còn booking nào CONFIRMED hoặc CHECKED_IN, nhưng hãy kiểm tra xem phòng có đang bảo trì không
-            if (room.getStatus() != RoomStatus.MAINTENANCE) {
-                room.setStatus(RoomStatus.AVAILABLE);
-            }
-        } else {
-            // Nếu vẫn còn booking active, kiểm tra xem có ai đang ở không
-            boolean hasCheckedIn = activeBookings.stream()
-                    .anyMatch(b -> b.getStatus() == BookingStatus.CHECKED_IN);
-            if (hasCheckedIn) {
-                room.setStatus(RoomStatus.OCCUPIED);
-            } else {
-                room.setStatus(RoomStatus.BOOKED);
-            }
+        if (booking.getStatus() != BookingStatus.CHECKED_IN) {
+            throw new RuntimeException("Booking #" + bookingId + " không ở trạng thái Đã check-in. Không thể thực hiện check-out.");
         }
+
+        // Tính toán lại tổng tiền bao gồm dịch vụ
+        List<BookingServiceUsage> usages = bookingServiceUsageRepository.findByBookingId(bookingId);
+        double serviceTotal = usages.stream()
+                .filter(u -> u.getStatus() == com.hotel.management.enums.ServiceStatus.COMPLETED)
+                .mapToDouble(u -> u.getService().getPrice() * u.getQuantity())
+                .sum();
+        
+        long nights = ChronoUnit.DAYS.between(booking.getCheckInDate(), booking.getCheckOutDate());
+        if (nights <= 0) nights = 1; // Tối thiểu 1 đêm
+        double roomTotal = booking.getRoom().getPrice() * nights;
+        
+        booking.setTotalPrice(roomTotal + serviceTotal);
+        booking.setStatus(BookingStatus.COMPLETED);
+        booking.setCheckedOutAt(LocalDateTime.now());
+
+        Room room = booking.getRoom();
+        room.setStatus(RoomStatus.CLEANING);
         roomRepository.save(room);
+
+        return bookingRepository.save(booking);
+    }
+
+    public Booking updateBooking(Long bookingId, BookingRequest request) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy booking"));
+
+        if (booking.getStatus() == BookingStatus.COMPLETED || booking.getStatus() == BookingStatus.CANCELLED) {
+            throw new RuntimeException("Không thể cập nhật booking đã hoàn thành hoặc đã hủy");
+        }
+
+        if (request.getCheckInDate() != null) booking.setCheckInDate(request.getCheckInDate());
+        if (request.getCheckOutDate() != null) booking.setCheckOutDate(request.getCheckOutDate());
+        if (request.getGuestFullName() != null) booking.setGuestFullName(request.getGuestFullName());
+        if (request.getGuestPhone() != null) booking.setGuestPhone(request.getGuestPhone());
+        if (request.getGuestEmail() != null) booking.setGuestEmail(request.getGuestEmail());
+
+        // Recalculate price if dates changed
+        if (request.getCheckInDate() != null || request.getCheckOutDate() != null) {
+            long nights = ChronoUnit.DAYS.between(booking.getCheckInDate(), booking.getCheckOutDate());
+            booking.setTotalPrice(booking.getRoom().getPrice() * nights);
+        }
+
+        return bookingRepository.save(booking);
+    }
+
+    public Booking changeRoom(Long bookingId, Long newRoomId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy booking"));
+
+        if (booking.getStatus() == BookingStatus.COMPLETED || booking.getStatus() == BookingStatus.CANCELLED) {
+            throw new RuntimeException("Không thể đổi phòng cho booking đã hoàn thành hoặc đã hủy");
+        }
+
+        Room oldRoom = booking.getRoom();
+        Room newRoom = roomRepository.findById(newRoomId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng mới"));
+
+        if (newRoom.getStatus() != RoomStatus.AVAILABLE) {
+            throw new RuntimeException("Phòng mới không khả dụng");
+        }
+
+        // Check for overlap in new room
+        List<Booking> overlapping = bookingRepository.findOverlappingBookings(
+                newRoomId,
+                booking.getCheckInDate(),
+                booking.getCheckOutDate()
+        );
+        // Exclude current booking from overlap check
+        overlapping.removeIf(b -> b.getId().equals(bookingId));
+
+        if (!overlapping.isEmpty()) {
+            throw new RuntimeException("Phòng mới đã được đặt trong khoảng thời gian này");
+        }
+
+        booking.setRoom(newRoom);
+        // Update price
+        long nights = ChronoUnit.DAYS.between(booking.getCheckInDate(), booking.getCheckOutDate());
+        booking.setTotalPrice(newRoom.getPrice() * nights);
+
+        Booking savedBooking = bookingRepository.save(booking);
+
+        // Update room statuses
+        roomService.syncRoomStatus(oldRoom);
+        roomService.syncRoomStatus(newRoom);
+
+        return savedBooking;
     }
 
     private boolean isBlank(String value) {

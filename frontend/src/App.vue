@@ -18,7 +18,16 @@ import AIChatbot from './components/AIChatbot.vue'
 
 const route = useRoute()
 const isAuthPage = computed(() => {
-  return ['/login', '/register'].includes(route.path)
+  const staffRoutes = [
+    '/login', 
+    '/register', 
+    '/staff-dashboard', 
+    '/staff-rooms', 
+    '/bookings', 
+    '/staff', 
+    '/manage-services'
+  ]
+  return staffRoutes.includes(route.path)
 })
 </script>
 

@@ -13,6 +13,8 @@ import Reviews from '../views/Reviews.vue'
 import Blog from '../views/Blog.vue'
 import Services from '../views/Services.vue'
 import StaffManagement from '../views/StaffManagement.vue'
+import StaffDashboard from '../views/StaffDashboard.vue'
+import StaffRoomManagement from '../views/StaffRoomManagement.vue'
 import ManageServices from '../views/ManageServices.vue'
 import CancellationPolicy from '../views/CancellationPolicy.vue'
 
@@ -42,6 +44,16 @@ const routes = [
   { 
     path: '/dashboard', 
     component: Dashboard,
+    meta: { requiresAuth: true }
+  },
+  { 
+    path: '/staff-dashboard', 
+    component: StaffDashboard,
+    meta: { requiresAuth: true }
+  },
+  { 
+    path: '/staff-rooms', 
+    component: StaffRoomManagement,
     meta: { requiresAuth: true }
   },
   { 

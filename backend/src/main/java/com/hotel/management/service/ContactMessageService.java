@@ -25,4 +25,13 @@ public class ContactMessageService {
             contactMessageRepository.save(message);
         });
     }
+
+    public void replyMessage(Long id, String replyContent) {
+        contactMessageRepository.findById(id).ifPresent(message -> {
+            message.setReplyContent(replyContent);
+            message.setRepliedAt(java.time.LocalDateTime.now());
+            message.setStatus(ContactMessage.MessageStatus.REPLIED);
+            contactMessageRepository.save(message);
+        });
+    }
 }

@@ -30,6 +30,11 @@ public class ContactMessage {
     @Column(columnDefinition = "TEXT")
     private String note;
 
+    @Column(columnDefinition = "TEXT")
+    private String replyContent;
+
+    private LocalDateTime repliedAt;
+
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)

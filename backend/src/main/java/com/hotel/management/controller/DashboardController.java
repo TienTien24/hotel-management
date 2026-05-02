@@ -17,7 +17,7 @@ public class DashboardController {
     private DashboardService dashboardService;
 
     @GetMapping("/stats")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<Map<String, Object>> getStats() {
         return ResponseEntity.ok(dashboardService.getStats());
     }

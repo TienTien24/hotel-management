@@ -52,7 +52,14 @@ const handleLogin = async () => {
     })
     console.log('Login response:', response.data);
     localStorage.setItem('user', JSON.stringify(response.data))
-    router.push('/')
+    
+    // Redirect based on role
+    const userRole = response.data.role;
+    if (userRole === 'ADMIN' || userRole === 'STAFF') {
+      router.push('/staff-dashboard')
+    } else {
+      router.push('/')
+    }
   } catch (error) {
     console.error('Login error:', error);
     const errorMsg = error.response?.data?.message || error.response?.data || 'Sai tên đăng nhập hoặc mật khẩu';

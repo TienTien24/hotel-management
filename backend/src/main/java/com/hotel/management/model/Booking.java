@@ -59,6 +59,9 @@ public class Booking {
 
     private LocalDateTime reviewCreatedAt;
 
+    private String guestIdNumber;
+    private String guestIdImageUrl;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

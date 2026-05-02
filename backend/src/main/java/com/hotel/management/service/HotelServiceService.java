@@ -1,5 +1,6 @@
 package com.hotel.management.service;
 
+import com.hotel.management.enums.ServiceStatus;
 import com.hotel.management.model.Booking;
 import com.hotel.management.model.BookingServiceUsage;
 import com.hotel.management.model.HotelService;
@@ -27,7 +28,11 @@ public class HotelServiceService {
         return hotelServiceRepository.findAll();
     }
 
-    public BookingServiceUsage addServiceToBooking(Long bookingId, Long serviceId, Integer quantity) {
+    public List<BookingServiceUsage> getAllUsages() {
+        return bookingServiceUsageRepository.findAll();
+    }
+
+    public BookingServiceUsage addServiceToBooking(Long bookingId, Long serviceId, Integer quantity, String note) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy booking"));
         
@@ -38,8 +43,17 @@ public class HotelServiceService {
         usage.setBooking(booking);
         usage.setService(service);
         usage.setQuantity(quantity);
+        usage.setNote(note);
         usage.setUsedDate(LocalDateTime.now());
+        usage.setStatus(ServiceStatus.PENDING);
 
+        return bookingServiceUsageRepository.save(usage);
+    }
+
+    public BookingServiceUsage updateUsageStatus(Long usageId, ServiceStatus status) {
+        BookingServiceUsage usage = bookingServiceUsageRepository.findById(usageId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy yêu cầu dịch vụ"));
+        usage.setStatus(status);
         return bookingServiceUsageRepository.save(usage);
     }
 

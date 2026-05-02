@@ -133,7 +133,10 @@ const menuItems = computed(() => {
     
     if (user.value.role === 'ADMIN') {
       items.push({ name: 'Dashboard', path: '/dashboard' })
+      items.push({ name: 'Booking', path: '/bookings' })
     } else if (user.value.role === 'STAFF') {
+      items.push({ name: 'Dashboard', path: '/staff-dashboard' })
+      items.push({ name: 'Quản lý Phòng', path: '/staff-rooms' })
       items.push({ name: 'Booking', path: '/bookings' })
     }
     

@@ -55,6 +55,19 @@ public class RoomController {
         }
     }
 
+    @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    public ResponseEntity<Room> updateRoomStatus(@PathVariable Long id, @RequestParam RoomStatus status) {
+        try {
+            Room room = roomService.getRoomById(id)
+                    .orElseThrow(() -> new RuntimeException("Phòng không tồn tại"));
+            room.setStatus(status);
+            return ResponseEntity.ok(roomService.updateRoom(id, room));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteRoom(@PathVariable Long id) {
