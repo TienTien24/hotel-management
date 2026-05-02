@@ -1,11 +1,11 @@
 <template>
   <div class="min-h-screen bg-gray-50 flex flex-col">
-    <Navbar v-if="!isAuthPage" />
+    <Navbar v-if="!isAuthPage && !isLoginPage" />
     <main class="flex-grow">
       <router-view></router-view>
     </main>
-    <Footer v-if="!isAuthPage" />
-    <AIChatbot v-if="!isAuthPage" />
+    <Footer v-if="!isAuthPage && !isLoginPage" />
+    <AIChatbot v-if="!isAuthPage && !isLoginPage" />
   </div>
 </template>
 
@@ -18,16 +18,21 @@ import AIChatbot from './components/AIChatbot.vue'
 
 const route = useRoute()
 const isAuthPage = computed(() => {
+  const adminRoutes = ['/admin-dashboard', '/admin']
   const staffRoutes = [
-    '/login', 
-    '/register', 
     '/staff-dashboard', 
     '/staff-rooms', 
     '/bookings', 
-    '/staff', 
-    '/manage-services'
+    '/manage-services',
+    '/staff-messages',
+    '/staff'
   ]
-  return staffRoutes.includes(route.path)
+  const allAuthRoutes = [...adminRoutes, ...staffRoutes]
+  return allAuthRoutes.some(path => route.path.startsWith(path))
+})
+
+const isLoginPage = computed(() => {
+  return ['/login', '/register'].includes(route.path)
 })
 </script>
 

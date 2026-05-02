@@ -17,6 +17,14 @@ import StaffDashboard from '../views/StaffDashboard.vue'
 import StaffRoomManagement from '../views/StaffRoomManagement.vue'
 import ManageServices from '../views/ManageServices.vue'
 import CancellationPolicy from '../views/CancellationPolicy.vue'
+import StaffMessages from '../views/StaffMessages.vue'
+import AdminDashboard from '../views/AdminDashboard.vue'
+import AdminStaff from '../views/AdminStaff.vue'
+import AdminCustomers from '../views/AdminCustomers.vue'
+import AdminReports from '../views/AdminReports.vue'
+import AdminServices from '../views/AdminServices.vue'
+import AdminRooms from '../views/AdminRooms.vue'
+import AdminSettings from '../views/AdminSettings.vue'
 
 const routes = [
   { path: '/login', component: Login },
@@ -52,6 +60,41 @@ const routes = [
     meta: { requiresAuth: true }
   },
   { 
+    path: '/admin-dashboard', 
+    component: AdminDashboard,
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  { 
+    path: '/admin/staff', 
+    component: AdminStaff,
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/admin/rooms',
+    component: AdminRooms,
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/admin/services',
+    component: AdminServices,
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/admin/customers',
+    component: AdminCustomers,
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/admin/reports',
+    component: AdminReports,
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/admin/settings',
+    component: AdminSettings,
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  { 
     path: '/staff-rooms', 
     component: StaffRoomManagement,
     meta: { requiresAuth: true }
@@ -76,8 +119,8 @@ const routes = [
   },
   {
     path: '/staff',
-    component: StaffManagement,
-    meta: { requiresAuth: true }
+    component: AdminStaff,
+    meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
     path: '/manage-services',
@@ -87,6 +130,11 @@ const routes = [
   {
     path: '/cancellation-policy',
     component: CancellationPolicy
+  },
+  {
+    path: '/staff-messages',
+    component: StaffMessages,
+    meta: { requiresAuth: true }
   }
 ]
 
@@ -105,14 +153,37 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const user = JSON.parse(localStorage.getItem('user'))
+  const userStr = localStorage.getItem('user')
+  const user = userStr ? JSON.parse(userStr) : null
+
+  // Trang khách (guest paths)
+  const guestPaths = ['/', '/rooms', '/about', '/contact', '/services', '/blog', '/cancellation-policy']
+  
+  // Nếu là STAFF, cưỡng bức về staff-dashboard nếu truy cập trang khách hoặc các trang không thuộc staff
+  if (user && user.role === 'STAFF') {
+    const isStaffRoute = to.path.startsWith('/staff') || to.path === '/bookings' || to.path === '/manage-services' || to.path === '/login'
+    if (guestPaths.includes(to.path) || !isStaffRoute) {
+      if (to.path !== '/staff-dashboard') {
+        next('/staff-dashboard')
+        return
+      }
+    }
+  }
+
+  // Nếu là ADMIN, chuyển hướng từ trang khách sang admin-dashboard
+  if (user && user.role === 'ADMIN' && (guestPaths.includes(to.path) || to.path === '/staff-dashboard')) {
+    next('/admin-dashboard')
+    return
+  }
 
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!user) {
       next('/login')
     } else {
       // Check for specific route permissions
-      if ((to.path === '/dashboard' || to.path === '/staff') && user.role !== 'ADMIN') {
+      if (to.matched.some(record => record.meta.requiresAdmin) && user.role !== 'ADMIN') {
+        next('/staff-dashboard') // Redirect non-admins to staff dashboard
+      } else if ((to.path === '/dashboard' || to.path === '/staff') && user.role !== 'ADMIN') {
         next('/') // Redirect non-admins away from admin routes
       } else {
         next()
