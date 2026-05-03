@@ -1,128 +1,78 @@
 <template>
   <div class="min-h-screen flex bg-gray-50 font-sans">
-    <!-- Sidebar -->
-    <aside class="w-72 bg-[#004d26] text-white min-h-screen flex flex-col shadow-2xl shrink-0">
-      <div class="p-8 mb-4">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center font-black text-2xl border border-white/20">H</div>
-          <h1 class="text-2xl font-black uppercase tracking-tight text-white">Grand Hotel</h1>
-        </div>
-      </div>
-      
-      <nav class="flex-1 px-4 space-y-1">
-        <router-link to="/staff-dashboard" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group hover:bg-white/10">
-          <i class="fas fa-th-large text-xl opacity-70 group-hover:opacity-100"></i>
-          <span class="font-bold text-lg tracking-tight">Tổng quan</span>
-        </router-link>
-
-        <router-link to="/staff-rooms" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group hover:bg-white/10">
-          <i class="fas fa-door-open text-xl opacity-70 group-hover:opacity-100"></i>
-          <span class="font-bold text-lg tracking-tight">Quản lý Phòng</span>
-        </router-link>
-
-        <router-link to="/bookings" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group bg-white/10">
-          <i class="fas fa-calendar-alt text-xl opacity-100"></i>
-          <span class="font-bold text-lg tracking-tight">Quản lý Đặt phòng</span>
-        </router-link>
-
-        <router-link to="/manage-services" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group hover:bg-white/10">
-          <i class="fas fa-bell text-xl opacity-70 group-hover:opacity-100"></i>
-          <span class="font-bold text-lg tracking-tight">Quản lý Dịch vụ</span>
-        </router-link>
-
-        <router-link to="/staff-messages" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group hover:bg-white/10">
-          <i class="fas fa-envelope text-xl opacity-70 group-hover:opacity-100"></i>
-          <span class="font-bold text-lg tracking-tight">Phản hồi khách hàng</span>
-        </router-link>
-      </nav>
-
-      <div class="p-6 border-t border-white/10">
-        <button @click="logout" class="flex items-center gap-4 py-4 px-6 w-full rounded-xl transition-all duration-300 hover:bg-white/10 group text-white uppercase tracking-widest font-black text-sm">
-          <span>Đăng xuất</span>
-        </button>
-      </div>
-    </aside>
+    <!-- Dynamic Sidebar based on user role -->
+    <AdminSidebar v-if="isAdmin" />
+    <StaffSidebar v-else />
 
     <!-- Main Content -->
     <main class="flex-1 p-10 overflow-y-auto">
-      <header class="flex justify-between items-center mb-10">
-        <div class="flex items-center gap-6">
-          <div class="w-14 h-14 bg-[#004d26] text-white rounded-2xl flex items-center justify-center shadow-xl cursor-pointer hover:rotate-180 transition-all duration-500" @click="fetchBookings" title="Làm mới dữ liệu">
-            <i class="fas fa-sync-alt text-2xl"></i>
-          </div>
-          <div>
-            <h2 class="text-4xl font-black text-gray-900 uppercase tracking-tight mb-2">Quản lý đặt phòng</h2>
-          </div>
+      <header class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+        <div>
+          <h2 class="text-3xl font-black tracking-tight text-slate-800">Quản lý đặt phòng</h2>
         </div>
-        <button @click="openCreateModal" class="bg-[#004d26] hover:bg-[#003d1e] text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-xl shadow-green-200 flex items-center gap-3">
+        <button @click="openCreateModal" class="bg-[#004d26] hover:bg-[#003d1e] text-white px-6 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition-all shadow-xl shadow-green-200/50 flex items-center gap-3">
           <i class="fas fa-plus"></i>
           Tạo booking mới
         </button>
       </header>
 
       <!-- Stats Quick View -->
-      <div class="grid grid-cols-4 gap-6 mb-10">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div v-for="tab in tabs" :key="tab.value" 
           @click="filters.status = tab.value"
-          :class="filters.status === tab.value ? 'bg-[#004d26] text-white shadow-lg shadow-green-100' : 'bg-white text-gray-500 hover:bg-gray-50'"
-          class="p-6 rounded-[2rem] cursor-pointer transition-all border border-transparent"
+          :class="filters.status === tab.value ? 'bg-[#004d26] text-white shadow-lg shadow-green-100' : 'bg-white text-slate-500 hover:bg-slate-50'"
+          class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 cursor-pointer transition-all"
         >
           <div class="flex items-center justify-between">
             <span class="text-[10px] font-black uppercase tracking-widest">{{ tab.label }}</span>
-            <i :class="tab.icon" class="text-xl opacity-20"></i>
+            <i :class="tab.icon" class="text-lg opacity-20"></i>
           </div>
           <div class="text-3xl font-black mt-2">{{ getBookingCount(tab.value) }}</div>
         </div>
       </div>
 
       <!-- Search and Filter Bar -->
-      <div class="bg-white rounded-[2.5rem] shadow-xl p-8 mb-10 border border-gray-50">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="space-y-3">
-            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Tìm kiếm khách hàng</label>
-            <div class="relative group">
-              <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#004d26] transition-colors"></i>
-              <input type="text" v-model="filters.customerName" placeholder="Nhập tên khách hàng..." class="w-full bg-gray-50 border-0 rounded-2xl pl-14 pr-6 py-4 outline-none focus:ring-2 focus:ring-[#004d26] text-sm font-bold transition-all">
+      <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden mb-8">
+        <div class="p-8 border-b border-slate-50 bg-slate-50/50">
+          <div class="flex flex-col lg:flex-row gap-4 w-full">
+            <div class="relative w-full lg:w-80">
+              <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-300"></i>
+              <input type="text" v-model="filters.customerName" placeholder="Tìm kiếm khách hàng..." class="w-full bg-white border-2 border-slate-100 rounded-xl pl-12 pr-5 py-3 outline-none focus:border-[#004d26] transition-all font-bold text-sm">
             </div>
-          </div>
-          <div class="space-y-3">
-            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Tìm theo phòng</label>
-            <div class="relative group">
-              <i class="fas fa-door-open absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#004d26] transition-colors"></i>
-              <input type="text" v-model="filters.roomNumber" placeholder="Nhập số phòng..." class="w-full bg-gray-50 border-0 rounded-2xl pl-14 pr-6 py-4 outline-none focus:ring-2 focus:ring-[#004d26] text-sm font-bold transition-all">
+            <div class="relative w-full lg:w-80">
+              <i class="fas fa-door-open absolute left-5 top-1/2 -translate-y-1/2 text-slate-300"></i>
+              <input type="text" v-model="filters.roomNumber" placeholder="Tìm theo phòng..." class="w-full bg-white border-2 border-slate-100 rounded-xl pl-12 pr-5 py-3 outline-none focus:border-[#004d26] transition-all font-bold text-sm">
             </div>
-          </div>
-          <div class="space-y-3">
-            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 ml-1">Lọc theo ngày</label>
-            <div class="relative group">
-              <i class="fas fa-calendar-alt absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#004d26] transition-colors"></i>
-              <input type="date" v-model="filters.date" class="w-full bg-gray-50 border-0 rounded-2xl pl-14 pr-6 py-4 outline-none focus:ring-2 focus:ring-[#004d26] text-sm font-bold transition-all">
-            </div>
+            <input type="date" v-model="filters.date" class="w-full lg:w-auto bg-white border-2 border-slate-100 rounded-xl px-5 py-3 outline-none focus:border-[#004d26] font-bold text-sm text-slate-600">
           </div>
         </div>
       </div>
 
       <!-- Bookings Table -->
-      <div class="bg-white rounded-[3rem] shadow-2xl shadow-gray-200 overflow-hidden border border-gray-100">
-        <div class="overflow-x-auto">
-          <table class="min-w-full">
+      <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+        <div v-if="loading" class="p-16 text-center text-slate-400 font-bold">Đang tải danh sách đặt phòng...</div>
+        <div v-else-if="filteredBookings.length === 0" class="p-16 text-center text-slate-400 font-bold">Không có đặt phòng phù hợp.</div>
+        <div v-else class="overflow-x-auto">
+          <table class="w-full">
             <thead>
-              <tr class="bg-[#004d26] text-white">
-                <th class="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[0.2em] opacity-60">ID</th>
-                <th class="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Khách hàng</th>
-                <th class="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Thông tin phòng</th>
-                <th class="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Check-in</th>
-                <th class="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Check-out</th>
-                <th class="px-8 py-6 text-left text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Trạng thái</th>
-                <th class="px-8 py-6 text-center text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Thao tác</th>
+              <tr class="bg-slate-50/50 text-left">
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">ID</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Khách hàng</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Thông tin phòng</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Check-in</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Check-out</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Trạng thái</th>
+                <th class="px-8 py-5 text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Thao tác</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-50">
-              <tr v-for="booking in filteredBookings" :key="booking.id" class="hover:bg-gray-50/50 transition-all group">
-                <td class="px-8 py-6 text-sm font-black text-gray-900">#{{ booking.id }}</td>
+            <tbody class="divide-y divide-slate-50">
+              <tr v-for="booking in filteredBookings" :key="booking.id" class="hover:bg-slate-50/50 transition-colors">
                 <td class="px-8 py-6">
-                  <div class="text-sm font-black text-gray-900 uppercase tracking-tight">{{ booking.guestFullName || booking.customer?.fullName }}</div>
-                  <div class="text-[10px] font-bold text-gray-400 mt-1 flex items-center gap-2">
+                  <div class="font-black text-slate-800">#{{ booking.id }}</div>
+                </td>
+                <td class="px-8 py-6">
+                  <div class="text-sm font-black text-slate-800 uppercase tracking-tight">{{ booking.guestFullName || booking.customer?.fullName }}</div>
+                  <div class="text-[10px] font-bold text-slate-400 mt-1 flex items-center gap-2">
                     <i class="fas fa-phone-alt text-[8px]"></i>
                     {{ booking.guestPhone || booking.customer?.phone || 'N/A' }}
                   </div>
@@ -137,28 +87,28 @@
                   </div>
                 </td>
                 <td class="px-8 py-6">
-                  <div class="text-sm font-bold text-gray-700">{{ formatDate(booking.checkInDate) }}</div>
+                  <div class="text-sm font-bold text-slate-700">{{ formatDate(booking.checkInDate) }}</div>
                 </td>
                 <td class="px-8 py-6">
-                  <div class="text-sm font-bold text-gray-700">{{ formatDate(booking.checkOutDate) }}</div>
+                  <div class="text-sm font-bold text-slate-700">{{ formatDate(booking.checkOutDate) }}</div>
                 </td>
                 <td class="px-8 py-6">
-                  <span :class="getStatusClass(booking.status)" class="px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-[0.1em] shadow-sm inline-block">
+                  <span :class="getStatusClass(booking.status)" class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
                     {{ formatStatus(booking.status) }}
                   </span>
                 </td>
                 <td class="px-8 py-6">
-                  <div class="flex justify-center gap-3">
-                    <button v-if="['PENDING', 'CONFIRMED'].includes(booking.status)" @click="openCheckInModal(booking)" class="w-11 h-11 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all shadow-sm" title="Check-in">
+                  <div class="flex justify-center gap-2">
+                    <button v-if="['PENDING', 'CONFIRMED'].includes(booking.status)" @click="openCheckInModal(booking)" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all flex items-center justify-center shadow-sm" title="Check-in">
                       <i class="fas fa-sign-in-alt"></i>
                     </button>
-                    <button v-if="booking.status === 'CHECKED_IN'" @click="handleCheckOut(booking.id)" class="w-11 h-11 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all shadow-sm" title="Check-out">
+                    <button v-if="booking.status === 'CHECKED_IN'" @click="handleCheckOut(booking.id)" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 transition-all flex items-center justify-center shadow-sm" title="Check-out">
                       <i class="fas fa-sign-out-alt"></i>
                     </button>
-                    <button v-if="!['COMPLETED', 'CANCELLED'].includes(booking.status)" @click="openUpdateModal(booking)" class="w-11 h-11 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center hover:bg-amber-600 hover:text-white transition-all shadow-sm" title="Sửa / Đổi phòng">
+                    <button v-if="!['COMPLETED', 'CANCELLED'].includes(booking.status)" @click="openUpdateModal(booking)" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:bg-amber-50 hover:text-amber-600 transition-all flex items-center justify-center shadow-sm" title="Sửa / Đổi phòng">
                       <i class="fas fa-edit"></i>
                     </button>
-                    <button v-if="!['COMPLETED', 'CANCELLED'].includes(booking.status)" @click="handleCancel(booking.id)" class="w-11 h-11 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center hover:bg-rose-600 hover:text-white transition-all shadow-sm" title="Hủy booking">
+                    <button v-if="!['COMPLETED', 'CANCELLED'].includes(booking.status)" @click="handleCancel(booking.id)" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-all flex items-center justify-center shadow-sm" title="Hủy booking">
                       <i class="fas fa-times"></i>
                     </button>
                   </div>
@@ -166,14 +116,6 @@
               </tr>
             </tbody>
           </table>
-          
-          <div v-if="filteredBookings.length === 0" class="p-32 text-center">
-            <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-8 border-2 border-dashed border-gray-100">
-              <i class="fas fa-folder-open text-3xl text-gray-200"></i>
-            </div>
-            <h4 class="text-xl font-black text-gray-300 uppercase tracking-widest">Không có dữ liệu</h4>
-            <p class="text-sm text-gray-400 mt-3 font-medium">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
-          </div>
         </div>
       </div>
     </main>
@@ -279,8 +221,14 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from '../api/axios'
+import AdminSidebar from '../components/AdminSidebar.vue'
+import StaffSidebar from '../components/StaffSidebar.vue'
 
 const router = useRouter()
+const isAdmin = computed(() => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  return user.role === 'ADMIN'
+})
 const bookings = ref([])
 const availableRooms = ref([])
 const showModal = ref(false)

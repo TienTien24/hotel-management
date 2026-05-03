@@ -1,147 +1,118 @@
 <template>
   <div class="min-h-screen flex bg-gray-50 font-sans">
     <!-- Sidebar -->
-    <aside class="w-72 bg-[#004d26] text-white min-h-screen flex flex-col shadow-2xl shrink-0">
-      <div class="p-8 mb-4">
+    <aside class="w-72 bg-[#004d26] text-white min-h-screen flex flex-col shadow-2xl shrink-0 z-50">
+      <div class="p-8 border-b border-white/5">
         <div class="flex items-center gap-3">
-          <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center font-black text-2xl border border-white/20">H</div>
-          <h1 class="text-2xl font-black uppercase tracking-tight">Grand Hotel</h1>
+          <div class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center font-black text-xl border border-white/20">H</div>
+          <div>
+            <h1 class="text-lg font-black uppercase tracking-tight leading-none">Grand Hotel</h1>
+          </div>
         </div>
       </div>
       
-      <nav class="flex-1 px-4 space-y-1">
-        <router-link to="/staff-dashboard" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="{'bg-white/10': $route.path === '/staff-dashboard', 'hover:bg-white/10': $route.path !== '/staff-dashboard'}">
-          <i class="fas fa-th-large text-xl opacity-70 group-hover:opacity-100" :class="{'opacity-100': $route.path === '/staff-dashboard'}"></i>
-          <span class="font-bold text-lg tracking-tight">Tổng quan</span>
+      <nav class="flex-1 px-4 mt-8 space-y-1">
+        <router-link to="/staff-dashboard" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="$route.path === '/staff-dashboard' ? 'bg-white/10 text-white shadow-lg' : 'text-white/60 hover:bg-white/5 hover:text-white'">
+          <i class="fas fa-chart-pie text-lg"></i>
+          <span class="font-bold text-sm tracking-tight">Tổng quan</span>
         </router-link>
 
-        <router-link to="/staff-rooms" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="{'bg-white/10': $route.path === '/staff-rooms', 'hover:bg-white/10': $route.path !== '/staff-rooms'}">
-          <i class="fas fa-door-open text-xl opacity-70 group-hover:opacity-100" :class="{'opacity-100': $route.path === '/staff-rooms'}"></i>
-          <span class="font-bold text-lg tracking-tight">Quản lý Phòng</span>
+        <router-link to="/staff-rooms" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="$route.path === '/staff-rooms' ? 'bg-white/10 text-white shadow-lg' : 'text-white/60 hover:bg-white/5 hover:text-white'">
+          <i class="fas fa-bed text-lg"></i>
+          <span class="font-bold text-sm tracking-tight">Quản lý Phòng</span>
         </router-link>
 
-        <router-link to="/bookings" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="{'bg-white/10': $route.path === '/bookings', 'hover:bg-white/10': $route.path !== '/bookings'}">
-          <i class="fas fa-calendar-alt text-xl opacity-70 group-hover:opacity-100" :class="{'opacity-100': $route.path === '/bookings'}"></i>
-          <span class="font-bold text-lg tracking-tight">Quản lý Đặt phòng</span>
+        <router-link to="/bookings" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="$route.path === '/bookings' ? 'bg-white/10 text-white shadow-lg' : 'text-white/60 hover:bg-white/5 hover:text-white'">
+          <i class="fas fa-calendar-check text-lg"></i>
+          <span class="font-bold text-sm tracking-tight">Quản lý Đặt phòng</span>
         </router-link>
 
-        <router-link to="/manage-services" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="{'bg-white/10': $route.path === '/manage-services', 'hover:bg-white/10': $route.path !== '/manage-services'}">
-          <i class="fas fa-bell text-xl opacity-70 group-hover:opacity-100" :class="{'opacity-100': $route.path === '/manage-services'}"></i>
-          <span class="font-bold text-lg tracking-tight">Quản lý Dịch vụ</span>
+        <router-link to="/manage-services" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="$route.path === '/manage-services' ? 'bg-white/10 text-white shadow-lg' : 'text-white/60 hover:bg-white/5 hover:text-white'">
+          <i class="fas fa-concierge-bell text-lg"></i>
+          <span class="font-bold text-sm tracking-tight">Quản lý Dịch vụ</span>
         </router-link>
 
-        <router-link to="/staff-messages" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="{'bg-white/10': $route.path === '/staff-messages', 'hover:bg-white/10': $route.path !== '/staff-messages'}">
-          <div class="relative">
-            <i class="fas fa-envelope text-xl opacity-70 group-hover:opacity-100" :class="{'opacity-100': $route.path === '/staff-messages'}"></i>
-            <span v-if="stats.pendingMessages > 0" class="absolute -top-2 -right-2 w-4 h-4 bg-rose-500 text-[8px] font-black rounded-full flex items-center justify-center border border-white/20">
-              {{ stats.pendingMessages }}
-            </span>
-          </div>
-          <span class="font-bold text-lg tracking-tight">Phản hồi khách hàng</span>
+        <router-link to="/staff-messages" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="$route.path === '/staff-messages' ? 'bg-white/10 text-white shadow-lg' : 'text-white/60 hover:bg-white/5 hover:text-white'">
+          <i class="fas fa-comment-alt text-lg"></i>
+          <span class="font-bold text-sm tracking-tight">Phản hồi khách hàng</span>
         </router-link>
       </nav>
 
-      <div class="p-10 mt-auto">
-        <button @click="logout" class="text-white/60 hover:text-white transition-colors font-black uppercase tracking-[0.2em] text-xs flex items-center gap-3">
+      <div class="p-8 border-t border-white/5">
+        <button @click="logout" class="w-full py-4 px-6 bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white rounded-xl transition-all duration-300 flex items-center justify-center gap-3 font-black uppercase tracking-widest text-[10px]">
           <i class="fas fa-sign-out-alt"></i>
-          Đăng xuất
+          <span>Đăng xuất</span>
         </button>
       </div>
     </aside>
 
     <!-- Main Content -->
     <main class="flex-1 p-10 overflow-y-auto">
+      <header class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+        <div>
+          <h2 class="text-3xl font-black tracking-tight text-slate-800">Tổng quan</h2>
+        </div>
+      </header>
+
       <!-- Stats Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-        <!-- Phòng Trống Card -->
-        <div class="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-gray-200 border border-gray-50 flex flex-col items-center text-center group transition-all duration-300 hover:-translate-y-2">
-          <div class="w-16 h-16 bg-[#00a859] rounded-3xl flex items-center justify-center text-white shadow-xl shadow-green-100 mb-6">
-            <i class="fas fa-bed text-2xl"></i>
-          </div>
-          <h3 class="text-[#00a859] font-black uppercase tracking-widest text-[10px] mb-2">Phòng Trống</h3>
-          <p class="text-4xl font-black text-gray-900 mb-2">{{ stats.availableRooms || 0 }}</p>
-          <p class="text-gray-400 font-bold uppercase tracking-widest text-[8px]">Số phòng trống</p>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Phòng trống</p>
+          <p class="text-3xl font-black text-emerald-600">{{ stats.availableRooms || 0 }}</p>
         </div>
-
-        <!-- Booking Mới Card -->
-        <div class="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-gray-200 border border-gray-50 flex flex-col items-center text-center group transition-all duration-300 hover:-translate-y-2">
-          <div class="w-16 h-16 bg-[#f39200] rounded-3xl flex items-center justify-center text-white shadow-xl shadow-orange-100 mb-6">
-            <i class="fas fa-calendar-check text-2xl"></i>
-          </div>
-          <h3 class="text-[#f39200] font-black uppercase tracking-widest text-[10px] mb-2">Booking Mới</h3>
-          <p class="text-4xl font-black text-gray-900 mb-2">{{ stats.newBookings || 0 }}</p>
-          <p class="text-gray-400 font-bold uppercase tracking-widest text-[8px]">Đặt phòng hôm nay</p>
+        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Booking mới</p>
+          <p class="text-3xl font-black text-amber-600">{{ stats.newBookings || 0 }}</p>
         </div>
-
-        <!-- Phòng Có Khách Card -->
-        <div class="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-gray-200 border border-gray-50 flex flex-col items-center text-center group transition-all duration-300 hover:-translate-y-2">
-          <div class="w-16 h-16 bg-[#8e44ad] rounded-3xl flex items-center justify-center text-white shadow-xl shadow-purple-100 mb-6">
-            <i class="fas fa-building text-2xl"></i>
-          </div>
-          <h3 class="text-[#8e44ad] font-black uppercase tracking-widest text-[10px] mb-2">Phòng Có Khách</h3>
-          <p class="text-4xl font-black text-gray-900 mb-2">{{ stats.occupiedRooms || 0 }} / {{ stats.totalRooms || 64 }}</p>
-          <p class="text-gray-400 font-bold uppercase tracking-widest text-[8px]">Phòng đang sử dụng</p>
+        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Phòng có khách</p>
+          <p class="text-3xl font-black text-blue-600">{{ stats.occupiedRooms || 0 }}</p>
         </div>
-
-        <!-- Tin nhắn mới Card -->
-        <div class="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-gray-200 border border-gray-50 flex flex-col items-center text-center group transition-all duration-300 hover:-translate-y-2 cursor-pointer" @click="$router.push('/staff-messages')">
-          <div class="w-16 h-16 bg-rose-500 rounded-3xl flex items-center justify-center text-white shadow-xl shadow-rose-100 mb-6 relative">
-            <i class="fas fa-envelope text-2xl"></i>
-            <span v-if="stats.pendingMessages > 0" class="absolute -top-1 -right-1 w-6 h-6 bg-white text-rose-500 text-[10px] font-black rounded-full flex items-center justify-center border-2 border-rose-500 shadow-sm">{{ stats.pendingMessages }}</span>
-          </div>
-          <h3 class="text-rose-500 font-black uppercase tracking-widest text-[10px] mb-2">Tin nhắn mới</h3>
-          <p class="text-4xl font-black text-gray-900 mb-2">{{ stats.pendingMessages || 0 }}</p>
-          <p class="text-gray-400 font-bold uppercase tracking-widest text-[8px]">Cần phản hồi</p>
+        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Tin nhắn mới</p>
+          <p class="text-3xl font-black text-rose-600">{{ stats.pendingMessages || 0 }}</p>
         </div>
       </div>
 
       <!-- Sơ đồ phòng trực quan Section -->
-      <div class="bg-white rounded-[3rem] shadow-2xl shadow-gray-200 overflow-hidden border border-gray-100">
-        <div class="bg-[#004d26] text-white p-10 flex justify-between items-center">
-          <div>
-            <h3 class="text-3xl font-black uppercase tracking-tight">Sơ đồ phòng trực quan</h3>
-            <p class="text-green-100/60 text-sm mt-2 font-medium">Tình trạng phòng thực tế</p>
-          </div>
-          <div class="flex gap-6">
-            <div class="flex items-center gap-3">
-              <span class="w-3 h-3 rounded-full bg-[#00a859]"></span>
-              <span class="text-[11px] font-black uppercase tracking-widest text-green-50">Trống</span>
+      <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+        <div class="p-8 border-b border-slate-50 bg-slate-50/50">
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+              <h3 class="text-2xl font-black text-slate-800">Sơ đồ phòng trực quan</h3>
+              <p class="text-slate-400 text-sm mt-1">Tình trạng phòng thực tế</p>
             </div>
-            <div class="flex items-center gap-3">
-              <span class="w-3 h-3 rounded-full bg-[#1d4ed8]"></span>
-              <span class="text-[11px] font-black uppercase tracking-widest text-green-50">Đã đặt</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="w-3 h-3 rounded-full bg-[#e74c3c]"></span>
-              <span class="text-[11px] font-black uppercase tracking-widest text-green-50">Có khách</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="w-3 h-3 rounded-full bg-[#f1c40f]"></span>
-              <span class="text-[11px] font-black uppercase tracking-widest text-green-50">Đang dọn</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="w-3 h-3 rounded-full bg-[#3498db]"></span>
-              <span class="text-[11px] font-black uppercase tracking-widest text-green-50">Bảo trì</span>
+            <div class="flex gap-4 flex-wrap">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-emerald-600"></span>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Trống</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-blue-600"></span>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Đã đặt</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-rose-600"></span>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Có khách</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-amber-600"></span>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Đang dọn</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-slate-600"></span>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Bảo trì</span>
+              </div>
             </div>
           </div>
         </div>
         
-        <div class="p-10 bg-gray-50/30">
+        <div class="p-8">
           <RoomMap ref="roomMap" @refresh-stats="fetchStats" :hide-header="true" />
         </div>
       </div>
     </main>
 
-    <!-- Floating Notification -->
-    <div v-if="showNotification" class="fixed bottom-10 right-10 bg-white rounded-[2rem] shadow-2xl p-6 border-l-8 border-rose-500 flex items-center gap-6 animate-bounce-in z-[100] cursor-pointer" @click="$router.push('/staff-messages')">
-      <div class="w-14 h-14 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500">
-        <i class="fas fa-envelope text-xl"></i>
-      </div>
-      <div>
-        <h4 class="text-sm font-black text-gray-900 uppercase tracking-tight">Tin nhắn mới!</h4>
-        <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">Bạn có phản hồi mới từ khách hàng</p>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -204,23 +175,16 @@ onUnmounted(() => {
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
 main::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 main::-webkit-scrollbar-track {
-  background: transparent;
+  background: #f1f1f1;
 }
 main::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
+  background: #005c32;
   border-radius: 10px;
 }
-
-.animate-bounce-in {
-  animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-}
-
-@keyframes bounceIn {
-  0% { opacity: 0; transform: translateY(100px) scale(0.3); }
-  60% { opacity: 1; transform: translateY(-20px) scale(1.05); }
-  100% { transform: translateY(0) scale(1); }
+main::-webkit-scrollbar-thumb:hover {
+  background: #004d26;
 }
 </style>

@@ -119,7 +119,7 @@ INSERT INTO `hotel_service` (`id`, `description`, `name`, `price`) VALUES
 CREATE TABLE `invoice` (
   `id` bigint(20) NOT NULL,
   `payment_date` datetime(6) DEFAULT NULL,
-  `payment_status` enum('PAID','UNPAID','REFUNDED') DEFAULT NULL,
+  `payment_status` enum('PAID','UNPAID') DEFAULT NULL,
   `room_charges` double DEFAULT NULL,
   `service_charges` double DEFAULT NULL,
   `total_amount` double DEFAULT NULL,
@@ -176,7 +176,6 @@ CREATE TABLE `users` (
   `id` bigint(20) NOT NULL,
   `email` varchar(255) DEFAULT NULL,
   `full_name` varchar(255) DEFAULT NULL,
-  `is_locked` tinyint(1) DEFAULT 0,
   `password` varchar(255) DEFAULT NULL,
   `phone` varchar(255) DEFAULT NULL,
   `role` enum('ADMIN','STAFF','CUSTOMER') DEFAULT NULL,

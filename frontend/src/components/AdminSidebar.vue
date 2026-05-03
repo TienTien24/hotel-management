@@ -45,6 +45,7 @@ const items = [
   { to: '/admin-dashboard', label: 'Tổng quan', icon: 'fas fa-chart-pie' },
   { to: '/admin/staff', label: 'Quản lý nhân viên', icon: 'fas fa-users-cog' },
   { to: '/admin/rooms', label: 'Quản lý phòng', icon: 'fas fa-bed' },
+  { to: '/bookings', label: 'Quản lý Đặt phòng', icon: 'fas fa-calendar-check' },
   { to: '/admin/services', label: 'Quản lý dịch vụ', icon: 'fas fa-concierge-bell' },
   { to: '/admin/customers', label: 'Quản lý khách hàng', icon: 'fas fa-user-friends' },
   { to: '/admin/reports', label: 'Báo cáo doanh thu', icon: 'fas fa-file-invoice-dollar' },
