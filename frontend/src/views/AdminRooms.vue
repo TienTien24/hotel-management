@@ -6,7 +6,6 @@
       <header class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
         <div>
           <h2 class="text-3xl font-black tracking-tight text-slate-800">Quản lý phòng</h2>
-          <p class="text-sm text-slate-400 font-bold mt-2">Quản lý danh sách phòng, trạng thái và thông tin hiển thị</p>
         </div>
         <button @click="openCreateModal" class="bg-[#004d26] hover:bg-[#003d1e] text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-xl shadow-green-100 flex items-center gap-3">
           <i class="fas fa-plus"></i>
@@ -73,7 +72,7 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
-              <tr v-for="room in filteredRooms" :key="room.id" class="hover:bg-slate-50/50 transition-colors">
+              <tr v-for="room in paginatedRooms" :key="room.id" class="hover:bg-slate-50/50 transition-colors">
                 <td class="px-8 py-6">
                   <div class="font-black text-slate-800">{{ room.roomNumber }}</div>
                 </td>
@@ -99,6 +98,28 @@
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Pagination -->
+        <div v-if="filteredRooms.length > 0" class="p-8 bg-slate-50/30 border-t border-slate-50 flex flex-col md:flex-row justify-between items-center gap-6">
+          <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">
+            Hiển thị <span class="text-slate-800">{{ startIndex + 1 }} - {{ Math.min(endIndex, filteredRooms.length) }}</span> trong <span class="text-slate-800">{{ filteredRooms.length }}</span> phòng
+          </p>
+          <div class="flex items-center gap-2">
+            <button @click="currentPage--" :disabled="currentPage === 1" class="w-10 h-10 rounded-xl bg-white border-2 border-slate-100 text-slate-400 hover:border-[#004d26] hover:text-[#004d26] disabled:opacity-30 disabled:hover:border-slate-100 disabled:hover:text-slate-400 transition-all flex items-center justify-center">
+              <i class="fas fa-chevron-left text-xs"></i>
+            </button>
+            
+            <div class="flex items-center gap-2">
+              <button v-for="page in totalPages" :key="page" @click="currentPage = page" :class="[currentPage === page ? 'bg-[#004d26] border-[#004d26] text-white' : 'bg-white border-slate-100 text-slate-500 hover:border-[#004d26]']" class="w-10 h-10 rounded-xl border-2 font-black text-xs transition-all">
+                {{ page }}
+              </button>
+            </div>
+
+            <button @click="currentPage++" :disabled="currentPage === totalPages" class="w-10 h-10 rounded-xl bg-white border-2 border-slate-100 text-slate-400 hover:border-[#004d26] hover:text-[#004d26] disabled:opacity-30 disabled:hover:border-slate-100 disabled:hover:text-slate-400 transition-all flex items-center justify-center">
+              <i class="fas fa-chevron-right text-xs"></i>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -178,7 +199,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import axios from '../api/axios'
 import AdminSidebar from '../components/AdminSidebar.vue'
 
@@ -188,10 +209,18 @@ const rooms = ref([])
 const showModal = ref(false)
 const editingId = ref(null)
 
+// Pagination state
+const currentPage = ref(1)
+const itemsPerPage = ref(10)
+
 const filters = ref({
   search: '',
   category: '',
   status: ''
+})
+
+watch([() => filters.value.search, () => filters.value.category, () => filters.value.status], () => {
+  currentPage.value = 1
 })
 
 const createDefaultForm = () => ({
@@ -222,13 +251,20 @@ const fetchRooms = async () => {
 
 const filteredRooms = computed(() => {
   const query = filters.value.search.trim().toLowerCase()
-  return rooms.value.filter((room) => {
+  const result = rooms.value.filter((room) => {
     const matchesSearch = !query || String(room.roomNumber).toLowerCase().includes(query)
     const matchesCategory = !filters.value.category || room.category === filters.value.category
     const matchesStatus = !filters.value.status || room.status === filters.value.status
     return matchesSearch && matchesCategory && matchesStatus
   })
+  // Reset to page 1 when filters change
+  return result
 })
+
+const totalPages = computed(() => Math.ceil(filteredRooms.value.length / itemsPerPage.value))
+const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage.value)
+const endIndex = computed(() => startIndex.value + itemsPerPage.value)
+const paginatedRooms = computed(() => filteredRooms.value.slice(startIndex.value, endIndex.value))
 
 const openCreateModal = () => {
   editingId.value = null

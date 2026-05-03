@@ -31,7 +31,7 @@
           </div>
           <h3 class="text-slate-400 font-black uppercase tracking-widest text-[10px] mb-2">Tổng doanh thu</h3>
           <p class="text-3xl font-black text-slate-800 tracking-tight">{{ formatCurrency(stats.totalRevenue) }}</p>
-          <p class="text-[10px] text-slate-400 font-bold mt-2 uppercase tracking-widest">So với tuần trước</p>
+          <p class="text-[10px] text-slate-400 font-bold mt-2 uppercase tracking-widest">Tất cả thời gian</p>
         </div>
 
         <!-- Đặt phòng Card -->
@@ -45,8 +45,8 @@
             </div>
           </div>
           <h3 class="text-slate-400 font-black uppercase tracking-widest text-[10px] mb-2">Tổng đặt phòng</h3>
-          <p class="text-3xl font-black text-slate-800 tracking-tight">{{ stats.newBookings || 156 }}</p>
-          <p class="text-[10px] text-slate-400 font-bold mt-2 uppercase tracking-widest">Đơn hàng mới hôm nay</p>
+          <p class="text-3xl font-black text-slate-800 tracking-tight">{{ stats.newBookings || 0 }}</p>
+          <p class="text-[10px] text-slate-400 font-bold mt-2 uppercase tracking-widest">Tổng số đơn hàng</p>
         </div>
 
         <!-- Tỷ lệ lấp đầy Card -->
@@ -60,7 +60,7 @@
             </div>
           </div>
           <h3 class="text-slate-400 font-black uppercase tracking-widest text-[10px] mb-2">Tỷ lệ lấp đầy</h3>
-          <p class="text-3xl font-black text-slate-800 tracking-tight">{{ stats.occupancyRate?.toFixed(1) || 72 }}%</p>
+          <p class="text-3xl font-black text-slate-800 tracking-tight">{{ stats.occupancyRate?.toFixed(1) || '0.0' }}%</p>
           <p class="text-[10px] text-slate-400 font-bold mt-2 uppercase tracking-widest">Hiệu suất sử dụng phòng</p>
         </div>
 
@@ -75,7 +75,7 @@
             </div>
           </div>
           <h3 class="text-slate-400 font-black uppercase tracking-widest text-[10px] mb-2">Phòng đang ở</h3>
-          <p class="text-3xl font-black text-slate-800 tracking-tight">{{ stats.occupiedRooms || 86 }}</p>
+          <p class="text-3xl font-black text-slate-800 tracking-tight">{{ stats.occupiedRooms || 0 }}</p>
           <p class="text-[10px] text-slate-400 font-bold mt-2 uppercase tracking-widest">Khách đang lưu trú</p>
         </div>
       </div>
@@ -175,8 +175,8 @@ const revenueChartData = computed(() => {
   return {
     labels: revenueDetails.value.map(d => new Date(d.date).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })),
     datasets: [{
-      label: 'Doanh thu',
-      data: revenueDetails.value.map(d => d.revenue),
+      label: 'Doanh thu (VND)',
+      data: revenueDetails.value.map(d => d.revenue * 25000),
       borderColor: '#3b82f6',
       backgroundColor: 'rgba(59, 130, 246, 0.1)',
       fill: true,

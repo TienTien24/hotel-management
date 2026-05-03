@@ -1,54 +1,69 @@
 <template>
   <section class="relative z-20 -mt-24 pb-16">
     <div class="max-w-7xl mx-auto px-4">
-
-      <!-- Search Bar Container -->
-      <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl border border-gray-50">
-        <div class="flex flex-wrap lg:flex-nowrap items-end gap-4">
+      <div class="bg-white rounded-[2rem] shadow-2xl shadow-emerald-900/10 p-8 border border-emerald-50">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <!-- Check-in -->
-          <div class="flex-1 min-w-[200px]">
-            <label class="block text-[10px] font-black uppercase text-emerald-900 mb-3 tracking-[0.15em]">NGÀY CHECK-IN</label>
-            <div class="relative">
-              <input v-model="searchData.checkIn" type="date" class="w-full bg-gray-50 px-6 py-4 rounded-2xl border-none focus:ring-2 focus:ring-emerald-500 text-sm font-medium text-gray-700 placeholder-gray-400">
-            </div>
+          <div class="relative group">
+            <label class="absolute left-12 top-3 text-[9px] font-black text-gray-400 uppercase tracking-widest z-10">Ngày check-in</label>
+            <i class="fas fa-calendar-alt absolute left-5 top-1/2 -translate-y-1/2 text-emerald-800 text-sm"></i>
+            <input 
+              type="date" 
+              v-model="searchData.checkIn"
+              class="w-full bg-gray-50 border-2 border-gray-50 rounded-xl pl-12 pr-4 pt-7 pb-3 outline-none focus:bg-white focus:border-emerald-800 transition-all font-bold text-xs text-slate-700"
+            >
           </div>
 
           <!-- Check-out -->
-          <div class="flex-1 min-w-[200px]">
-            <label class="block text-[10px] font-black uppercase text-emerald-900 mb-3 tracking-[0.15em]">NGÀY CHECK-OUT</label>
-            <div class="relative">
-              <input v-model="searchData.checkOut" type="date" class="w-full bg-gray-50 px-6 py-4 rounded-2xl border-none focus:ring-2 focus:ring-emerald-500 text-sm font-medium text-gray-700 placeholder-gray-400">
-            </div>
+          <div class="relative group">
+            <label class="absolute left-12 top-3 text-[9px] font-black text-gray-400 uppercase tracking-widest z-10">Ngày check-out</label>
+            <i class="fas fa-calendar-check absolute left-5 top-1/2 -translate-y-1/2 text-emerald-800 text-sm"></i>
+            <input 
+              type="date" 
+              v-model="searchData.checkOut"
+              class="w-full bg-gray-50 border-2 border-gray-50 rounded-xl pl-12 pr-4 pt-7 pb-3 outline-none focus:bg-white focus:border-emerald-800 transition-all font-bold text-xs text-slate-700"
+            >
           </div>
 
           <!-- Guests -->
-          <div class="w-full lg:w-40">
-            <label class="block text-[10px] font-black uppercase text-emerald-900 mb-3 tracking-[0.15em]">SỐ NGƯỜI</label>
-            <input v-model.number="searchData.guests" type="number" min="1" class="w-full bg-gray-50 px-6 py-4 rounded-2xl border-none focus:ring-2 focus:ring-emerald-500 text-sm font-medium text-gray-700">
+          <div class="relative group">
+            <label class="absolute left-12 top-3 text-[9px] font-black text-gray-400 uppercase tracking-widest z-10">Số người</label>
+            <i class="fas fa-user-friends absolute left-5 top-1/2 -translate-y-1/2 text-emerald-800 text-sm"></i>
+            <select 
+              v-model="searchData.capacity"
+              class="w-full bg-gray-50 border-2 border-gray-50 rounded-xl pl-12 pr-4 pt-7 pb-3 outline-none focus:bg-white focus:border-emerald-800 transition-all font-bold text-xs text-slate-700 appearance-none cursor-pointer"
+            >
+              <option :value="1">1 người lớn</option>
+              <option :value="2">2 người lớn</option>
+              <option :value="3">3 người lớn</option>
+              <option :value="4">4 người lớn</option>
+            </select>
+            <i class="fas fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-gray-300 text-[10px] pointer-events-none"></i>
           </div>
 
           <!-- Room Type -->
-          <div class="w-full lg:w-48">
-            <label class="block text-[10px] font-black uppercase text-emerald-900 mb-3 tracking-[0.15em]">LOẠI PHÒNG</label>
-            <select v-model="searchData.category" class="w-full bg-gray-50 px-6 py-4 rounded-2xl border-none focus:ring-2 focus:ring-emerald-500 text-sm font-medium text-gray-700 appearance-none cursor-pointer">
+          <div class="relative group">
+            <label class="absolute left-12 top-3 text-[9px] font-black text-gray-400 uppercase tracking-widest z-10">Loại phòng</label>
+            <i class="fas fa-hotel absolute left-5 top-1/2 -translate-y-1/2 text-emerald-800 text-sm"></i>
+            <select 
+              v-model="searchData.category"
+              class="w-full bg-gray-50 border-2 border-gray-50 rounded-xl pl-12 pr-4 pt-7 pb-3 outline-none focus:bg-white focus:border-emerald-800 transition-all font-bold text-xs text-slate-700 appearance-none cursor-pointer"
+            >
               <option value="All">Tất cả</option>
               <option value="Standard">Standard</option>
               <option value="Deluxe">Deluxe</option>
               <option value="Suite">Suite</option>
             </select>
+            <i class="fas fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-gray-300 text-[10px] pointer-events-none"></i>
           </div>
 
-          <!-- Action Buttons -->
-          <div class="flex gap-3 w-full lg:w-auto">
-            <button @click="handleSearch" class="flex-1 lg:flex-none bg-emerald-800 text-white px-8 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-900 transition-all shadow-lg shadow-emerald-100 flex flex-col items-center justify-center leading-tight">
-              <span>TÌM</span>
-              <span>PHÒNG</span>
-            </button>
-            <button @click="handleClear" class="flex-1 lg:flex-none bg-gray-50 text-gray-500 px-8 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-gray-100 transition-all flex flex-col items-center justify-center leading-tight">
-              <span>XÓA</span>
-              <span>LỌC</span>
-            </button>
-          </div>
+          <!-- Search Button -->
+          <button 
+            @click="handleSearch"
+            class="w-full bg-[#004d26] text-white rounded-xl font-black uppercase tracking-[0.2em] text-[11px] hover:bg-emerald-700 transition-all shadow-xl shadow-green-900/20"
+          >
+            Tìm phòng
+          </button>
         </div>
       </div>
     </div>
@@ -66,7 +81,7 @@ const categories = ['All', 'Standard', 'Deluxe', 'Suite']
 const searchData = reactive({
   checkIn: '',
   checkOut: '',
-  guests: 1,
+  capacity: 1,
   category: 'All'
 })
 
@@ -75,8 +90,8 @@ const handleSearch = () => {
   if (searchData.category !== 'All') {
     query.category = searchData.category
   }
-  if (searchData.guests > 1) {
-    query.capacity = searchData.guests
+  if (searchData.capacity > 1) {
+    query.capacity = searchData.capacity
   }
   if (searchData.checkIn) {
     query.checkIn = searchData.checkIn
@@ -94,7 +109,7 @@ const handleSearch = () => {
 const handleClear = () => {
   searchData.checkIn = ''
   searchData.checkOut = ''
-  searchData.guests = 1
+  searchData.capacity = 1
   searchData.category = 'All'
 }
 </script>

@@ -1,205 +1,243 @@
 <template>
-  <div class="min-h-screen bg-white">
+  <div class="min-h-screen bg-white font-sans overflow-x-hidden">
     <!-- Hero Section -->
-    <HeroSlider />
-    <RoomSearchSection />
+    <section class="relative h-[600px] flex items-center justify-center">
+      <HeroSlider />
+      <!-- Hero Content Overlay -->
+      <div class="absolute inset-0 z-10 flex flex-col justify-center items-start max-w-7xl mx-auto px-6 pointer-events-none">
+      </div>
+    </section>
 
-    <!-- About Section -->
-    <section id="about" class="max-w-7xl mx-auto px-4 py-12 border-b border-gray-100">
-      <div class="flex flex-col md:flex-row items-start gap-12">
-        <div class="md:w-5/12 relative group">
-          <div class="absolute -top-10 -left-10 w-40 h-40 bg-emerald-50 rounded-full -z-10 group-hover:scale-110 transition-transform duration-700"></div>
-          <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" class="rounded-3xl shadow-2xl relative z-10 w-full h-[480px] object-cover transition-transform duration-700 hover:scale-[1.02]">
-          <div class="absolute -bottom-6 -right-6 bg-white p-8 rounded-2xl shadow-2xl z-20 border border-emerald-50 transform hover:-translate-y-2 transition-all duration-300 flex flex-col gap-4">
-            <div>
-              <p class="text-4xl font-black text-emerald-800">25+</p>
-              <p class="text-gray-500 uppercase tracking-widest text-[10px] font-bold mt-1">Năm Kinh Nghiệm</p>
+    <!-- Search Section -->
+    <div class="relative z-30 max-w-7xl mx-auto px-6 -mt-24">
+      <RoomSearchSection />
+    </div>
+
+    <!-- Quick Features -->
+    <section class="max-w-7xl mx-auto px-6 py-20 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+      <div v-for="(feat, idx) in quickFeatures" :key="idx" class="flex flex-col items-center text-center group">
+        <div class="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center text-emerald-800 text-xl mb-4 group-hover:bg-[#004d26] group-hover:text-white transition-all duration-500 shadow-sm border border-gray-100">
+          <i :class="feat.icon"></i>
+        </div>
+        <h4 class="text-[10px] font-black text-emerald-950 uppercase tracking-widest mb-1">{{ feat.title }}</h4>
+        <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">{{ feat.desc }}</p>
+      </div>
+    </section>
+
+    <!-- Room Highlights -->
+    <section id="rooms" class="max-w-7xl mx-auto px-6 py-32 border-t border-gray-50">
+      <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+        <div>
+          <p class="text-amber-400 font-bold uppercase tracking-[0.3em] text-[10px] mb-4">Phòng nghỉ</p>
+          <h2 class="text-3xl md:text-5xl font-black text-emerald-950 uppercase tracking-tighter leading-none">Không gian nghỉ dưỡng tuyệt vời</h2>
+        </div>
+        <router-link to="/rooms" class="group flex items-center gap-3 text-emerald-900 font-black uppercase tracking-widest text-[11px] hover:text-emerald-700 transition-colors">
+          Xem tất cả phòng
+          <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
+        </router-link>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Deluxe Ocean View -->
+        <div class="group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 border border-gray-100 flex flex-col h-full">
+          <div class="relative h-48 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
+          </div>
+          <div class="p-6 flex-1 flex flex-col">
+            <h3 class="text-lg font-black text-emerald-950 uppercase tracking-tight mb-2">Deluxe Ocean View</h3>
+            <div class="flex items-center gap-4 mb-4 text-gray-400">
+              <span class="text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5"><i class="fas fa-expand text-[8px]"></i> 45m²</span>
+              <span class="text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5"><i class="fas fa-users text-[8px]"></i> 2 người</span>
+              <span class="text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5"><i class="fas fa-bed text-[8px]"></i> 1 giường</span>
             </div>
-            <div class="pt-4 border-t border-gray-100">
-              <p class="text-3xl font-black text-emerald-800">60+</p>
-              <p class="text-gray-500 uppercase tracking-widest text-[10px] font-bold mt-1">Phòng & 6 Tầng</p>
+            <p class="text-[11px] text-gray-500 font-medium leading-relaxed mb-6 line-clamp-2">Hướng biển tuyệt đẹp, không gian thoáng đãng và đầy đủ tiện nghi hiện đại.</p>
+            <div class="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
+              <div><p class="text-lg font-black text-emerald-800 leading-none">1.850.000đ <span class="text-[10px] text-gray-400 font-bold">/đêm</span></p></div>
+              <button @click="$router.push('/rooms')" class="px-5 py-2 bg-white text-emerald-950 border border-emerald-100 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-[#004d26] hover:text-white transition-all">Xem chi tiết</button>
             </div>
           </div>
         </div>
-        <div class="md:w-7/12">
-          <h2 class="text-4xl md:text-6xl font-black uppercase text-emerald-950 tracking-tighter mb-10 leading-[1.1]">Chào mừng bạn đến với <span class="text-emerald-800">Grand Hotel</span></h2>
-          <p class="text-gray-600 font-light leading-relaxed mb-12 text-lg">
-            Được thành lập từ năm 2000, Grand Hotel không chỉ là một khách sạn nghỉ dưỡng, mà là nơi mỗi khoảnh khắc của bạn đều được trân trọng. Chúng tôi mang đến sự kết hợp hoàn hảo giữa kiến trúc sang trọng và dịch vụ tận tâm theo tiêu chuẩn quốc tế.
-          </p>
-          
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-10 mb-12">
-            <div class="flex items-start space-x-5 group">
-              <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-800 transition-colors duration-300">
-                <i class="fas fa-history text-2xl text-emerald-800 group-hover:text-white transition-colors"></i>
-              </div>
-              <div>
-                <h4 class="font-bold text-emerald-900 uppercase text-sm tracking-widest mb-2">Lịch sử lâu đời</h4>
-                <p class="text-gray-500 text-sm font-light leading-relaxed">Hơn 2 thập kỷ đồng hành cùng hàng triệu khách hàng toàn cầu.</p>
-              </div>
-            </div>
-            
-            <div class="flex items-start space-x-5 group">
-              <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-800 transition-colors duration-300">
-                <i class="fas fa-concierge-bell text-2xl text-emerald-800 group-hover:text-white transition-colors"></i>
-              </div>
-              <div>
-                <h4 class="font-bold text-emerald-900 uppercase text-sm tracking-widest mb-2">Dịch vụ 24/7</h4>
-                <p class="text-gray-500 text-sm font-light leading-relaxed">Đội ngũ nhân viên chuyên nghiệp sẵn sàng phục vụ mọi yêu cầu của bạn.</p>
-              </div>
-            </div>
 
-            <div class="flex items-start space-x-5 group">
-              <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-800 transition-colors duration-300">
-                <i class="fas fa-map-marked-alt text-2xl text-emerald-800 group-hover:text-white transition-colors"></i>
-              </div>
-              <div>
-                <h4 class="font-bold text-emerald-900 uppercase text-sm tracking-widest mb-2">Vị trí đắc địa</h4>
-                <p class="text-gray-500 text-sm font-light leading-relaxed">Nằm tại trung tâm thành phố, thuận tiện cho việc tham quan và di chuyển.</p>
-              </div>
+        <!-- Premier Suite -->
+        <div class="group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 border border-gray-100 flex flex-col h-full">
+          <div class="relative h-48 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
+          </div>
+          <div class="p-6 flex-1 flex flex-col">
+            <h3 class="text-lg font-black text-emerald-950 uppercase tracking-tight mb-2">Premier Suite</h3>
+            <div class="flex items-center gap-4 mb-4 text-gray-400">
+              <span class="text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5"><i class="fas fa-expand text-[8px]"></i> 65m²</span>
+              <span class="text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5"><i class="fas fa-users text-[8px]"></i> 2 người</span>
+              <span class="text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5"><i class="fas fa-bed text-[8px]"></i> 1 giường</span>
             </div>
-
-            <div class="flex items-start space-x-5 group">
-              <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-800 transition-colors duration-300">
-                <i class="fas fa-award text-2xl text-emerald-800 group-hover:text-white transition-colors"></i>
-              </div>
-              <div>
-                <h4 class="font-bold text-emerald-900 uppercase text-sm tracking-widest mb-2">Giải thưởng</h4>
-                <p class="text-gray-500 text-sm font-light leading-relaxed">Được bình chọn là khách sạn có dịch vụ tốt nhất trong nhiều năm liền.</p>
-              </div>
+            <p class="text-[11px] text-gray-500 font-medium leading-relaxed mb-6 line-clamp-2">Phòng suite sang trọng với ban công riêng và tầm nhìn toàn cảnh thành phố.</p>
+            <div class="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
+              <div><p class="text-lg font-black text-emerald-800 leading-none">2.850.000đ <span class="text-[10px] text-gray-400 font-bold">/đêm</span></p></div>
+              <button @click="$router.push('/rooms')" class="px-5 py-2 bg-white text-emerald-950 border border-emerald-100 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-[#004d26] hover:text-white transition-all">Xem chi tiết</button>
             </div>
           </div>
-          
-          <button @click="$router.push('/about')" class="bg-emerald-800 text-white px-12 py-4 rounded-full font-bold uppercase tracking-[0.2em] hover:bg-emerald-900 transition-all shadow-xl hover:shadow-emerald-200 transform hover:-translate-y-1">Khám phá câu chuyện của chúng tôi</button>
+        </div>
+
+        <!-- Family Suite -->
+        <div class="group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 border border-gray-100 flex flex-col h-full">
+          <div class="relative h-48 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
+          </div>
+          <div class="p-6 flex-1 flex flex-col">
+            <h3 class="text-lg font-black text-emerald-950 uppercase tracking-tight mb-2">Family Suite</h3>
+            <div class="flex items-center gap-4 mb-4 text-gray-400">
+              <span class="text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5"><i class="fas fa-expand text-[8px]"></i> 55m²</span>
+              <span class="text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5"><i class="fas fa-users text-[8px]"></i> 4 người</span>
+              <span class="text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5"><i class="fas fa-bed text-[8px]"></i> 2 giường</span>
+            </div>
+            <p class="text-[11px] text-gray-500 font-medium leading-relaxed mb-6 line-clamp-2">Không gian rộng rãi cho cả gia đình, đầy đủ tiện ích và ấm cúng.</p>
+            <div class="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
+              <div><p class="text-lg font-black text-emerald-800 leading-none">3.450.000đ <span class="text-[10px] text-gray-400 font-bold">/đêm</span></p></div>
+              <button @click="$router.push('/rooms')" class="px-5 py-2 bg-white text-emerald-950 border border-emerald-100 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-[#004d26] hover:text-white transition-all">Xem chi tiết</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Presidential Suite -->
+        <div class="group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 border border-gray-100 flex flex-col h-full">
+          <div class="relative h-48 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
+          </div>
+          <div class="p-6 flex-1 flex flex-col">
+            <h3 class="text-lg font-black text-emerald-950 uppercase tracking-tight mb-2">Presidential Suite</h3>
+            <div class="flex items-center gap-4 mb-4 text-gray-400">
+              <span class="text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5"><i class="fas fa-expand text-[8px]"></i> 125m²</span>
+              <span class="text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5"><i class="fas fa-users text-[8px]"></i> 2 người</span>
+              <span class="text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5"><i class="fas fa-bed text-[8px]"></i> 1 giường</span>
+            </div>
+            <p class="text-[11px] text-gray-500 font-medium leading-relaxed mb-6 line-clamp-2">Đẳng cấp thượng lưu với phòng khách riêng, bếp và dịch vụ quản gia.</p>
+            <div class="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between">
+              <div><p class="text-lg font-black text-emerald-800 leading-none">6.850.000đ <span class="text-[10px] text-gray-400 font-bold">/đêm</span></p></div>
+              <button @click="$router.push('/rooms')" class="px-5 py-2 bg-white text-emerald-950 border border-emerald-100 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-[#004d26] hover:text-white transition-all">Xem chi tiết</button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Introduction Section (Room Types) -->
-    <section id="rooms" class="max-w-7xl mx-auto px-4 py-16">
-      <div class="text-center mb-16">
-        <h3 class="text-emerald-800 font-bold uppercase tracking-[0.3em] mb-4 text-xs">LOẠI PHÒNG</h3>
-        <h2 class="text-4xl md:text-5xl font-black uppercase text-emerald-950 tracking-tight">NGHỈ DƯỠNG 5 SAO</h2>
-        <div class="w-24 h-1 bg-emerald-800 mx-auto mt-6"></div>
+    <!-- Summer Promo -->
+    <section class="max-w-7xl mx-auto px-6 pb-32">
+      <div class="relative rounded-[3rem] overflow-hidden h-[400px] flex items-center group">
+        <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
+        <div class="absolute inset-0 bg-emerald-950/40 backdrop-blur-[2px]"></div>
+        <div class="relative z-10 p-12 md:p-20 text-white max-w-2xl">
+          <p class="text-amber-400 font-black uppercase tracking-[0.3em] text-[10px] mb-4">Ưu đãi đặc biệt</p>
+          <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-6">Ưu đãi mùa hè 2026</h2>
+          <p class="text-lg text-white/80 font-medium mb-10 italic">Giảm đến 20% khi đặt phòng sớm và lưu trú từ 01/05 - 30/09/2026</p>
+          
+          <div class="flex gap-4 mb-10">
+            <div v-for="t in ['23 NGÀY', '14 GIỜ', '36 PHÚT', '45 GIÂY']" :key="t" class="bg-black/20 backdrop-blur-md rounded-2xl px-4 py-3 border border-white/10">
+              <p class="text-lg font-black leading-none">{{ t.split(' ')[0] }}</p>
+              <p class="text-[8px] font-bold uppercase mt-1 opacity-60">{{ t.split(' ')[1] }}</p>
+            </div>
+          </div>
+          
+          <button class="px-10 py-4 bg-white text-emerald-950 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-amber-400 transition-all shadow-xl">Xem ưu đãi</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Service Highlights -->
+    <section id="services" class="bg-gray-50 py-32 border-y border-gray-100">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-24">
+          <p class="text-amber-400 font-bold uppercase tracking-[0.3em] text-[10px] mb-4 italic">Dịch vụ & Tiện ích</p>
+          <h2 class="text-4xl md:text-6xl font-black text-emerald-950 uppercase tracking-tighter leading-none">Trải nghiệm dịch vụ đẳng cấp</h2>
+          <div class="w-24 h-1 bg-[#004d26] mx-auto mt-8"></div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+          <div v-for="s in services" :key="s.title" class="group bg-white p-8 rounded-[2.5rem] shadow-xl shadow-emerald-900/5 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100 flex flex-col items-center text-center">
+            <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-800 text-xl mb-6 group-hover:bg-[#004d26] group-hover:text-white transition-all shadow-inner">
+              <i :class="s.icon"></i>
+            </div>
+            <h4 class="text-[11px] font-black text-emerald-950 uppercase tracking-widest mb-3">{{ s.title }}</h4>
+            <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest leading-relaxed">{{ s.desc }}</p>
+          </div>
+        </div>
+        
+        <div class="mt-20 text-center">
+          <router-link to="/services" class="px-10 py-4 border-2 border-emerald-900 text-emerald-900 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-emerald-900 hover:text-white transition-all">Xem tất cả dịch vụ</router-link>
+        </div>
+      </div>
+    </section>
+
+    <!-- Photo Gallery -->
+    <section class="max-w-7xl mx-auto px-6 py-32">
+      <div class="text-center mb-24">
+        <p class="text-amber-400 font-bold uppercase tracking-[0.3em] text-[10px] mb-4 italic">Khám phá Grand Hotel</p>
+        <h2 class="text-4xl md:text-6xl font-black text-emerald-950 uppercase tracking-tighter leading-none">Khoảnh khắc đáng nhớ</h2>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div v-for="i in 4" :key="i" class="relative h-64 md:h-80 rounded-[2rem] overflow-hidden group cursor-pointer shadow-xl">
+          <img :src="`https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80&sig=${i}`" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
+          <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <i class="fas fa-search-plus text-white text-3xl"></i>
+          </div>
+        </div>
       </div>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-        <div v-for="category in displayCategories" :key="category.name" class="bg-white group cursor-pointer" @click="$router.push({ path: '/rooms', query: { category: category.name } })">
-          <!-- Image Section -->
-          <div class="relative h-72 mb-8 overflow-hidden rounded-[2rem]">
-            <img :src="category.imageUrl" 
-                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-          </div>
-
-          <!-- Content Section -->
-          <div>
-            <h4 class="text-xl font-bold uppercase text-emerald-950 mb-3 tracking-widest">{{ category.displayTitle }}</h4>
-            <p class="text-gray-500 font-light text-base leading-relaxed">
-              {{ category.description }}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="text-center mt-16">
-        <router-link to="/rooms" class="inline-block border-2 border-emerald-900 text-emerald-900 px-10 py-3 rounded-full font-black uppercase tracking-widest text-sm hover:bg-emerald-900 hover:text-white transition-all transform hover:-translate-y-1">
-          XEM TẤT CẢ PHÒNG
-        </router-link>
+      <div class="mt-16 text-center">
+        <button class="px-10 py-4 bg-gray-50 text-gray-400 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-emerald-50 hover:text-emerald-800 transition-all border border-gray-100">Xem thêm hình ảnh</button>
       </div>
     </section>
 
-    <!-- Services Section -->
-    <section id="services" class="bg-gray-50 py-16 border-y border-gray-100">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-          <div class="max-w-2xl">
-            <h3 class="text-emerald-800 font-bold uppercase tracking-[0.3em] mb-4 text-xs">TRẢI NGHIỆM DỊCH VỤ</h3>
-            <h2 class="text-4xl md:text-5xl font-black uppercase text-emerald-950 tracking-tight">TIỆN NGHI ĐẲNG CẤP QUỐC TẾ</h2>
-          </div>
-          <p class="text-gray-400 font-light max-w-[300px] mb-2 italic text-sm text-right">"Chúng tôi không chỉ cung cấp chỗ nghỉ, chúng tôi mang đến trải nghiệm."</p>
+    <!-- Testimonials -->
+    <section class="bg-gray-50 py-32 overflow-hidden">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="mb-20">
+          <p class="text-amber-400 font-bold uppercase tracking-[0.3em] text-[10px] mb-4">Khách hàng nói gì</p>
+          <h2 class="text-4xl md:text-5xl font-black text-emerald-950 uppercase tracking-tighter">Cảm nhận từ khách hàng</h2>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div v-for="(service, index) in services" :key="index" class="bg-white p-10 rounded-3xl shadow-sm border border-gray-100 hover:border-emerald-200 hover:shadow-2xl transition-all duration-300 group">
-            <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-emerald-800 transition-colors duration-300">
-              <i :class="[service.icon, 'text-2xl text-emerald-800 group-hover:text-white transition-colors duration-300']"></i>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div v-for="(test, idx) in testimonials" :key="idx" class="bg-white p-10 rounded-[3rem] shadow-xl shadow-emerald-900/5 border border-gray-100 relative group hover:shadow-2xl transition-all duration-500">
+            <div class="flex text-amber-400 gap-1 mb-6">
+              <i v-for="n in 5" :key="n" class="fas fa-star text-[10px]"></i>
             </div>
-            <h4 class="text-lg font-bold uppercase tracking-widest text-emerald-900 mb-4">{{ service.title }}</h4>
-            <p class="text-gray-500 font-light text-sm leading-relaxed">{{ service.desc }}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Blog/Experience Section -->
-    <section id="blog" class="py-24 bg-gray-50 overflow-hidden">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-          <div class="max-w-2xl">
-            <h3 class="text-emerald-800 font-bold uppercase tracking-[0.3em] mb-4 text-xs">BLOG & TRẢI NGHIỆM</h3>
-            <h2 class="text-4xl md:text-6xl font-black uppercase text-emerald-950 tracking-tighter leading-none">
-              CHIA SẺ TỪ <span class="text-emerald-800 italic">KHÁCH HÀNG</span>
-            </h2>
-          </div>
-          <router-link to="/blog" class="group flex items-center gap-3 text-emerald-900 font-black uppercase tracking-widest text-sm hover:text-emerald-700 transition-colors">
-            Xem tất cả bài viết
-            <div class="w-10 h-10 rounded-full border-2 border-emerald-900 flex items-center justify-center group-hover:bg-emerald-900 group-hover:text-white transition-all">
-              <i class="fas fa-arrow-right"></i>
-            </div>
-          </router-link>
-        </div>
-
-        <div v-if="loadingReviews" class="text-center py-20 text-gray-400 font-bold uppercase tracking-widest text-xs">
-          Đang tải bài viết...
-        </div>
-
-        <div v-else-if="!blogPosts.length" class="text-center py-20 bg-white rounded-[3rem] shadow-sm border border-dashed border-gray-200">
-          <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">Chưa có bài viết trải nghiệm nào.</p>
-        </div>
-
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          <div v-for="post in blogPosts" :key="post.id" class="group cursor-pointer" @click="$router.push('/blog')">
-            <div class="relative h-80 mb-8 overflow-hidden rounded-[2.5rem] shadow-2xl">
-              <img :src="post.room?.imageUrl || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80'" 
-                   class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-              <div class="absolute top-6 left-6 bg-red-600 text-white w-14 h-14 rounded-2xl flex flex-col items-center justify-center shadow-xl">
-                <span class="text-xl font-black leading-none">{{ getDay(post.reviewCreatedAt) }}</span>
-                <span class="text-[10px] font-bold uppercase mt-1">{{ getMonth(post.reviewCreatedAt) }}</span>
+            <p class="text-sm text-slate-700 font-medium leading-relaxed mb-8 italic">"{{ test.content }}"</p>
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-emerald-50">
+                <img :src="test.avatar" class="w-full h-full object-cover">
+              </div>
+              <div>
+                <p class="text-xs font-black text-emerald-950 uppercase tracking-widest">{{ test.name }}</p>
+                <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">{{ test.location }}</p>
               </div>
             </div>
-            
-            <div class="px-2">
-              <h4 class="text-2xl font-black text-emerald-950 mb-4 group-hover:text-emerald-800 transition-colors line-clamp-2 leading-tight uppercase tracking-tighter">
-                {{ post.reviewTitle || `Kỳ nghỉ tuyệt vời tại phòng ${post.room?.roomNumber}` }}
-              </h4>
-              <p class="text-gray-500 font-light text-base leading-relaxed line-clamp-3 mb-6">
-                {{ post.reviewComment }}
-              </p>
-              <div class="flex items-center gap-3 pt-6 border-t border-gray-100">
-                <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center font-black text-emerald-800 text-sm">
-                  {{ post.guestFullName?.charAt(0) || 'K' }}
-                </div>
-                <div>
-                  <p class="text-sm font-black text-emerald-950 uppercase tracking-widest">{{ post.guestFullName || 'Khách hàng' }}</p>
-                  <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">Người trải nghiệm</p>
-                </div>
-              </div>
-            </div>
+            <i class="fas fa-quote-right absolute top-10 right-10 opacity-5 text-4xl text-emerald-900"></i>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Call to Action -->
-    <section class="bg-emerald-950 py-20 text-white relative overflow-hidden">
-      <div class="absolute inset-0 opacity-10">
-        <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" class="w-full h-full object-cover">
-      </div>
-      <div class="max-w-4xl mx-auto text-center px-4 relative z-10">
-        <h2 class="text-5xl font-black uppercase mb-8 tracking-tight">Kiến tạo những kỷ niệm vô giá</h2>
-        <p class="text-emerald-100 mb-12 text-lg font-light tracking-[0.3em] uppercase">Đặt chỗ ngay để nhận ưu đãi tốt nhất trong mùa này</p>
-        <router-link to="/rooms" class="inline-block bg-white text-emerald-950 px-12 py-5 rounded-full font-bold uppercase tracking-[0.2em] hover:bg-emerald-100 transition-all duration-300 transform hover:scale-105 shadow-2xl">
-          Bắt đầu hành trình của bạn
-        </router-link>
+    <!-- Newsletter -->
+    <section class="max-w-7xl mx-auto px-6 pb-32">
+      <div class="bg-[#004d26] rounded-[3rem] p-12 md:p-20 text-white relative overflow-hidden group shadow-2xl shadow-green-900/40">
+        <div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+        <div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
+          <div class="flex items-center gap-8 lg:w-1/2">
+            <div class="w-20 h-20 bg-white/10 rounded-[2rem] flex items-center justify-center text-amber-400 text-3xl border border-white/20 shadow-inner shrink-0">
+              <i class="fas fa-envelope-open-text"></i>
+            </div>
+            <div>
+              <h3 class="text-3xl font-black uppercase tracking-tighter mb-2">Đăng ký nhận ưu đãi & tin tức mới nhất</h3>
+              <p class="text-sm text-white/60 font-medium">Nhận ngay ưu đãi đặc quyền và thông tin hữu ích từ Grand Hotel.</p>
+            </div>
+          </div>
+          <div class="lg:w-1/2 w-full">
+            <form class="flex flex-col sm:flex-row gap-4">
+              <input type="email" placeholder="Nhập email của bạn" class="flex-1 bg-white/10 border-2 border-white/10 rounded-2xl px-8 py-5 outline-none focus:bg-white focus:text-emerald-950 transition-all font-bold text-sm">
+              <button class="px-10 py-5 bg-amber-400 text-emerald-950 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-white transition-all shadow-xl">Đăng ký ngay</button>
+            </form>
+          </div>
+        </div>
       </div>
     </section>
   </div>
@@ -211,151 +249,56 @@ import HeroSlider from '../components/HeroSlider.vue'
 import RoomSearchSection from '../components/RoomSearchSection.vue'
 import axios from '../api/axios'
 
-const user = ref(null)
-const rooms = ref([])
-const blogPosts = ref([])
-const loadingReviews = ref(true)
-const submittingReview = ref(false)
-const quickReview = ref({
-  guestFullName: '',
-  title: '',
-  rating: 5,
-  comment: ''
-})
+const quickFeatures = [
+  { icon: 'fas fa-map-marker-alt', title: 'Vị trí đắc địa', desc: 'Ngay trung tâm thành phố' },
+  { icon: 'fas fa-award', title: 'Dịch vụ 5 sao', desc: 'Chuẩn quốc tế, tận tâm 24/7' },
+  { icon: 'fas fa-utensils', title: 'Ẩm thực tinh tế', desc: 'Nhà hàng sang trọng, đầu bếp danh tiếng' },
+  { icon: 'fas fa-swimming-pool', title: 'Tiện ích đa dạng', desc: 'Hồ bơi, spa, gym, kid club...' },
+  { icon: 'fas fa-tags', title: 'Ưu đãi hấp dẫn', desc: 'Giá tốt nhất khi đặt trực tuyến' },
+  { icon: 'fas fa-credit-card', title: 'Thanh toán linh hoạt', desc: 'Nhiều hình thức tiện lợi, an toàn' }
+]
 
-const submitQuickReview = async () => {
-  if (submittingReview.value) return
-  submittingReview.value = true
-  try {
-    await axios.post('/bookings/quick-review', quickReview.value)
-    alert('Cảm ơn bạn đã gửi đánh giá! Đánh giá của bạn sẽ xuất hiện trong phần Blog.')
-    quickReview.value = {
-      guestFullName: '',
-      title: '',
-      rating: 5,
-      comment: ''
-    }
-    await fetchBlogPosts() // Tải lại danh sách blog để hiện bài mới nhất
-  } catch (error) {
-    console.error('Lỗi khi gửi đánh giá:', error)
-    alert('Có lỗi xảy ra khi gửi đánh giá. Vui lòng thử lại sau.')
-  } finally {
-    submittingReview.value = false
-  }
-}
-
-const getDay = (dateStr) => {
-  if (!dateStr) return ''
-  const date = new Date(dateStr)
-  return date.getDate()
-}
-
-const getMonth = (dateStr) => {
-  if (!dateStr) return ''
-  const date = new Date(dateStr)
-  return `TH${date.getMonth() + 1}`
-}
-
-const fetchBlogPosts = async () => {
-  try {
-    const response = await axios.get('/bookings/reviews')
-    blogPosts.value = response.data.slice(0, 3) // Chỉ lấy 3 bài mới nhất cho trang chủ
-  } catch (error) {
-    console.error('Lỗi khi tải bài viết:', error)
-  } finally {
-    loadingReviews.value = false
-  }
-}
-
-onMounted(() => {
-  fetchBlogPosts()
-})
-
-const displayCategories = computed(() => {
-  const categories = [
-    { 
-      name: 'Suite', 
-      displayTitle: 'PRESIDENTIAL SUITE',
-      description: 'Phòng Suite là biểu tượng của sự sang trọng và đẳng cấp, nơi bạn được tận hưởng không gian rộng lớn với phòng khách và phòng ngủ riêng biệt. Thiết kế tinh xảo, tiện nghi cao cấp cùng dịch vụ ưu tiên mang đến trải nghiệm như một “ngôi nhà thứ hai” đầy riêng tư và đẳng cấp. Đây là lựa chọn hoàn hảo cho những ai muốn tận hưởng kỳ nghỉ theo phong cách thượng lưu.',
-      imageUrl: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-    },
-    { 
-      name: 'Deluxe', 
-      displayTitle: 'DELUXE OCEAN VIEW',
-      description: 'Phòng Deluxe nâng tầm trải nghiệm lưu trú với không gian rộng rãi, nội thất tinh tế và tầm nhìn ấn tượng. Mỗi chi tiết đều được chăm chút nhằm mang lại cảm giác thư giãn tối đa, giúp bạn tận hưởng kỳ nghỉ trọn vẹn hơn. Đây là lựa chọn lý tưởng cho những ai mong muốn sự thoải mái và một chút “đẳng cấp” trong từng khoảnh khắc.',
-      imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-    },
-    { 
-      name: 'Standard', 
-      displayTitle: 'STANDARD GARDEN ROOM',
-      description: 'Phòng Standard mang đến không gian nghỉ ngơi ấm cúng và tiện nghi với mức giá hợp lý, là lựa chọn hoàn hảo cho những ai tìm kiếm sự thoải mái đơn giản nhưng đầy đủ. Với thiết kế gọn gàng, trang bị hiện đại và không gian dễ chịu, đây chính là điểm dừng chân lý tưởng sau một ngày dài khám phá hoặc làm việc.',
-      imageUrl: 'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-    }
-  ]
-  return categories
-})
+const roomHighlights = [
+  { displayTitle: 'Deluxe Ocean View', size: '45m²', description: 'Hướng biển tuyệt đẹp, không gian thoáng đãng với tiện nghi hiện đại.', price: '1.850.000đ', imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80' },
+  { displayTitle: 'Premier Suite', size: '65m²', description: 'Phòng suite sang trọng với ban công riêng và tầm nhìn toàn cảnh.', price: '2.850.000đ', imageUrl: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { displayTitle: 'Family Suite', size: '55m²', description: 'Không gian rộng cho gia đình, đầy đủ tiện ích và ấm cúng.', price: '3.450.000đ', imageUrl: 'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
+  { displayTitle: 'Presidential Suite', size: '125m²', description: 'Đẳng cấp thượng lưu với phòng khách riêng, bếp và dịch vụ quản gia.', price: '6.850.000đ', imageUrl: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80' }
+]
 
 const services = [
-  {
-    title: 'Nhà hàng & Bar',
-    desc: 'Trải nghiệm ẩm thực tinh hoa từ các đầu bếp hàng đầu trong không gian sang trọng.',
-    icon: 'fas fa-utensils'
-  },
-  {
-    title: 'Spa & Wellness',
-    desc: 'Thư giãn tuyệt đối với các liệu trình chăm sóc sức khỏe và sắc đẹp chuyên sâu.',
-    icon: 'fas fa-spa'
-  },
-  {
-    title: 'Hồ bơi vô cực',
-    desc: 'Đắm mình trong làn nước mát lạnh và ngắm nhìn toàn cảnh thành phố từ trên cao.',
-    icon: 'fas fa-swimmer'
-  },
-  {
-    title: 'Đưa đón sân bay',
-    desc: 'Dịch vụ xe đưa đón sang trọng, đảm bảo sự tiện lợi và an toàn cho hành trình của bạn.',
-    icon: 'fas fa-car'
-  }
+  { icon: 'fas fa-swimming-pool', title: 'Hồ bơi vô cực', desc: 'Thư giãn với tầm nhìn hướng biển tuyệt đẹp' },
+  { icon: 'fas fa-spa', title: 'Spa & Wellness', desc: 'Liệu trình chuyên sâu chăm sóc sức khỏe' },
+  { icon: 'fas fa-utensils', title: 'Nhà hàng cao cấp', desc: 'Ẩm thực đa dạng hương vị quốc tế' },
+  { icon: 'fas fa-dumbbell', title: 'Phòng gym hiện đại', desc: 'Trang thiết bị tiên tiến, đầy đủ tiện nghi' },
+  { icon: 'fas fa-child', title: 'Kid Club', desc: 'Khu vui chơi an toàn, thú vị cho trẻ nhỏ' },
+  { icon: 'fas fa-shuttle-van', title: 'Dịch vụ đưa đón', desc: 'Xe đưa đón sân bay tham quan tiện lợi' }
 ]
 
 const testimonials = [
-  {
-    name: 'Nguyễn Văn A',
-    content: 'Dịch vụ tuyệt vời, phòng ốc sạch sẽ và sang trọng. Tôi chắc chắn sẽ quay lại đây vào lần tới.',
-    avatar: 'https://i.pravatar.cc/150?u=1',
-  },
-  {
-    name: 'Trần Thị B',
-    content: 'Nhân viên rất nhiệt tình và chu đáo. Đồ ăn tại nhà hàng rất ngon và đa dạng.',
-    avatar: 'https://i.pravatar.cc/150?u=2',
-  },
-  {
-    name: 'Lê Văn C',
-    content: 'Không gian yên tĩnh, view đẹp. Một nơi lý tưởng để nghỉ dưỡng cùng gia đình.',
-    avatar: 'https://i.pravatar.cc/150?u=3',
-  }
+  { name: 'Nguyễn Minh Anh', location: 'Hà Nội', avatar: 'https://i.pravatar.cc/150?u=1', content: 'Kỳ nghỉ tuyệt vời! Dịch vụ chuyên nghiệp, phòng ốc sạch đẹp, đồ ăn rất ngon. Chắc chắn sẽ quay lại.' },
+  { name: 'Trần Quốc Bảo', location: 'TP. Hồ Chí Minh', avatar: 'https://i.pravatar.cc/150?u=2', content: 'Không gian yên bình, view đẹp, nhân viên nhiệt tình. Gia đình mình rất hài lòng về kỳ nghỉ tại đây.' },
+  { name: 'Lê Thùy Dương', location: 'Đà Nẵng', avatar: 'https://i.pravatar.cc/150?u=3', content: 'Spa rất thư giãn, hồ bơi vô cực đẹp xuất sắc. Một trải nghiệm 5 sao đúng nghĩa!' }
 ]
 
-const formatPrice = (price) => {
-  if (!price) return '0 đ'
-  const formatted = new Intl.NumberFormat('vi-VN').format(price * 25000)
-  return `${formatted} đ`
-}
-
-const fetchRooms = async () => {
-  try {
-    const response = await axios.get('/rooms')
-    rooms.value = response.data
-  } catch (error) {
-    console.error('Error fetching rooms:', error)
-  }
-}
-
 onMounted(() => {
-  fetchRooms()
-  const userData = localStorage.getItem('user')
-  if (userData) {
-    user.value = JSON.parse(userData)
-  }
+  window.scrollTo(0, 0)
 })
 </script>
+
+<style scoped>
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
+.animate-fade-in { animation: fadeIn 1s ease-out forwards; }
+.animate-slide-up { animation: slideUp 1s ease-out forwards; }
+.delay-200 { animation-delay: 0.2s; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>

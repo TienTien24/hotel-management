@@ -6,7 +6,6 @@
       <header class="flex justify-between items-center mb-10">
         <div>
           <h2 class="text-3xl font-black tracking-tight text-slate-800">Quản lý khách hàng</h2>
-          <p class="text-sm text-slate-400 font-bold mt-2">Danh sách khách hàng lấy trực tiếp từ MySQL qua backend Spring Boot</p>
         </div>
       </header>
 
