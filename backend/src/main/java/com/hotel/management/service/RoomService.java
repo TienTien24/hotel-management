@@ -45,7 +45,9 @@ public class RoomService {
         System.out.println("Syncing Room " + room.getRoomNumber() + " (ID: " + room.getId() + ") - Today: " + today + " - Active Bookings: " + activeBookings.size());
 
         if (activeBookings.isEmpty()) {
-            if (room.getStatus() != RoomStatus.MAINTENANCE && room.getStatus() != RoomStatus.CLEANING) {
+            // Chỉ tự động chuyển về AVAILABLE nếu đang là BOOKED (hết hạn đặt mà không check-in)
+            // Nếu là OCCUPIED, CLEANING, hoặc MAINTENANCE thì giữ nguyên để tôn trọng thao tác thủ công của nhân viên
+            if (room.getStatus() == RoomStatus.BOOKED) {
                 room.setStatus(RoomStatus.AVAILABLE);
             }
         } else {

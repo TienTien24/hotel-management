@@ -6,7 +6,6 @@
       <header class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-6 mb-8">
         <div>
           <h2 class="text-3xl font-black tracking-tight text-slate-800">Báo cáo doanh thu</h2>
-          <p class="text-sm text-slate-400 font-bold mt-2">Tổng hợp doanh thu từ hóa đơn, loại phòng và dịch vụ trong khoảng thời gian chọn</p>
         </div>
 
         <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-5 flex flex-col md:flex-row gap-4">

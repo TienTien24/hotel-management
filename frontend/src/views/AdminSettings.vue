@@ -5,7 +5,6 @@
     <main class="flex-1 p-10 overflow-y-auto">
       <header class="mb-8">
         <h2 class="text-3xl font-black tracking-tight text-slate-800">Cài đặt hệ thống</h2>
-        <p class="text-sm text-slate-400 font-bold mt-2">Lưu cấu hình khách sạn trực tiếp từ trang quản trị</p>
       </header>
 
       <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
@@ -30,7 +29,6 @@
               <template v-if="activeTab === 'hotel-info'">
                 <div>
                   <h3 class="text-xl font-black text-slate-800 mb-1">Thông tin khách sạn</h3>
-                  <p class="text-sm text-slate-400 font-bold">Thông tin hiển thị trong dashboard và liên hệ khách hàng</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -74,7 +72,6 @@
               <template v-else>
                 <div class="rounded-[2rem] bg-slate-50 border border-slate-100 p-8">
                   <h3 class="text-xl font-black text-slate-800 mb-3">{{ currentTabLabel }}</h3>
-                  <p class="text-sm text-slate-500 font-bold">Tab này đã sẵn sàng giao diện để bạn mở rộng thêm sau. Hiện tại phần lưu dữ liệu tập trung ở mục `Thông tin khách sạn`.</p>
                 </div>
               </template>
 

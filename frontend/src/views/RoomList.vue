@@ -1,107 +1,125 @@
 <template>
-  <div class="min-h-screen bg-white">
-    <section class="bg-emerald-950 text-white relative overflow-hidden h-[600px] flex items-center justify-center">
-      <div class="absolute inset-0 opacity-10">
+  <div class="min-h-screen bg-white font-sans">
+    <!-- Hero Section -->
+    <section class="relative h-[500px] flex items-center justify-center overflow-hidden">
+      <div class="absolute inset-0 z-0">
         <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-black/50"></div>
       </div>
+      
       <div class="max-w-7xl mx-auto px-4 relative z-10 text-center">
-        <h1 class="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-6">Booking <span class="text-emerald-400">Online</span></h1>
-        <p class="text-emerald-100 font-light tracking-[0.3em] uppercase text-sm">Tìm phòng, xem giá và đặt phòng trực tuyến</p>
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20 mb-6">
+          <i class="fas fa-calendar-alt text-amber-400 text-xs"></i>
+          <span class="text-[10px] font-black uppercase tracking-[0.2em] text-white">Đặt phòng dễ dàng</span>
+        </div>
+        <h1 class="text-6xl md:text-8xl font-black text-white uppercase tracking-tighter mb-4 leading-none">
+          BOOKING <span class="text-amber-400">ONLINE</span>
+        </h1>
+        <p class="text-lg text-white/80 font-medium max-w-2xl mx-auto leading-relaxed">
+          Tìm phòng, xem giá và đặt phòng trực tuyến. Nhanh chóng – Tiện lợi – Giá tốt nhất.
+        </p>
       </div>
     </section>
 
-    <div class="max-w-7xl mx-auto px-4 py-16">
-      <section class="bg-white border border-emerald-100 rounded-[2rem] shadow-sm p-6 md:p-8 mb-10">
-        <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-          <div class="flex items-start gap-4">
-            <router-link to="/" class="bg-emerald-50 text-emerald-800 w-14 h-14 rounded-2xl flex items-center justify-center hover:bg-emerald-100 transition-colors shrink-0">
-              <i class="fas fa-arrow-left"></i>
-            </router-link>
+    <div class="max-w-7xl mx-auto px-4 -mt-24 relative z-20 pb-20">
+      <!-- Search & Filter Bar -->
+      <section class="bg-white rounded-[2.5rem] shadow-2xl shadow-emerald-900/10 p-8 md:p-10 mb-12 border border-emerald-50">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 mb-10 pb-8 border-b border-gray-100">
+          <div class="flex items-center gap-6">
+            <div class="w-16 h-16 bg-emerald-50 rounded-[1.5rem] flex items-center justify-center text-emerald-800 text-2xl shadow-inner">
+              <i class="fas fa-th-large"></i>
+            </div>
             <div>
-              <h2 class="text-2xl md:text-3xl font-black text-emerald-950 uppercase tracking-tighter">{{ pageTitle }}</h2>
-              <p class="text-sm text-gray-500 mt-2">{{ loading ? 'Đang tải dữ liệu...' : resultText }}</p>
+              <h2 class="text-3xl font-black text-emerald-950 uppercase tracking-tighter">Danh sách phòng khách sạn</h2>
+              <p class="text-sm text-gray-400 font-bold mt-1">Hiển thị {{ rooms.length }} phòng của toàn khách sạn</p>
             </div>
           </div>
 
-          <button v-if="isAdmin" @click="openAddModal" class="bg-emerald-800 hover:bg-emerald-900 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition shadow-xl transform hover:-translate-y-1">
-            <i class="fas fa-plus mr-2"></i> Thêm phòng mới
-          </button>
-          <router-link v-if="user" to="/my-bookings" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition shadow-xl transform hover:-translate-y-1">
-            <i class="fas fa-history mr-2"></i> Lịch sử đặt phòng
+          <router-link v-if="user" to="/my-bookings" class="bg-[#004d26] hover:bg-[#003d1e] text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-xl shadow-green-900/20 flex items-center gap-3">
+            <i class="fas fa-history"></i>
+            Lịch sử đặt phòng
           </router-link>
         </div>
 
-        <div class="flex flex-wrap gap-3 mt-8">
+        <div class="flex flex-wrap gap-4">
           <button
             v-for="option in categoryOptions"
             :key="option.value"
             @click="selectCategory(option.value)"
             :class="[
-              'px-5 py-3 rounded-full text-sm font-black uppercase tracking-wider transition-all border',
+              'px-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all flex items-center gap-3 border-2',
               activeCategory === option.value
-                ? 'bg-emerald-900 text-white border-emerald-900 shadow-lg'
-                : 'bg-white text-emerald-900 border-emerald-200 hover:bg-emerald-50'
+                ? 'bg-[#004d26] text-white border-[#004d26] shadow-xl shadow-green-900/20'
+                : 'bg-white text-gray-400 border-gray-100 hover:border-emerald-200 hover:text-emerald-800'
             ]"
           >
+            <i :class="getCategoryIcon(option.value)" class="text-sm"></i>
             {{ option.label }}
           </button>
         </div>
       </section>
 
-      <div v-if="loading" class="text-center py-20 text-gray-400 font-bold uppercase tracking-widest text-xs">
-        Đang tìm phòng...
+      <!-- Rooms Grid -->
+      <div v-if="loading" class="flex flex-col items-center justify-center py-32 space-y-4">
+        <div class="w-12 h-12 border-4 border-emerald-100 border-t-emerald-800 rounded-full animate-spin"></div>
+        <p class="text-xs font-black text-gray-400 uppercase tracking-widest">Đang tìm phòng...</p>
       </div>
 
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-        <div v-for="room in rooms" :key="room.id" class="group bg-white rounded-[2rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-emerald-100/70">
-          <div class="relative h-56 overflow-hidden">
-            <img :src="room.imageUrl || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-            <div class="absolute inset-0 bg-gradient-to-t from-emerald-950/25 via-transparent to-transparent"></div>
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div v-for="room in paginatedRooms" :key="room.id" class="group bg-white rounded-[2.5rem] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-gray-100">
+          <!-- Room Image -->
+          <div class="relative h-72 overflow-hidden">
+            <img :src="room.imageUrl || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80'" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
+            <div class="absolute top-6 right-6">
+              <button class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white hover:text-rose-500 transition-all">
+                <i class="far fa-heart"></i>
+              </button>
+            </div>
+            <router-link :to="'/rooms/' + room.id" class="absolute bottom-6 right-6 w-12 h-12 bg-[#004d26] text-white rounded-full flex items-center justify-center shadow-xl transform translate-y-20 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+              <i class="fas fa-arrow-right"></i>
+            </router-link>
           </div>
 
-          <div class="p-6">
-            <div class="flex items-start justify-between gap-4 mb-4">
+          <!-- Room Content -->
+          <div class="p-8">
+            <div class="mb-6">
+              <h4 class="text-2xl font-black uppercase tracking-tighter text-slate-800 mb-2">Phòng {{ room.roomNumber }}</h4>
+              <div class="flex gap-1 text-amber-400 text-[10px]">
+                <i v-for="i in 5" :key="i" class="fas fa-star"></i>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-8 pb-8 border-b border-gray-50">
+              <span class="bg-[#004d26] text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-green-900/10">{{ room.category }}</span>
+              <span class="bg-gray-50 text-gray-500 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-gray-100">{{ room.capacity }} người</span>
+              <span class="bg-gray-50 text-gray-500 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-gray-100">25m²</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6 mb-8">
               <div>
-                <h4 class="text-2xl font-black uppercase tracking-tighter text-emerald-950">Phòng {{ room.roomNumber }}</h4>
-                <div class="flex text-yellow-400 text-[10px] mt-2">
-                  <i v-for="i in 5" :key="i" class="fas fa-star"></i>
+                <p class="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-2">Sức chứa</p>
+                <div class="flex items-center gap-3">
+                  <i class="fas fa-user-friends text-emerald-800"></i>
+                  <span class="text-sm font-black text-slate-700">{{ room.capacity || 0 }} người</span>
                 </div>
               </div>
-
-              <router-link :to="'/rooms/' + room.id" class="w-12 h-12 rounded-full bg-emerald-900 text-white flex items-center justify-center hover:bg-emerald-800 transition-colors shadow-lg shrink-0">
-                <i class="fas fa-arrow-right"></i>
-              </router-link>
-            </div>
-
-            <div class="flex flex-wrap gap-2 mb-5">
-              <span class="bg-emerald-900 text-white px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">{{ room.category }}</span>
-              <span class="bg-emerald-50 text-emerald-800 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">{{ room.type }}</span>
-              <span class="bg-white border border-emerald-100 text-gray-400 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">{{ getFloorLabel(room) }}</span>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 mb-6">
-              <div class="bg-gray-50 rounded-2xl px-4 py-3">
-                <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">Sức chứa</div>
-                <div class="text-emerald-900 text-base font-black mt-1">{{ room.capacity || 0 }} người</div>
-              </div>
-              <div class="bg-gray-50 rounded-2xl px-4 py-3">
-                <div class="text-[10px] text-gray-400 font-black uppercase tracking-widest">Trạng thái</div>
-                <div :class="getAvailabilityTextClass(room)" class="text-base font-black mt-1">{{ getAvailabilityLabel(room) }}</div>
-              </div>
-            </div>
-
-            <div class="flex items-end justify-between gap-4">
               <div>
-                <p class="text-3xl font-black text-emerald-900 leading-none">{{ formatPrice(room.price) }}</p>
-                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-2">mỗi đêm</p>
+                <p class="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-2">Trạng thái</p>
+                <div class="flex items-center gap-3">
+                  <i class="fas fa-circle text-[8px]" :class="room.status === 'AVAILABLE' ? 'text-emerald-500' : 'text-blue-500'"></i>
+                  <span class="text-sm font-black text-slate-700">{{ getAvailabilityLabel(room) }}</span>
+                </div>
               </div>
+            </div>
 
-              <div class="flex space-x-2">
-                <button v-if="isAdmin || isStaff" @click="editRoom(room)" class="w-10 h-10 bg-yellow-50 text-yellow-600 rounded-xl flex items-center justify-center hover:bg-yellow-100 transition-all">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button v-if="isAdmin" @click="deleteRoom(room.id)" class="w-10 h-10 bg-red-50 text-red-600 rounded-xl flex items-center justify-center hover:bg-red-100 transition-all">
-                  <i class="fas fa-trash"></i>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-3xl font-black text-emerald-950 leading-none tracking-tighter">{{ formatPrice(room.price) }}</p>
+                <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-2">/ mỗi đêm</p>
+              </div>
+              <div class="flex gap-2">
+                <button v-if="isAdmin || isStaff" @click="editRoom(room)" class="w-10 h-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center hover:bg-blue-50 hover:text-blue-600 transition-all">
+                  <i class="fas fa-pen"></i>
                 </button>
               </div>
             </div>
@@ -109,102 +127,33 @@
         </div>
       </div>
 
-      <div v-if="!loading && !rooms.length" class="text-center py-20">
-        <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">Hiện chưa có dữ liệu phòng để hiển thị.</p>
+      <!-- Pagination -->
+      <div v-if="!loading && rooms.length > itemsPerPage" class="mt-20 flex justify-center items-center gap-3">
+        <button @click="currentPage--" :disabled="currentPage === 1" class="w-12 h-12 rounded-2xl bg-white border-2 border-gray-100 text-gray-400 hover:border-emerald-800 hover:text-emerald-800 disabled:opacity-30 transition-all flex items-center justify-center">
+          <i class="fas fa-chevron-left text-sm"></i>
+        </button>
+        
+        <div class="flex gap-2">
+          <button v-for="page in totalPages" :key="page" @click="currentPage = page" :class="[currentPage === page ? 'bg-[#004d26] border-[#004d26] text-white shadow-xl shadow-green-900/20' : 'bg-white border-gray-100 text-gray-500 hover:border-emerald-800']" class="w-12 h-12 rounded-2xl border-2 font-black text-sm transition-all">
+            {{ page }}
+          </button>
+        </div>
+
+        <button @click="currentPage++" :disabled="currentPage === totalPages" class="w-12 h-12 rounded-2xl bg-white border-2 border-gray-100 text-gray-400 hover:border-emerald-800 hover:text-emerald-800 disabled:opacity-30 transition-all flex items-center justify-center">
+          <i class="fas fa-chevron-right text-sm"></i>
+        </button>
       </div>
 
-      <div v-if="showAddModal" class="fixed inset-0 bg-emerald-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-[2.5rem] max-w-lg w-full p-10 shadow-2xl overflow-hidden">
-          <div class="flex justify-between items-center mb-10">
-            <h3 class="text-3xl font-black text-emerald-950 uppercase tracking-tighter">{{ currentRoom.id ? 'Sửa thông tin' : 'Thêm phòng mới' }}</h3>
-            <button @click="closeModal" class="text-gray-400 hover:text-emerald-800 transition-colors">
-              <i class="fas fa-times text-2xl"></i>
-            </button>
-          </div>
-
-          <form @submit.prevent="saveRoom" class="space-y-6">
-            <div class="grid grid-cols-2 gap-6">
-              <div>
-                <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Số phòng</label>
-                <input v-model="currentRoom.roomNumber" type="text" class="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none transition-all" required>
-              </div>
-              <div>
-                <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Hạng phòng</label>
-                <select v-model="currentRoom.category" class="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none transition-all">
-                  <option>Standard</option>
-                  <option>Deluxe</option>
-                  <option>Suite</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-6">
-              <div>
-                <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Loại phòng</label>
-                <select v-model="currentRoom.type" class="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none transition-all">
-                  <template v-if="currentRoom.category === 'Standard'">
-                    <option>Single</option>
-                    <option>Double</option>
-                    <option>Twin</option>
-                  </template>
-                  <template v-else-if="currentRoom.category === 'Deluxe'">
-                    <option>Double</option>
-                    <option>Twin</option>
-                    <option>Ocean View</option>
-                    <option>City View</option>
-                  </template>
-                  <template v-else>
-                    <option>Junior</option>
-                    <option>Executive</option>
-                    <option>Family</option>
-                    <option>Presidential</option>
-                  </template>
-                </select>
-              </div>
-              <div>
-                <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Giá phòng ($)</label>
-                <input v-model.number="currentRoom.price" type="number" class="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none transition-all" required>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-6">
-              <div>
-                <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Sức chứa</label>
-                <input v-model.number="currentRoom.capacity" type="number" min="1" max="10" class="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none transition-all" required>
-              </div>
-              <div v-if="currentRoom.id">
-                <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Trạng thái</label>
-                <select v-model="currentRoom.status" class="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none transition-all">
-                  <option value="AVAILABLE">AVAILABLE</option>
-                  <option value="BOOKED">BOOKED</option>
-                  <option value="OCCUPIED">OCCUPIED</option>
-                  <option value="MAINTENANCE">MAINTENANCE</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Link hình ảnh</label>
-              <input v-model="currentRoom.imageUrl" type="text" class="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none transition-all">
-            </div>
-
-            <div>
-              <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Mô tả</label>
-              <textarea v-model="currentRoom.description" class="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none transition-all h-32"></textarea>
-            </div>
-
-            <button type="submit" class="w-full bg-emerald-800 text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-emerald-900 transition-all shadow-xl transform hover:-translate-y-1 mt-6">
-              Lưu thông tin
-            </button>
-          </form>
-        </div>
+      <div v-if="!loading && !rooms.length" class="text-center py-32 bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
+        <i class="fas fa-bed text-5xl text-gray-200 mb-6"></i>
+        <p class="text-xs font-black text-gray-400 uppercase tracking-widest">Hiện chưa có dữ liệu phòng phù hợp.</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
 
@@ -212,17 +161,12 @@ const route = useRoute()
 const router = useRouter()
 const rooms = ref([])
 const loading = ref(false)
-const showAddModal = ref(false)
 const isAdmin = ref(false)
 const isStaff = ref(false)
 const user = ref(null)
-const categoryOptions = [
-  { label: 'Xem tất cả', value: 'All' },
-  { label: 'Standard', value: 'Standard' },
-  { label: 'Deluxe', value: 'Deluxe' },
-  { label: 'Suite', value: 'Suite' }
-]
 
+// Modal state
+const showAddModal = ref(false)
 const currentRoom = ref({
   id: null,
   roomNumber: '',
@@ -235,22 +179,60 @@ const currentRoom = ref({
   imageUrl: ''
 })
 
+// Pagination
+const currentPage = ref(1)
+const itemsPerPage = 6
+
+const activeCategory = ref(route.query.category || 'All')
+
+const categoryOptions = [
+  { label: 'XEM TẤT CẢ', value: 'All' },
+  { label: 'STANDARD', value: 'Standard' },
+  { label: 'DELUXE', value: 'Deluxe' },
+  { label: 'SUITE', value: 'Suite' }
+]
+
+const getCategoryIcon = (value) => {
+  switch (value) {
+    case 'All': return 'fas fa-border-all'
+    case 'Standard': return 'fas fa-hotel'
+    case 'Deluxe': return 'fas fa-star'
+    case 'Suite': return 'fas fa-crown'
+    default: return 'fas fa-bed'
+  }
+}
+
+const totalPages = computed(() => Math.ceil(rooms.value.length / itemsPerPage))
+const paginatedRooms = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  return rooms.value.slice(start, start + itemsPerPage)
+})
+
 const fetchRooms = async () => {
   loading.value = true
   try {
     const params = {
-      category: route.query.category || undefined,
+      category: activeCategory.value === 'All' ? undefined : activeCategory.value,
       numberOfGuests: route.query.capacity || undefined,
       checkInDate: route.query.checkIn || undefined,
       checkOutDate: route.query.checkOut || undefined
     }
     const response = await axios.get('/rooms/search', { params })
     rooms.value = response.data
+    currentPage.value = 1
   } catch (error) {
     console.error('Lỗi khi tải danh sách phòng:', error)
     rooms.value = []
   } finally {
     loading.value = false
+  }
+}
+
+const selectCategory = (val) => {
+  if (val === 'All') {
+    router.push('/rooms')
+  } else {
+    router.push({ path: '/rooms', query: { category: val } })
   }
 }
 
@@ -281,129 +263,25 @@ const getAvailabilityLabel = (room) => {
   }
 }
 
-const getAvailabilityClass = (room) => {
-  switch (room.status) {
-    case 'AVAILABLE': return 'bg-emerald-500'
-    case 'BOOKED': return 'bg-blue-500'
-    case 'OCCUPIED': return 'bg-purple-500'
-    case 'MAINTENANCE': return 'bg-red-500'
-    default: return 'bg-gray-500'
-  }
-}
-
-const getAvailabilityTextClass = (room) => {
-  switch (room.status) {
-    case 'AVAILABLE': return 'text-emerald-700'
-    case 'BOOKED': return 'text-blue-600'
-    case 'OCCUPIED': return 'text-purple-600'
-    case 'MAINTENANCE': return 'text-red-500'
-    default: return 'text-gray-500'
-  }
-}
-
-const getCurrentCategory = () => route.query.category || 'All'
-
-const getFloorLabel = (room) => {
-  const floor = String(room.roomNumber || '').trim().charAt(0)
-  return floor ? `Tầng ${floor}` : 'Tầng ?'
-}
-
-const activeCategory = ref(getCurrentCategory())
-
-const pageTitle = ref('Danh sách phòng khách sạn')
-const resultText = ref('')
-
-const updatePageContent = () => {
-  const category = getCurrentCategory()
-  activeCategory.value = category
-
-  if (category === 'All') {
-    pageTitle.value = 'Danh sách phòng khách sạn'
-    resultText.value = `Hiển thị ${rooms.value.length} phòng của toàn khách sạn`
-    return
-  }
-
-  pageTitle.value = `Danh sách phòng ${category}`
-  resultText.value = `Hiển thị ${rooms.value.length} phòng thuộc hạng ${category}`
-}
-
-const selectCategory = (category) => {
-  if (category === 'All') {
-    router.push('/rooms')
-    return
-  }
-
-  router.push({ path: '/rooms', query: { category } })
-}
-
-const openAddModal = () => {
-  currentRoom.value = {
-    id: null,
-    roomNumber: '',
-    category: 'Standard',
-    type: 'Single',
-    capacity: 2,
-    price: 0,
-    status: 'AVAILABLE',
-    description: '',
-    imageUrl: ''
-  }
-  showAddModal.value = true
-}
-
-const closeModal = () => {
-  showAddModal.value = false
-}
-
 const editRoom = (room) => {
   currentRoom.value = { ...room }
   showAddModal.value = true
 }
 
-const saveRoom = async () => {
-  try {
-    if (currentRoom.value.id) {
-      await axios.put(`/rooms/${currentRoom.value.id}`, currentRoom.value)
-    } else {
-      await axios.post('/rooms', currentRoom.value)
-    }
-    await fetchRooms()
-    closeModal()
-  } catch (error) {
-    console.error('Lỗi khi lưu thông tin phòng:', error)
-    alert('Lỗi khi lưu thông tin phòng!')
-  }
-}
-
-const deleteRoom = async (id) => {
-  if (!confirm('Bạn có chắc chắn muốn xóa phòng này?')) return
-  try {
-    await axios.delete(`/rooms/${id}`)
-    await fetchRooms()
-  } catch (error) {
-    console.error('Lỗi khi xóa phòng:', error)
-    alert('Lỗi khi xóa phòng!')
-  }
-}
-
 onMounted(() => {
   checkUser()
+  fetchRooms()
 })
 
 watch(
   () => route.query.category,
-  async () => {
-    await fetchRooms()
-    updatePageContent()
-  },
-  { immediate: true }
-)
-
-watch(
-  rooms,
-  () => {
-    updatePageContent()
-  },
-  { deep: true }
+  (newCat) => {
+    activeCategory.value = newCat || 'All'
+    fetchRooms()
+  }
 )
 </script>
+
+<style scoped>
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+</style>

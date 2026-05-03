@@ -94,7 +94,6 @@
         <div class="bg-[#004d26] p-10 text-white flex justify-between items-center">
           <div>
             <h3 class="text-3xl font-black uppercase tracking-tight">Thêm nhân viên</h3>
-            <p class="text-green-100/60 text-[10px] font-bold uppercase tracking-widest mt-1">Khởi tạo tài khoản nhân sự mới</p>
           </div>
           <button @click="showCreateForm = false" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 text-white hover:bg-rose-500 transition-all">
             <i class="fas fa-times"></i>

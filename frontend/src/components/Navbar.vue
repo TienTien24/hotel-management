@@ -2,82 +2,76 @@
   <nav 
     :class="[
       'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-      isScrolled || !isHome ? 'bg-white shadow-md py-4' : 'bg-transparent py-6'
+      isScrolled || !isHome ? 'bg-[#002b16] shadow-xl py-3' : 'bg-[#002b16]/90 backdrop-blur-md py-4'
     ]"
   >
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center">
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-12">
+      <div class="flex justify-between items-center h-14">
         <!-- Logo -->
         <div class="flex-shrink-0 flex items-center">
-          <router-link to="/" class="flex items-center space-x-2">
-            <div class="w-10 h-10 bg-emerald-800 rounded-full flex items-center justify-center shadow-lg">
-              <span class="text-white font-bold text-xl">H</span>
+          <router-link to="/" class="flex items-center space-x-3 group">
+            <div class="w-10 h-10 bg-emerald-500/20 rounded-full flex items-center justify-center border border-emerald-500/30 group-hover:bg-emerald-500/40 transition-all">
+              <span class="text-emerald-400 font-black text-xl">H</span>
             </div>
-            <span 
-              :class="[
-                'text-2xl font-black tracking-tighter uppercase transition-colors duration-300',
-                isScrolled || !isHome ? 'text-emerald-900' : 'text-white'
-              ]"
-            >
+            <span class="text-xl font-black tracking-tighter uppercase text-white group-hover:text-emerald-400 transition-colors">
               Grand Hotel
             </span>
           </router-link>
         </div>
 
         <!-- Desktop Menu -->
-        <div class="hidden md:flex items-center space-x-8">
+        <div class="hidden xl:flex items-center space-x-8">
           <router-link 
             v-for="item in menuItems" 
             :key="item.path"
             :to="item.path" 
             :class="[
-              'font-bold uppercase text-sm tracking-widest transition-all duration-300 hover:text-emerald-500',
-              isScrolled || !isHome ? 'text-gray-700' : 'text-white drop-shadow-md'
+              'font-black uppercase text-[11px] tracking-[0.15em] transition-all duration-300 relative py-2',
+              $route.path === item.path ? 'text-white after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-amber-400' : 'text-white/70 hover:text-emerald-400'
             ]"
           >
             {{ item.name }}
           </router-link>
         </div>
 
-        <!-- Auth Button -->
-        <div class="flex items-center space-x-4">
-          <template v-if="!user">
-            <router-link 
-              to="/login" 
-              :class="[
-                'px-6 py-2.5 rounded-full font-bold text-sm uppercase tracking-widest transition-all duration-300 shadow-lg',
-                isScrolled || !isHome ? 'bg-emerald-800 text-white hover:bg-emerald-900' : 'bg-white text-emerald-900 hover:bg-emerald-50'
-              ]"
-            >
-              Đăng nhập
-            </router-link>
-          </template>
-          <template v-else>
-            <div class="flex items-center space-x-4">
-              <span 
-                :class="[
-                  'hidden lg:block text-sm font-medium transition-colors duration-300',
-                  isScrolled || !isHome ? 'text-gray-500' : 'text-emerald-50'
-                ]"
-              >
-                Xin chào, <span :class="isScrolled || !isHome ? 'text-emerald-800 font-bold' : 'text-white font-black text-base'">{{ user.username }}</span>
+        <!-- Auth & Action -->
+        <div class="flex items-center space-x-6">
+          <template v-if="user">
+            <div class="hidden lg:flex items-center gap-3">
+              <div class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center border border-white/20">
+                <i class="fas fa-user text-[10px] text-white"></i>
+              </div>
+              <span class="text-[11px] font-black text-white/70 uppercase tracking-widest">
+                Xin chào, <span class="text-white">{{ user.username }}</span>
               </span>
-              <button 
-                @click="handleLogout" 
-                :class="[
-                  'font-bold uppercase text-sm tracking-widest transition-all duration-300 hover:text-red-500',
-                  isScrolled || !isHome ? 'text-gray-700' : 'text-white drop-shadow-md'
-                ]"
-              >
-                Đăng xuất
-              </button>
             </div>
+            <button 
+              @click="handleLogout" 
+              class="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 hover:text-rose-400 transition-colors"
+            >
+              Đăng xuất
+            </button>
           </template>
+          
+          <router-link 
+            v-if="!user"
+            to="/login" 
+            class="text-[11px] font-black uppercase tracking-[0.2em] text-white hover:text-emerald-400 transition-colors"
+          >
+            Đăng nhập
+          </router-link>
+
+          <router-link 
+            to="/rooms" 
+            class="px-8 py-3 bg-[#004d26] text-white rounded-xl font-black text-[11px] uppercase tracking-[0.2em] hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-950/20"
+          >
+            Đặt phòng
+          </router-link>
         </div>
 
         <!-- Mobile menu button -->
-        <div class="md:hidden flex items-center">
-          <button @click="isOpen = !isOpen" class="text-gray-700 hover:text-emerald-700">
+        <div class="xl:hidden flex items-center ml-4">
+          <button @click="isOpen = !isOpen" class="text-white hover:text-emerald-400">
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path v-if="!isOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
               <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -88,17 +82,17 @@
     </div>
 
     <!-- Mobile Menu -->
-    <div v-if="isOpen" class="md:hidden bg-white border-t border-gray-100 pb-4">
-      <div class="px-2 pt-2 pb-3 space-y-1">
-        <router-link v-for="item in menuItems" :key="item.path" :to="item.path" class="block px-3 py-2 text-gray-700 font-bold uppercase text-sm" @click="isOpen = false">
+    <div v-if="isOpen" class="xl:hidden bg-[#002b16] border-t border-white/5 py-6">
+      <div class="px-6 space-y-4">
+        <router-link 
+          v-for="item in menuItems" 
+          :key="item.path" 
+          :to="item.path" 
+          class="block text-white/70 font-black uppercase text-xs tracking-widest hover:text-emerald-400" 
+          @click="isOpen = false"
+        >
           {{ item.name }}
         </router-link>
-        <template v-if="!user">
-          <router-link to="/login" class="block px-3 py-2 text-emerald-800 font-bold uppercase text-sm">Đăng nhập</router-link>
-        </template>
-        <template v-else>
-          <button @click="handleLogout" class="block w-full text-left px-3 py-2 text-red-600 font-bold uppercase text-sm">Đăng xuất</button>
-        </template>
       </div>
     </div>
   </nav>
@@ -114,40 +108,28 @@ const isOpen = ref(false)
 const user = ref(null)
 const isScrolled = ref(false)
 
-const isHome = computed(() => {
-  const transparentPaths = ['/', '/about', '/rooms', '/services', '/blog', '/contact']
-  return transparentPaths.includes(route.path)
-})
+const isHome = computed(() => route.path === '/')
 
 const menuItems = computed(() => {
   const items = [
     { name: 'Trang chủ', path: '/' },
     { name: 'Phòng', path: '/rooms' },
+    { name: 'Dịch vụ', path: '/services' },
+    { name: 'Chính sách', path: '/cancellation-policy' },
+    { name: 'Blog', path: '/blog' },
+    { name: 'Liên hệ', path: '/contact' }
   ]
   
   if (user.value) {
-    items.push({ name: 'Dịch vụ', path: '/services' })
-    items.push({ name: 'Chính sách', path: '/cancellation-policy' })
-    items.push({ name: 'Blog', path: '/blog' })
-    items.push({ name: 'Liên hệ', path: '/contact' })
-    
     if (user.value.role === 'ADMIN') {
       items.push({ name: 'Dashboard', path: '/dashboard' })
-      items.push({ name: 'Booking', path: '/bookings' })
     } else if (user.value.role === 'STAFF') {
       items.push({ name: 'Dashboard', path: '/staff-dashboard' })
-      items.push({ name: 'Quản lý Phòng', path: '/staff-rooms' })
-      items.push({ name: 'Booking', path: '/bookings' })
     }
     
     if (user.value.role === 'CUSTOMER') {
       items.push({ name: 'Booking', path: '/my-bookings' })
     }
-  } else {
-    items.push({ name: 'Dịch vụ', path: '/services' })
-    items.push({ name: 'Chính sách', path: '/cancellation-policy' })
-    items.push({ name: 'Blog', path: '/blog' })
-    items.push({ name: 'Liên hệ', path: '/contact' })
   }
   
   return items
@@ -177,7 +159,6 @@ onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
 })
 
-// Update user state when route changes (e.g., after login)
 watch(() => route.path, () => {
   checkUser()
   isOpen.value = false
