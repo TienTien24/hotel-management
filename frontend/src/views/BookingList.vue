@@ -179,7 +179,7 @@
       <div class="bg-white rounded-[3.5rem] max-w-xl w-full overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
         <div class="bg-indigo-600 p-12 text-white relative">
           <div class="absolute top-12 right-12">
-            <button @click="showCheckInModal = false" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 text-white hover:bg-rose-500 transition-all">
+            <button @click="closeCheckInModal" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 text-white hover:bg-rose-500 transition-all">
               <i class="fas fa-times text-xl"></i>
             </button>
           </div>
@@ -188,22 +188,64 @@
         </div>
 
         <form @submit.prevent="handleCheckIn" class="p-12 space-y-8">
+          <div class="space-y-4 bg-slate-50 p-6 rounded-[2rem]">
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Xác nhận thông tin khách</label>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-sm font-bold text-slate-500">Tên khách</span>
+                <span class="text-sm font-black text-slate-800">{{ selectedBooking?.guestFullName || selectedBooking?.customer?.fullName }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm font-bold text-slate-500">Số người</span>
+                <span class="text-sm font-black text-slate-800">{{ selectedBooking?.numberOfGuests }} người</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-sm font-bold text-slate-500">Phòng</span>
+                <span class="text-sm font-black text-slate-800">P.{{ selectedBooking?.room?.roomNumber }} - {{ selectedBooking?.room?.category }}</span>
+              </div>
+            </div>
+          </div>
+
           <div class="space-y-3">
-            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Số CCCD / Passport</label>
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Số CCCD / Passport <span class="text-rose-500">*</span></label>
             <input v-model="checkInForm.guestIdNumber" type="text" required placeholder="Nhập số định danh..." class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 outline-none focus:border-indigo-600 transition-all font-bold">
           </div>
 
           <div class="space-y-3">
-            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Hình ảnh giấy tờ (Upload/URL)</label>
+            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Hình ảnh giấy tờ (Không bắt buộc)</label>
             <div class="space-y-4">
-              <div class="w-full h-56 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] flex flex-col items-center justify-center overflow-hidden group hover:border-indigo-600 transition-all">
-                <template v-if="!checkInForm.guestIdImageUrl">
-                  <i class="fas fa-camera text-4xl text-slate-200 group-hover:text-indigo-600 transition-all mb-4"></i>
-                  <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Chọn ảnh hoặc nhập link bên dưới</span>
+              <div class="w-full h-56 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] flex flex-col items-center justify-center overflow-hidden group hover:border-indigo-600 transition-all relative">
+                <video v-if="isCameraActive" ref="cameraRef" autoplay playsinline class="w-full h-full object-cover"></video>
+                <template v-else-if="checkInForm.guestIdImageUrl">
+                  <img :src="checkInForm.guestIdImageUrl" class="w-full h-full object-cover">
+                  <button @click="clearImage" type="button" class="absolute top-4 right-4 w-10 h-10 bg-rose-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-rose-600 transition-all">
+                    <i class="fas fa-times"></i>
+                  </button>
                 </template>
-                <img v-else :src="checkInForm.guestIdImageUrl" class="w-full h-full object-cover">
+                <template v-else>
+                  <i class="fas fa-id-card text-4xl text-slate-200 group-hover:text-indigo-600 transition-all mb-4"></i>
+                  <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Chọn cách thêm ảnh</span>
+                </template>
               </div>
-              <input v-model="checkInForm.guestIdImageUrl" type="text" placeholder="Dán URL hình ảnh hồ sơ..." class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 outline-none focus:border-indigo-600 transition-all font-bold">
+              
+              <div class="flex gap-3">
+                <input type="file" ref="fileInputRef" accept="image/*" @change="handleFileSelect" class="hidden">
+                <button @click="openFilePicker" type="button" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2">
+                  <i class="fas fa-upload"></i>
+                  Upload ảnh
+                </button>
+                <button v-if="!isCameraActive" @click="startCamera" type="button" class="flex-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2">
+                  <i class="fas fa-camera"></i>
+                  Chụp ảnh
+                </button>
+                <button v-else @click="capturePhoto" type="button" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2">
+                  <i class="fas fa-check"></i>
+                  Chụp
+                </button>
+                <button v-if="isCameraActive" @click="stopCamera" type="button" class="w-14 bg-rose-50 hover:bg-rose-100 text-rose-700 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all flex items-center justify-center">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -218,7 +260,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from '../api/axios'
 import AdminSidebar from '../components/AdminSidebar.vue'
@@ -262,6 +304,10 @@ const checkInForm = ref({
   guestIdNumber: '',
   guestIdImageUrl: ''
 })
+const isCameraActive = ref(false)
+const cameraRef = ref(null)
+const fileInputRef = ref(null)
+let cameraStream = null
 
 const fetchBookings = async () => {
   try {
@@ -407,16 +453,75 @@ const handleSubmit = async () => {
 const openCheckInModal = (booking) => {
   selectedBooking.value = booking
   checkInForm.value = {
-    guestIdNumber: '',
-    guestIdImageUrl: ''
+    guestIdNumber: booking.guestIdNumber || '',
+    guestIdImageUrl: booking.guestIdImageUrl || ''
   }
   showCheckInModal.value = true
+}
+
+const closeCheckInModal = () => {
+  showCheckInModal.value = false
+  stopCamera()
+}
+
+const startCamera = async () => {
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true })
+    isCameraActive.value = true
+    await nextTick()
+    if (cameraRef.value) {
+      cameraRef.value.srcObject = cameraStream
+    }
+  } catch (error) {
+    console.error('Lỗi khi mở camera:', error)
+    alert('Không thể mở camera. Vui lòng kiểm tra quyền truy cập.')
+  }
+}
+
+const stopCamera = () => {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(track => track.stop())
+    cameraStream = null
+  }
+  isCameraActive.value = false
+}
+
+const capturePhoto = () => {
+  if (!cameraRef.value) return
+  
+  const canvas = document.createElement('canvas')
+  canvas.width = cameraRef.value.videoWidth
+  canvas.height = cameraRef.value.videoHeight
+  const ctx = canvas.getContext('2d')
+  ctx.drawImage(cameraRef.value, 0, 0)
+  checkInForm.value.guestIdImageUrl = canvas.toDataURL('image/jpeg')
+  stopCamera()
+}
+
+const openFilePicker = () => {
+  fileInputRef.value?.click()
+}
+
+const handleFileSelect = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      checkInForm.value.guestIdImageUrl = e.target.result
+    }
+    reader.readAsDataURL(file)
+  }
+}
+
+const clearImage = () => {
+  checkInForm.value.guestIdImageUrl = ''
 }
 
 const handleCheckIn = async () => {
   try {
     await axios.put(`/bookings/${selectedBooking.value.id}/check-in`, checkInForm.value)
     showCheckInModal.value = false
+    stopCamera()
     fetchBookings()
     alert('Khách đã nhận phòng thành công!')
   } catch (error) {

@@ -141,6 +141,10 @@ public class BookingService {
         if (booking.getStatus() != BookingStatus.CONFIRMED && booking.getStatus() != BookingStatus.PENDING) {
             throw new RuntimeException("Booking #" + bookingId + " không ở trạng thái Chờ xác nhận hoặc Đã xác nhận (Trạng thái hiện tại: " + booking.getStatus() + "). Không thể thực hiện check-in.");
         }
+
+        if (guestIdNumber == null || guestIdNumber.isBlank()) {
+            throw new RuntimeException("Vui lòng nhập số CCCD/Passport");
+        }
         
         Room room = booking.getRoom();
 
