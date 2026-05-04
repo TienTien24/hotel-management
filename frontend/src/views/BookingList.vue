@@ -159,6 +159,13 @@
             </div>
           </div>
 
+          <div class="grid grid-cols-2 gap-8">
+            <div class="space-y-3">
+              <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Số người</label>
+              <input v-model.number="form.numberOfGuests" type="number" min="1" required placeholder="Số khách..." class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 outline-none focus:border-[#004d26] transition-all font-bold">
+            </div>
+          </div>
+
           <div class="space-y-3">
             <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Chọn phòng (Số phòng / Loại phòng)</label>
             <select v-model="form.roomId" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 outline-none focus:border-[#004d26] transition-all font-bold">
@@ -383,7 +390,8 @@ const form = ref({
   guestContact: '',
   checkInDate: '',
   checkOutDate: '',
-  roomId: ''
+  roomId: '',
+  numberOfGuests: 1
 })
 
 const checkInForm = ref({
@@ -483,7 +491,8 @@ const openCreateModal = () => {
     guestContact: '',
     checkInDate: '',
     checkOutDate: '',
-    roomId: ''
+    roomId: '',
+    numberOfGuests: 1
   }
   showModal.value = true
   fetchRooms()
@@ -497,7 +506,8 @@ const openUpdateModal = (booking) => {
     guestContact: booking.guestPhone || booking.customer?.phone || booking.guestEmail || booking.customer?.email,
     checkInDate: booking.checkInDate,
     checkOutDate: booking.checkOutDate,
-    roomId: booking.room?.id
+    roomId: booking.room?.id,
+    numberOfGuests: booking.numberOfGuests || 1
   }
   showModal.value = true
   fetchRooms()
