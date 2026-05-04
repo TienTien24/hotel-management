@@ -295,7 +295,7 @@ const handleBooking = async () => {
 
     alert('Đặt phòng thành công!')
     showBookingForm.value = false
-    router.push('/bookings')
+    router.push('/my-bookings')
   } catch (error) {
     console.error('Booking failed:', error)
     alert(error.response?.data?.message || 'Đặt phòng thất bại, vui lòng kiểm tra lại thông tin')

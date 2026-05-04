@@ -2,79 +2,84 @@
   <div class="min-h-screen flex bg-[#f8fafc] font-sans">
     <!-- Sidebar -->
     <aside class="w-72 bg-[#004d26] text-white min-h-screen flex flex-col shadow-2xl shrink-0 z-50">
-      <div class="p-8 mb-4">
+      <div class="p-8 border-b border-white/5">
         <div class="flex items-center gap-3">
-          <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center font-black text-2xl border border-white/20 text-white">H</div>
-          <h1 class="text-2xl font-black uppercase tracking-tight text-white">Grand Hotel</h1>
+          <div class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center font-black text-xl border border-white/20">H</div>
+          <div>
+            <h1 class="text-lg font-black uppercase tracking-tight leading-none">Grand Hotel</h1>
+          </div>
         </div>
       </div>
       
-      <nav class="flex-1 px-4 space-y-1">
-        <router-link to="/staff-dashboard" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group hover:bg-white/10">
-          <i class="fas fa-th-large text-xl opacity-70 group-hover:opacity-100"></i>
-          <span class="font-bold text-lg tracking-tight">Tổng quan</span>
+      <nav class="flex-1 px-4 mt-8 space-y-1">
+        <router-link to="/staff-dashboard" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="$route.path === '/staff-dashboard' ? 'bg-white/10 text-white shadow-lg' : 'text-white/60 hover:bg-white/5 hover:text-white'">
+          <i class="fas fa-chart-pie text-lg"></i>
+          <span class="font-bold text-sm tracking-tight">Tổng quan</span>
         </router-link>
 
-        <router-link to="/staff-rooms" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group hover:bg-white/10">
-          <i class="fas fa-door-open text-xl opacity-70 group-hover:opacity-100"></i>
-          <span class="font-bold text-lg tracking-tight">Quản lý Phòng</span>
+        <router-link to="/staff-rooms" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="$route.path === '/staff-rooms' ? 'bg-white/10 text-white shadow-lg' : 'text-white/60 hover:bg-white/5 hover:text-white'">
+          <i class="fas fa-bed text-lg"></i>
+          <span class="font-bold text-sm tracking-tight">Quản lý Phòng</span>
         </router-link>
 
-        <router-link to="/bookings" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group hover:bg-white/10">
-          <i class="fas fa-calendar-alt text-xl opacity-70 group-hover:opacity-100"></i>
-          <span class="font-bold text-lg tracking-tight">Quản lý Đặt phòng</span>
+        <router-link to="/bookings" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="$route.path === '/bookings' ? 'bg-white/10 text-white shadow-lg' : 'text-white/60 hover:bg-white/5 hover:text-white'">
+          <i class="fas fa-calendar-check text-lg"></i>
+          <span class="font-bold text-sm tracking-tight">Quản lý Đặt phòng</span>
         </router-link>
 
-        <router-link to="/manage-services" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group hover:bg-white/10">
-          <i class="fas fa-bell text-xl opacity-70 group-hover:opacity-100"></i>
-          <span class="font-bold text-lg tracking-tight">Quản lý Dịch vụ</span>
+        <router-link to="/manage-services" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="$route.path === '/manage-services' ? 'bg-white/10 text-white shadow-lg' : 'text-white/60 hover:bg-white/5 hover:text-white'">
+          <i class="fas fa-concierge-bell text-lg"></i>
+          <span class="font-bold text-sm tracking-tight">Quản lý Dịch vụ</span>
         </router-link>
 
-        <router-link to="/staff-messages" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group bg-white/10">
-          <i class="fas fa-envelope text-xl opacity-100"></i>
-          <span class="font-bold text-lg tracking-tight">Phản hồi khách hàng</span>
+        <router-link to="/staff-messages" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="$route.path === '/staff-messages' ? 'bg-white/10 text-white shadow-lg' : 'text-white/60 hover:bg-white/5 hover:text-white'">
+          <i class="fas fa-comment-alt text-lg"></i>
+          <span class="font-bold text-sm tracking-tight">Phản hồi khách hàng</span>
         </router-link>
       </nav>
 
-      <div class="p-10 mt-auto">
-        <button @click="logout" class="text-white/60 hover:text-white transition-colors font-black uppercase tracking-[0.2em] text-xs flex items-center gap-3">
+      <div class="p-8 border-t border-white/5">
+        <button @click="logout" class="w-full py-4 px-6 bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white rounded-xl transition-all duration-300 flex items-center justify-center gap-3 font-black uppercase tracking-widest text-[10px]">
           <i class="fas fa-sign-out-alt"></i>
-          Đăng xuất
+          <span>Đăng xuất</span>
         </button>
       </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 p-8 overflow-y-auto">
-      <header class="flex justify-between items-center mb-10">
+    <main class="flex-1 p-10 overflow-y-auto">
+      <header class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
         <div>
-          <h2 class="text-3xl font-black text-slate-800 uppercase tracking-tight">Phản hồi khách hàng</h2>
+          <h2 class="text-3xl font-black tracking-tight text-slate-800">Phản hồi khách hàng</h2>
         </div>
       </header>
 
       <!-- Messages List -->
-      <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-50">
-        <div class="p-8 border-b border-slate-50 flex justify-between items-center">
-          <div class="flex gap-4">
-            <button @click="filterStatus = ''" :class="!filterStatus ? 'bg-[#004d26] text-white' : 'bg-slate-50 text-slate-400'" class="px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Tất cả</button>
-            <button @click="filterStatus = 'PENDING'" :class="filterStatus === 'PENDING' ? 'bg-amber-500 text-white' : 'bg-slate-50 text-slate-400'" class="px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Chưa đọc</button>
-            <button @click="filterStatus = 'READ'" :class="filterStatus === 'READ' ? 'bg-blue-500 text-white' : 'bg-slate-50 text-slate-400'" class="px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Đã đọc</button>
-            <button @click="filterStatus = 'REPLIED'" :class="filterStatus === 'REPLIED' ? 'bg-emerald-500 text-white' : 'bg-slate-50 text-slate-400'" class="px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Đã trả lời</button>
+      <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+        <div class="p-8 border-b border-slate-50 bg-slate-50/50">
+          <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div class="flex gap-4 flex-wrap">
+              <button @click="filterStatus = ''" :class="!filterStatus ? 'bg-[#004d26] text-white' : 'bg-slate-50 text-slate-400'" class="px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Tất cả</button>
+              <button @click="filterStatus = 'PENDING'" :class="filterStatus === 'PENDING' ? 'bg-amber-500 text-white' : 'bg-slate-50 text-slate-400'" class="px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Chưa đọc</button>
+              <button @click="filterStatus = 'READ'" :class="filterStatus === 'READ' ? 'bg-blue-500 text-white' : 'bg-slate-50 text-slate-400'" class="px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Đã đọc</button>
+              <button @click="filterStatus = 'REPLIED'" :class="filterStatus === 'REPLIED' ? 'bg-emerald-500 text-white' : 'bg-slate-50 text-slate-400'" class="px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Đã trả lời</button>
+            </div>
+            <button @click="fetchMessages" class="w-10 h-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center hover:bg-[#004d26] hover:text-white transition-all shadow-sm">
+              <i class="fas fa-sync-alt"></i>
+            </button>
           </div>
-          <button @click="fetchMessages" class="w-10 h-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center hover:bg-[#004d26] hover:text-white transition-all shadow-sm">
-            <i class="fas fa-sync-alt"></i>
-          </button>
         </div>
 
-        <div class="overflow-x-auto">
-          <table class="min-w-full">
+        <div v-if="filteredMessages.length === 0" class="p-16 text-center text-slate-400 font-bold">Không có tin nhắn nào</div>
+        <div v-else class="overflow-x-auto">
+          <table class="w-full">
             <thead>
-              <tr class="bg-slate-50/50">
-                <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Khách hàng</th>
-                <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Nội dung liên hệ</th>
-                <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Thời gian</th>
-                <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Trạng thái</th>
-                <th class="px-8 py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Thao tác</th>
+              <tr class="bg-slate-50/50 text-left">
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Khách hàng</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Nội dung liên hệ</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Thời gian</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Trạng thái</th>
+                <th class="px-8 py-5 text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Thao tác</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
@@ -97,31 +102,23 @@
                   <p class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">{{ formatDateTime(msg.createdAt) }}</p>
                 </td>
                 <td class="px-8 py-6">
-                  <span :class="getStatusClass(msg.status)" class="px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest">
+                  <span :class="getStatusClass(msg.status)" class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
                     {{ formatStatus(msg.status) }}
                   </span>
                 </td>
                 <td class="px-8 py-6">
                   <div class="flex justify-center gap-2">
-                    <button @click="openReplyModal(msg)" class="w-9 h-9 bg-white shadow-sm border border-slate-100 text-slate-400 rounded-xl flex items-center justify-center hover:bg-[#004d26] hover:text-white transition-all">
-                      <i class="fas fa-reply text-[10px]"></i>
+                    <button @click="openReplyModal(msg)" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:bg-[#004d26] hover:text-white transition-all flex items-center justify-center shadow-sm">
+                      <i class="fas fa-reply text-xs"></i>
                     </button>
-                    <button v-if="msg.status === 'PENDING'" @click="markAsRead(msg.id)" class="w-9 h-9 bg-white shadow-sm border border-slate-100 text-slate-400 rounded-xl flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all">
-                      <i class="fas fa-check text-[10px]"></i>
+                    <button v-if="msg.status === 'PENDING'" @click="markAsRead(msg.id)" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:bg-blue-500 hover:text-white transition-all flex items-center justify-center shadow-sm">
+                      <i class="fas fa-check text-xs"></i>
                     </button>
                   </div>
                 </td>
               </tr>
             </tbody>
           </table>
-          
-          <div v-if="filteredMessages.length === 0" class="p-32 text-center">
-            <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
-              <i class="fas fa-envelope-open text-2xl text-slate-200"></i>
-            </div>
-            <h4 class="text-lg font-black text-slate-300 uppercase tracking-widest">Không có tin nhắn nào</h4>
-            <p class="text-sm text-slate-400 mt-2 font-medium">Hệ thống hiện tại chưa nhận được phản hồi mới</p>
-          </div>
         </div>
       </div>
     </main>
@@ -254,13 +251,17 @@ onMounted(() => {
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
-main::-webkit-scrollbar { width: 6px; }
-main::-webkit-scrollbar-track { background: transparent; }
-main::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-
-.animate-in { animation: animate-in 0.3s ease-out; }
-@keyframes animate-in {
-  from { opacity: 0; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1); }
+main::-webkit-scrollbar {
+  width: 8px;
+}
+main::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+main::-webkit-scrollbar-thumb {
+  background: #005c32;
+  border-radius: 10px;
+}
+main::-webkit-scrollbar-thumb:hover {
+  background: #004d26;
 }
 </style>

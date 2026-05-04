@@ -2,104 +2,75 @@
   <div class="min-h-screen flex bg-[#f8fafc] font-sans">
     <!-- Sidebar (Same as other staff pages) -->
     <aside class="w-72 bg-[#004d26] text-white min-h-screen flex flex-col shadow-2xl shrink-0 z-50">
-      <div class="p-8 mb-4">
+      <div class="p-8 border-b border-white/5">
         <div class="flex items-center gap-3">
-          <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center font-black text-2xl border border-white/20 text-white">H</div>
-          <h1 class="text-2xl font-black uppercase tracking-tight text-white">Grand Hotel</h1>
+          <div class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center font-black text-xl border border-white/20">H</div>
+          <div>
+            <h1 class="text-lg font-black uppercase tracking-tight leading-none">Grand Hotel</h1>
+          </div>
         </div>
       </div>
       
-      <nav class="flex-1 px-4 space-y-1">
-        <router-link to="/staff-dashboard" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="{'bg-white/10': $route.path === '/staff-dashboard', 'hover:bg-white/10': $route.path !== '/staff-dashboard'}">
-          <i class="fas fa-th-large text-xl opacity-70 group-hover:opacity-100" :class="{'opacity-100': $route.path === '/staff-dashboard'}"></i>
-          <span class="font-bold text-lg tracking-tight">Tổng quan</span>
+      <nav class="flex-1 px-4 mt-8 space-y-1">
+        <router-link to="/staff-dashboard" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="$route.path === '/staff-dashboard' ? 'bg-white/10 text-white shadow-lg' : 'text-white/60 hover:bg-white/5 hover:text-white'">
+          <i class="fas fa-chart-pie text-lg"></i>
+          <span class="font-bold text-sm tracking-tight">Tổng quan</span>
         </router-link>
 
-        <router-link to="/staff-rooms" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="{'bg-white/10': $route.path === '/staff-rooms', 'hover:bg-white/10': $route.path !== '/staff-rooms'}">
-          <i class="fas fa-door-open text-xl opacity-70 group-hover:opacity-100" :class="{'opacity-100': $route.path === '/staff-rooms'}"></i>
-          <span class="font-bold text-lg tracking-tight">Quản lý Phòng</span>
+        <router-link to="/staff-rooms" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="$route.path === '/staff-rooms' ? 'bg-white/10 text-white shadow-lg' : 'text-white/60 hover:bg-white/5 hover:text-white'">
+          <i class="fas fa-bed text-lg"></i>
+          <span class="font-bold text-sm tracking-tight">Quản lý Phòng</span>
         </router-link>
 
-        <router-link to="/bookings" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="{'bg-white/10': $route.path === '/bookings', 'hover:bg-white/10': $route.path !== '/bookings'}">
-          <i class="fas fa-calendar-alt text-xl opacity-70 group-hover:opacity-100" :class="{'opacity-100': $route.path === '/bookings'}"></i>
-          <span class="font-bold text-lg tracking-tight">Quản lý Đặt phòng</span>
+        <router-link to="/bookings" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="$route.path === '/bookings' ? 'bg-white/10 text-white shadow-lg' : 'text-white/60 hover:bg-white/5 hover:text-white'">
+          <i class="fas fa-calendar-check text-lg"></i>
+          <span class="font-bold text-sm tracking-tight">Quản lý Đặt phòng</span>
         </router-link>
 
-        <router-link to="/manage-services" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group bg-white/10">
-          <i class="fas fa-bell text-xl opacity-100"></i>
-          <span class="font-bold text-lg tracking-tight">Quản lý Dịch vụ</span>
+        <router-link to="/manage-services" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="$route.path === '/manage-services' ? 'bg-white/10 text-white shadow-lg' : 'text-white/60 hover:bg-white/5 hover:text-white'">
+          <i class="fas fa-concierge-bell text-lg"></i>
+          <span class="font-bold text-sm tracking-tight">Quản lý Dịch vụ</span>
         </router-link>
 
-        <router-link to="/staff-messages" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group hover:bg-white/10">
-          <i class="fas fa-envelope text-xl opacity-70 group-hover:opacity-100"></i>
-          <span class="font-bold text-lg tracking-tight">Phản hồi khách hàng</span>
+        <router-link to="/staff-messages" class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group" :class="$route.path === '/staff-messages' ? 'bg-white/10 text-white shadow-lg' : 'text-white/60 hover:bg-white/5 hover:text-white'">
+          <i class="fas fa-comment-alt text-lg"></i>
+          <span class="font-bold text-sm tracking-tight">Phản hồi khách hàng</span>
         </router-link>
       </nav>
 
-      <div class="p-10 mt-auto">
-        <button @click="logout" class="text-white/60 hover:text-white transition-colors font-black uppercase tracking-[0.2em] text-xs flex items-center gap-3">
+      <div class="p-8 border-t border-white/5">
+        <button @click="logout" class="w-full py-4 px-6 bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white rounded-xl transition-all duration-300 flex items-center justify-center gap-3 font-black uppercase tracking-widest text-[10px]">
           <i class="fas fa-sign-out-alt"></i>
-          Đăng xuất
+          <span>Đăng xuất</span>
         </button>
       </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 p-8 overflow-y-auto">
-      <header class="flex justify-between items-center mb-10">
+    <main class="flex-1 p-10 overflow-y-auto">
+      <header class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
         <div>
-          <h2 class="text-3xl font-black text-slate-800 uppercase tracking-tight">Quản lý dịch vụ</h2>
+          <h2 class="text-3xl font-black tracking-tight text-slate-800">Quản lý dịch vụ</h2>
         </div>
       </header>
 
       <!-- Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-        <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-5">
-          <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl">
-            <i class="fas fa-clipboard-list"></i>
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="text-2xl font-black text-slate-800">{{ stats.total }}</span>
-            </div>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tổng yêu cầu <span class="text-blue-500 lowercase ml-1">hôm nay</span></p>
-          </div>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Tổng yêu cầu</p>
+          <p class="text-3xl font-black text-slate-800">{{ stats.total }}</p>
         </div>
-
-        <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-5">
-          <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-xl">
-            <i class="fas fa-clock"></i>
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="text-2xl font-black text-slate-800">{{ stats.processing }}</span>
-            </div>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Đang xử lý <span class="text-amber-500 lowercase ml-1">hôm nay</span></p>
-          </div>
+        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Đang xử lý</p>
+          <p class="text-3xl font-black text-amber-600">{{ stats.processing }}</p>
         </div>
-
-        <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-5">
-          <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl">
-            <i class="fas fa-check-circle"></i>
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="text-2xl font-black text-slate-800">{{ stats.completed }}</span>
-            </div>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Đã hoàn thành <span class="text-emerald-500 lowercase ml-1">hôm nay</span></p>
-          </div>
+        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Đã hoàn thành</p>
+          <p class="text-3xl font-black text-emerald-600">{{ stats.completed }}</p>
         </div>
-
-        <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-5">
-          <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-xl">
-            <i class="fas fa-dollar-sign"></i>
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="text-2xl font-black text-slate-800">{{ formatCurrency(stats.revenue) }}</span>
-            </div>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Doanh thu dịch vụ <span class="text-indigo-500 lowercase ml-1">hôm nay</span></p>
-          </div>
+        <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Doanh thu</p>
+          <p class="text-3xl font-black text-indigo-600">{{ formatCurrency(stats.revenue) }}</p>
         </div>
       </div>
 
@@ -107,98 +78,105 @@
         <!-- List Section -->
         <div class="flex-1 space-y-6">
           <!-- Filters -->
-          <div class="bg-white p-4 rounded-[2rem] shadow-sm border border-slate-100 flex flex-wrap items-center gap-4">
-            <div class="relative flex-1 min-w-[200px]">
-              <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i>
-              <input type="text" v-model="filters.search" placeholder="Tìm kiếm (phòng, dịch vụ, ghi chú...)" class="w-full bg-slate-50 border-0 rounded-xl pl-10 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-[#004d26] text-xs font-bold transition-all">
+          <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+            <div class="p-8 border-b border-slate-50 bg-slate-50/50">
+              <div class="flex flex-col lg:flex-row gap-4 w-full">
+                <div class="relative w-full lg:w-80">
+                  <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                  <input type="text" v-model="filters.search" placeholder="Tìm kiếm (phòng, dịch vụ, ghi chú...)" class="w-full bg-white border-2 border-slate-100 rounded-xl pl-12 pr-5 py-3 outline-none focus:border-[#004d26] transition-all font-bold text-sm">
+                </div>
+                <select v-model="filters.status" class="w-full lg:w-auto bg-white border-2 border-slate-100 rounded-xl px-5 py-3 outline-none focus:border-[#004d26] font-bold text-sm text-slate-600">
+                  <option value="">Tất cả trạng thái</option>
+                  <option value="PENDING">Mới tạo (Pending)</option>
+                  <option value="IN_PROGRESS">Đang xử lý (In Progress)</option>
+                  <option value="COMPLETED">Đã hoàn tất (Completed)</option>
+                </select>
+                <select v-model="filters.type" class="w-full lg:w-auto bg-white border-2 border-slate-100 rounded-xl px-5 py-3 outline-none focus:border-[#004d26] font-bold text-sm text-slate-600">
+                  <option value="">Tất cả loại dịch vụ</option>
+                  <option v-for="s in services" :key="s.id" :value="s.id">{{ s.name }}</option>
+                </select>
+                <input type="date" v-model="filters.date" class="w-full lg:w-auto bg-white border-2 border-slate-100 rounded-xl px-5 py-3 outline-none focus:border-[#004d26] font-bold text-sm text-slate-600">
+                <button @click="openCreateModal" class="bg-[#004d26] text-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-[#003d1e] transition-all flex items-center gap-2">
+                  <i class="fas fa-plus"></i>
+                  Thêm dịch vụ
+                </button>
+              </div>
             </div>
-            <select v-model="filters.status" class="bg-slate-50 border-0 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#004d26] text-xs font-bold text-slate-600">
-              <option value="">Tất cả trạng thái</option>
-              <option value="PENDING">Mới tạo (Pending)</option>
-              <option value="IN_PROGRESS">Đang xử lý (In Progress)</option>
-              <option value="COMPLETED">Đã hoàn tất (Completed)</option>
-            </select>
-            <select v-model="filters.type" class="bg-slate-50 border-0 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#004d26] text-xs font-bold text-slate-600">
-              <option value="">Tất cả loại dịch vụ</option>
-              <option v-for="s in services" :key="s.id" :value="s.id">{{ s.name }}</option>
-            </select>
-            <div class="relative">
-              <input type="date" v-model="filters.date" class="bg-slate-50 border-0 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#004d26] text-xs font-bold text-slate-600">
-            </div>
-            <button @click="openCreateModal" class="bg-[#004d26] text-white px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-[#003d1e] transition-all flex items-center gap-2">
-              <i class="fas fa-plus"></i>
-              Thêm dịch vụ
-            </button>
           </div>
 
           <!-- Table -->
-          <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-50">
-            <table class="min-w-full">
-              <thead>
-                <tr class="bg-slate-50/50">
-                  <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Mã yêu cầu</th>
-                  <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Phòng</th>
-                  <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Dịch vụ</th>
-                  <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Số lượng</th>
-                  <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Thời gian yêu cầu</th>
-                  <th class="px-8 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Trạng thái</th>
-                  <th class="px-8 py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Thao tác</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-50">
-                <tr v-for="usage in filteredUsages" :key="usage.id" class="hover:bg-slate-50/50 transition-colors">
-                  <td class="px-8 py-5 text-[11px] font-black text-slate-500 tracking-tighter uppercase">SV{{ String(usage.id).padStart(8, '0') }}</td>
-                  <td class="px-8 py-5">
-                    <span class="text-sm font-black text-slate-800">{{ usage.booking?.room?.roomNumber }}</span>
-                  </td>
-                  <td class="px-8 py-5">
-                    <div class="flex items-center gap-3">
-                      <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
-                        <i :class="getServiceIcon(usage.service?.name)"></i>
+          <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+            <div v-if="filteredUsages.length === 0" class="p-16 text-center text-slate-400 font-bold">Không tìm thấy yêu cầu dịch vụ</div>
+            <div v-else class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="bg-slate-50/50 text-left">
+                    <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Mã yêu cầu</th>
+                    <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Phòng</th>
+                    <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Dịch vụ</th>
+                    <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Số lượng</th>
+                    <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Thời gian yêu cầu</th>
+                    <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Trạng thái</th>
+                    <th class="px-8 py-5 text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                  <tr v-for="usage in filteredUsages" :key="usage.id" class="hover:bg-slate-50/50 transition-colors">
+                    <td class="px-8 py-6">
+                      <div class="font-black text-slate-500 text-sm tracking-tighter uppercase">SV{{ String(usage.id).padStart(8, '0') }}</div>
+                    </td>
+                    <td class="px-8 py-6">
+                      <div class="font-black text-slate-800 text-sm">{{ usage.booking?.room?.roomNumber }}</div>
+                    </td>
+                    <td class="px-8 py-6">
+                      <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
+                          <i :class="getServiceIcon(usage.service?.name)"></i>
+                        </div>
+                        <div>
+                          <p class="text-xs font-black text-slate-800">{{ usage.service?.name }}</p>
+                          <p v-if="usage.note" class="text-[9px] font-bold text-slate-400 italic">"{{ usage.note }}"</p>
+                        </div>
                       </div>
-                      <div>
-                        <p class="text-xs font-black text-slate-800">{{ usage.service?.name }}</p>
-                        <p v-if="usage.note" class="text-[9px] font-bold text-slate-400 italic">"{{ usage.note }}"</p>
+                    </td>
+                    <td class="px-8 py-6">
+                      <div class="font-black text-slate-800 text-sm">{{ usage.quantity }}</div>
+                    </td>
+                    <td class="px-8 py-6">
+                      <div class="font-bold text-slate-500 text-xs uppercase tracking-tighter">{{ formatDateTime(usage.usedDate) }}</div>
+                    </td>
+                    <td class="px-8 py-6">
+                      <span :class="getStatusClass(usage.status)" class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
+                        {{ formatStatus(usage.status) }}
+                      </span>
+                    </td>
+                    <td class="px-8 py-6">
+                      <div class="flex justify-center gap-2">
+                        <button @click="openViewModal(usage)" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all flex items-center justify-center shadow-sm">
+                          <i class="fas fa-eye text-xs"></i>
+                        </button>
+                        <button v-if="usage.status !== 'COMPLETED'" @click="openEditStatusModal(usage)" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:bg-amber-50 hover:text-amber-600 transition-all flex items-center justify-center shadow-sm">
+                          <i class="fas fa-edit text-xs"></i>
+                        </button>
                       </div>
-                    </div>
-                  </td>
-                  <td class="px-8 py-5 text-sm font-black text-slate-800">{{ usage.quantity }}</td>
-                  <td class="px-8 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-tighter">{{ formatDateTime(usage.usedDate) }}</td>
-                  <td class="px-8 py-5">
-                    <span :class="getStatusClass(usage.status)" class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest">
-                      {{ formatStatus(usage.status) }}
-                    </span>
-                  </td>
-                  <td class="px-8 py-5">
-                    <div class="flex justify-center gap-2">
-                      <button @click="openViewModal(usage)" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all flex items-center justify-center">
-                        <i class="fas fa-eye text-[10px]"></i>
-                      </button>
-                      <button v-if="usage.status !== 'COMPLETED'" @click="openEditStatusModal(usage)" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:bg-amber-50 hover:text-amber-600 transition-all flex items-center justify-center">
-                        <i class="fas fa-edit text-[10px]"></i>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div v-if="filteredUsages.length === 0" class="p-20 text-center">
-              <i class="fas fa-inbox text-4xl text-slate-100 mb-4"></i>
-              <p class="text-xs font-black text-slate-300 uppercase tracking-[0.2em]">Không tìm thấy yêu cầu dịch vụ</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
 
         <!-- Create Panel (Right) -->
         <aside class="w-full xl:w-96">
-          <div class="bg-white rounded-[2.5rem] shadow-xl border border-slate-50 overflow-hidden sticky top-8">
-            <div class="bg-white p-8 border-b border-slate-50">
-              <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">Thêm dịch vụ mới</h3>
+          <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden sticky top-8">
+            <div class="p-8 border-b border-slate-50 bg-slate-50/50">
+              <h3 class="text-xl font-black text-slate-800">Thêm dịch vụ mới</h3>
             </div>
             <form @submit.prevent="handleCreateUsage" class="p-8 space-y-6">
               <div class="space-y-2">
                 <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Phòng <span class="text-rose-500">*</span></label>
-                <select v-model="form.bookingId" required class="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[#004d26] text-xs font-bold text-slate-800 transition-all">
+                <select v-model="form.bookingId" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3 outline-none focus:border-[#004d26] text-xs font-bold text-slate-800 transition-all">
                   <option value="">-- Chọn phòng đang có khách --</option>
                   <option v-for="b in occupiedBookings" :key="b.id" :value="b.id">
                     {{ b.room?.roomNumber }} - {{ b.guestFullName || b.customer?.fullName }}
@@ -208,7 +186,7 @@
 
               <div class="space-y-2">
                 <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Loại dịch vụ <span class="text-rose-500">*</span></label>
-                <select v-model="form.serviceId" required class="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[#004d26] text-xs font-bold text-slate-800 transition-all">
+                <select v-model="form.serviceId" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3 outline-none focus:border-[#004d26] text-xs font-bold text-slate-800 transition-all">
                   <option value="">-- Chọn loại dịch vụ --</option>
                   <option v-for="s in services" :key="s.id" :value="s.id">
                     {{ s.name }} ({{ formatCurrency(s.price) }})
@@ -231,7 +209,7 @@
 
               <div class="space-y-2">
                 <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Ghi chú</label>
-                <textarea v-model="form.note" rows="3" placeholder="Ví dụ: Đồ ăn không cay, giặt là gấp..." class="w-full bg-slate-50 border-0 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[#004d26] text-xs font-bold text-slate-800 transition-all resize-none"></textarea>
+                <textarea v-model="form.note" rows="3" placeholder="Ví dụ: Đồ ăn không cay, giặt là gấp..." class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3 outline-none focus:border-[#004d26] text-xs font-bold text-slate-800 transition-all resize-none"></textarea>
               </div>
 
               <button type="submit" class="w-full bg-[#004d26] text-white py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-[#003d1e] transition-all shadow-xl shadow-green-50 flex items-center justify-center gap-3">
@@ -469,21 +447,17 @@ onMounted(() => {
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
-main::-webkit-scrollbar { width: 6px; }
-main::-webkit-scrollbar-track { background: transparent; }
-main::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-
-.animate-in { animation: animate-in 0.3s ease-out; }
-@keyframes animate-in {
-  from { opacity: 0; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1); }
+main::-webkit-scrollbar {
+  width: 8px;
 }
-
-select {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 1rem;
+main::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+main::-webkit-scrollbar-thumb {
+  background: #005c32;
+  border-radius: 10px;
+}
+main::-webkit-scrollbar-thumb:hover {
+  background: #004d26;
 }
 </style>
