@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 22, 2026 at 06:31 AM
+-- Generation Time: May 04, 2026
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -31,18 +31,34 @@ CREATE TABLE `booking` (
   `id` bigint(20) NOT NULL,
   `check_in_date` date DEFAULT NULL,
   `check_out_date` date DEFAULT NULL,
-  `status` enum('PENDING','CONFIRMED','CANCELLED','COMPLETED') DEFAULT NULL,
+  `checked_in_at` datetime(6) DEFAULT NULL,
+  `checked_out_at` datetime(6) DEFAULT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `guest_address` varchar(255) DEFAULT NULL,
+  `guest_email` varchar(255) DEFAULT NULL,
+  `guest_full_name` varchar(255) DEFAULT NULL,
+  `guest_id_image_url` text DEFAULT NULL,
+  `guest_id_number` varchar(255) DEFAULT NULL,
+  `guest_phone` varchar(255) DEFAULT NULL,
+  `number_of_guests` int(11) DEFAULT NULL,
+  `payment_method` enum('COD','VNPAY','MOMO') DEFAULT NULL,
+  `payment_status` enum('UNPAID','PENDING','PAID','FAILED','REFUNDED') DEFAULT NULL,
+  `review_comment` text DEFAULT NULL,
+  `review_created_at` datetime(6) DEFAULT NULL,
+  `review_rating` int(11) DEFAULT NULL,
+  `review_title` varchar(255) DEFAULT NULL,
+  `status` enum('PENDING','CONFIRMED','CHECKED_IN','COMPLETED','CANCELLED') DEFAULT NULL,
   `total_price` double DEFAULT NULL,
-  `user_id` bigint(20) DEFAULT NULL,
-  `room_id` bigint(20) DEFAULT NULL
+  `room_id` bigint(20) DEFAULT NULL,
+  `user_id` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `booking`
 --
 
-INSERT INTO `booking` (`id`, `check_in_date`, `check_out_date`, `status`, `total_price`, `user_id`, `room_id`) VALUES
-(1, '2026-04-22', '2026-04-23', 'CONFIRMED', 50, 4, 1);
+INSERT INTO `booking` (`id`, `check_in_date`, `check_out_date`, `status`, `total_price`, `user_id`, `room_id`, `guest_full_name`, `number_of_guests`) VALUES
+(1, '2026-04-22', '2026-04-23', 'CONFIRMED', 50, 4, 1, 'thuytien', 1);
 
 -- --------------------------------------------------------
 
@@ -136,35 +152,22 @@ CREATE TABLE `room` (
   `id` bigint(20) NOT NULL,
   `price` double DEFAULT NULL,
   `room_number` varchar(255) DEFAULT NULL,
-  `status` enum('AVAILABLE','BOOKED','OCCUPIED','MAINTENANCE') DEFAULT NULL,
-  `type` varchar(255) DEFAULT NULL
+  `status` enum('AVAILABLE','BOOKED','OCCUPIED','MAINTENANCE','CLEANING') DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `category` varchar(255) DEFAULT NULL,
+  `capacity` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `room`
 --
 
-INSERT INTO `room` (`id`, `price`, `room_number`, `status`, `type`) VALUES
-(1, 50, '101', 'AVAILABLE', 'Single'),
-(2, 80, '102', 'AVAILABLE', 'Double'),
-(3, 150, '201', 'AVAILABLE', 'Suite'),
-(4, 120, '202', 'AVAILABLE', 'Deluxe'),
-(5, 250, '301', 'AVAILABLE', 'Suite'),
-(6, 50, '101', 'AVAILABLE', 'Single'),
-(7, 80, '102', 'AVAILABLE', 'Double'),
-(8, 150, '201', 'AVAILABLE', 'Suite'),
-(9, 120, '202', 'AVAILABLE', 'Deluxe'),
-(10, 250, '301', 'AVAILABLE', 'Suite'),
-(11, 50, '101', 'AVAILABLE', 'Single'),
-(12, 80, '102', 'AVAILABLE', 'Double'),
-(13, 150, '201', 'AVAILABLE', 'Suite'),
-(14, 120, '202', 'AVAILABLE', 'Deluxe'),
-(15, 250, '301', 'AVAILABLE', 'Suite'),
-(16, 50, '101', 'AVAILABLE', 'Single'),
-(17, 80, '102', 'AVAILABLE', 'Double'),
-(18, 150, '201', 'AVAILABLE', 'Suite'),
-(19, 120, '202', 'AVAILABLE', 'Deluxe'),
-(20, 250, '301', 'AVAILABLE', 'Suite');
+INSERT INTO `room` (`id`, `price`, `room_number`, `status`, `type`, `category`, `capacity`) VALUES
+(1, 50, '101', 'AVAILABLE', 'Single', 'Standard', 1),
+(2, 80, '102', 'AVAILABLE', 'Double', 'Standard', 2),
+(3, 150, '201', 'AVAILABLE', 'Suite', 'Suite', 4),
+(4, 120, '202', 'AVAILABLE', 'Deluxe', 'Deluxe', 2),
+(5, 250, '301', 'AVAILABLE', 'Suite', 'Suite', 4);
 
 -- --------------------------------------------------------
 
