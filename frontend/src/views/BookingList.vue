@@ -105,6 +105,9 @@
                     <button v-if="booking.status === 'CHECKED_IN'" @click="handleCheckOut(booking.id)" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600 transition-all flex items-center justify-center shadow-sm" title="Check-out">
                       <i class="fas fa-sign-out-alt"></i>
                     </button>
+                    <button v-if="booking.status === 'COMPLETED'" @click="openInvoiceModal(booking)" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-all flex items-center justify-center shadow-sm" title="Xem hóa đơn">
+                      <i class="fas fa-file-invoice"></i>
+                    </button>
                     <button v-if="!['COMPLETED', 'CANCELLED'].includes(booking.status)" @click="openUpdateModal(booking)" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:bg-amber-50 hover:text-amber-600 transition-all flex items-center justify-center shadow-sm" title="Sửa / Đổi phòng">
                       <i class="fas fa-edit"></i>
                     </button>
@@ -256,6 +259,89 @@
         </form>
       </div>
     </div>
+
+    <!-- Modal Hóa đơn -->
+    <div v-if="showInvoiceModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md">
+      <div class="bg-white rounded-[3.5rem] max-w-2xl w-full overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+        <div class="bg-emerald-600 p-12 text-white relative">
+          <div class="absolute top-12 right-12">
+            <button @click="showInvoiceModal = false" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/10 text-white hover:bg-rose-500 transition-all">
+              <i class="fas fa-times text-xl"></i>
+            </button>
+          </div>
+          <h3 class="text-4xl font-black uppercase tracking-tighter mb-2">Hóa đơn</h3>
+          <p class="text-emerald-100/60 font-bold">Booking #{{ currentInvoice?.booking?.id }}</p>
+        </div>
+
+        <div class="p-12 space-y-8" v-if="currentInvoice">
+          <div class="space-y-4 bg-slate-50 p-6 rounded-[2rem]">
+            <h4 class="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Thông tin khách hàng</h4>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Tên khách</p>
+                <p class="text-sm font-black text-slate-800">{{ currentInvoice.booking?.guestFullName || currentInvoice.booking?.customer?.fullName }}</p>
+              </div>
+              <div>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Số điện thoại</p>
+                <p class="text-sm font-black text-slate-800">{{ currentInvoice.booking?.guestPhone || currentInvoice.booking?.customer?.phone }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4 bg-slate-50 p-6 rounded-[2rem]">
+            <h4 class="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Thông tin phòng</h4>
+            <div class="grid grid-cols-3 gap-4">
+              <div>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Phòng</p>
+                <p class="text-sm font-black text-slate-800">P.{{ currentInvoice.booking?.room?.roomNumber }}</p>
+              </div>
+              <div>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Ngày đến</p>
+                <p class="text-sm font-black text-slate-800">{{ formatDate(currentInvoice.booking?.checkInDate) }}</p>
+              </div>
+              <div>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Ngày đi</p>
+                <p class="text-sm font-black text-slate-800">{{ formatDate(currentInvoice.booking?.checkOutDate) }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <h4 class="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Chi tiết thanh toán</h4>
+            <div class="space-y-3">
+              <div class="flex justify-between items-center py-3 border-b border-slate-100">
+                <span class="text-sm font-bold text-slate-600">Phòng</span>
+                <span class="text-sm font-black text-slate-800">{{ formatCurrency(currentInvoice.roomCharges) }}</span>
+              </div>
+              <div class="flex justify-between items-center py-3 border-b border-slate-100" v-if="currentInvoice.serviceCharges > 0">
+                <span class="text-sm font-bold text-slate-600">Dịch vụ</span>
+                <span class="text-sm font-black text-slate-800">{{ formatCurrency(currentInvoice.serviceCharges) }}</span>
+              </div>
+              <div class="flex justify-between items-center pt-3">
+                <span class="text-lg font-black uppercase tracking-widest text-slate-800">Tổng cộng</span>
+                <span class="text-2xl font-black text-emerald-600">{{ formatCurrency(currentInvoice.totalAmount) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between bg-emerald-50 p-6 rounded-[2rem]">
+            <div>
+              <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-600">Trạng thái thanh toán</p>
+              <p class="text-sm font-black text-emerald-800">{{ currentInvoice.paymentStatus === 'PAID' ? 'Đã thanh toán' : 'Chưa thanh toán' }}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Ngày thanh toán</p>
+              <p class="text-sm font-black text-slate-800">{{ currentInvoice.paymentDate ? formatDateTime(currentInvoice.paymentDate) : '--' }}</p>
+            </div>
+          </div>
+          
+          <button @click="printInvoice" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-5 rounded-[2rem] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3">
+            <i class="fas fa-print"></i>
+            <span>In hóa đơn</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -308,6 +394,8 @@ const isCameraActive = ref(false)
 const cameraRef = ref(null)
 const fileInputRef = ref(null)
 let cameraStream = null
+const showInvoiceModal = ref(false)
+const currentInvoice = ref(null)
 
 const fetchBookings = async () => {
   try {
@@ -532,12 +620,238 @@ const handleCheckIn = async () => {
 const handleCheckOut = async (id) => {
   if (!confirm('Xác nhận trả phòng (Check-out) cho khách?')) return
   try {
-    await axios.put(`/bookings/${id}/check-out`)
+    const invoice = await axios.put(`/invoices/booking/${id}/check-out`)
+    currentInvoice.value = invoice.data
     fetchBookings()
-    alert('Đã hoàn tất trả phòng. Trạng thái phòng: Đang dọn dẹp.')
+    showInvoiceModal.value = true
   } catch (error) {
     alert('Lỗi: ' + (error.response?.data?.message || 'Check-out thất bại'))
   }
+}
+
+const openInvoiceModal = async (booking) => {
+  try {
+    const response = await axios.get(`/invoices/booking/${booking.id}`)
+    currentInvoice.value = response.data
+    showInvoiceModal.value = true
+  } catch (error) {
+    alert('Lỗi: ' + (error.response?.data?.message || 'Không tìm thấy hóa đơn'))
+  }
+}
+
+const formatCurrency = (amount) => {
+  if (!amount) return '0 đ'
+  return new Intl.NumberFormat('vi-VN').format(amount * 25000) + ' đ'
+}
+
+const formatDateTime = (dateStr) => {
+  if (!dateStr) return ''
+  const d = new Date(dateStr)
+  return d.toLocaleString('vi-VN')
+}
+
+const printInvoice = () => {
+  const printContent = document.querySelector('#invoice-content')?.innerHTML
+  if (!printContent) return
+  
+  const printWindow = window.open('', '', 'width=800,height=1000')
+  if (!printWindow) return
+  
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Hóa đơn - Grand Hotel</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          padding: 40px;
+          max-width: 800px;
+          margin: 0 auto;
+        }
+        .invoice-header {
+          text-align: center;
+          margin-bottom: 30px;
+          border-bottom: 2px solid #004d26;
+          padding-bottom: 20px;
+        }
+        .invoice-header h1 {
+          color: #004d26;
+          margin: 0;
+        }
+        .invoice-section {
+          margin: 20px 0;
+          padding: 15px;
+          background: #f8fafc;
+          border-radius: 8px;
+        }
+        .invoice-section h4 {
+          color: #64748b;
+          font-size: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          margin: 0 0 15px 0;
+        }
+        .grid-2 {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+        }
+        .grid-3 {
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 20px;
+        }
+        .item {
+          margin-bottom: 10px;
+        }
+        .item-label {
+          font-size: 12px;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+        }
+        .item-value {
+          font-size: 14px;
+          font-weight: bold;
+          color: #1e293b;
+          margin-top: 4px;
+        }
+        .total-section {
+          margin-top: 30px;
+        }
+        .total-row {
+          display: flex;
+          justify-content: space-between;
+          padding: 10px 0;
+          border-bottom: 1px solid #e2e8f0;
+        }
+        .total-row:last-child {
+          border-bottom: none;
+          padding-top: 20px;
+        }
+        .total-label {
+          font-size: 14px;
+          color: #475569;
+          font-weight: bold;
+        }
+        .total-value {
+          font-size: 14px;
+          color: #1e293b;
+          font-weight: bold;
+        }
+        .grand-total .total-label {
+          font-size: 18px;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+        }
+        .grand-total .total-value {
+          font-size: 24px;
+          color: #059669;
+        }
+        .status-section {
+          display: flex;
+          justify-content: space-between;
+          background: #d1fae5;
+          padding: 20px;
+          border-radius: 8px;
+          margin-top: 20px;
+        }
+        .status-label {
+          font-size: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: #059669;
+        }
+        .status-value {
+          font-size: 14px;
+          font-weight: bold;
+          color: #065f46;
+          margin-top: 4px;
+        }
+        @media print {
+          body {
+            padding: 0;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="invoice-header">
+        <h1>GRAND HOTEL</h1>
+        <p>HÓA ĐƠN</p>
+        <p>Booking #${currentInvoice.value?.booking?.id || ''}</p>
+      </div>
+      
+      <div class="invoice-section">
+        <h4>Thông tin khách hàng</h4>
+        <div class="grid-2">
+          <div class="item">
+            <div class="item-label">Tên khách</div>
+            <div class="item-value">${currentInvoice.value?.booking?.guestFullName || currentInvoice.value?.booking?.customer?.fullName || ''}</div>
+          </div>
+          <div class="item">
+            <div class="item-label">Số điện thoại</div>
+            <div class="item-value">${currentInvoice.value?.booking?.guestPhone || currentInvoice.value?.booking?.customer?.phone || ''}</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="invoice-section">
+        <h4>Thông tin phòng</h4>
+        <div class="grid-3">
+          <div class="item">
+            <div class="item-label">Phòng</div>
+            <div class="item-value">P.${currentInvoice.value?.booking?.room?.roomNumber || ''}</div>
+          </div>
+          <div class="item">
+            <div class="item-label">Ngày đến</div>
+            <div class="item-value">${formatDate(currentInvoice.value?.booking?.checkInDate)}</div>
+          </div>
+          <div class="item">
+            <div class="item-label">Ngày đi</div>
+            <div class="item-value">${formatDate(currentInvoice.value?.booking?.checkOutDate)}</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="total-section">
+        <div class="total-row">
+          <span class="total-label">Phòng</span>
+          <span class="total-value">${formatCurrency(currentInvoice.value?.roomCharges)}</span>
+        </div>
+        ${(currentInvoice.value?.serviceCharges || 0) > 0 ? `
+        <div class="total-row">
+          <span class="total-label">Dịch vụ</span>
+          <span class="total-value">${formatCurrency(currentInvoice.value?.serviceCharges)}</span>
+        </div>
+        ` : ''}
+        <div class="total-row grand-total">
+          <span class="total-label">Tổng cộng</span>
+          <span class="total-value">${formatCurrency(currentInvoice.value?.totalAmount)}</span>
+        </div>
+      </div>
+      
+      <div class="status-section">
+        <div>
+          <div class="status-label">Trạng thái thanh toán</div>
+          <div class="status-value">${currentInvoice.value?.paymentStatus === 'PAID' ? 'Đã thanh toán' : 'Chưa thanh toán'}</div>
+        </div>
+        <div style="text-align: right;">
+          <div class="status-label">Ngày thanh toán</div>
+          <div class="status-value">${currentInvoice.value?.paymentDate ? formatDateTime(currentInvoice.value.paymentDate) : '--'}</div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `)
+  
+  printWindow.document.close()
+  printWindow.focus()
+  
+  setTimeout(() => {
+    printWindow.print()
+  }, 500)
 }
 
 const handleCancel = async (id) => {
