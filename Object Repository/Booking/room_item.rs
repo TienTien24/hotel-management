@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebElementEntity>
+   <description></description>
+   <name>room_item</name>
+   <tag></tag>
+   <elementGuidId>1bbbdeb2-9996-47cf-9a39-ad77b6339aa3</elementGuidId>
+   <selectorCollection>
+      <entry>
+         <key>XPATH</key>
+         <value>//div[contains(.,'Phòng')]</value>
+      </entry>
+      <entry>
+         <key>CSS</key>
+         <value>.shadow-xl.group:nth-child(1)</value>
+      </entry>
+   </selectorCollection>
+   <selectorMethod>XPATH</selectorMethod>
+   <smartLocatorCollection>
+      <entry>
+         <key>SMART_LOCATOR</key>
+         <value>internal:role=main >> div >> internal:has-text=&quot;Phòng 101Standard2 người25m²Sức chứa2 ngườiTrạng tháiCòn trống1.125.000 đ/ mỗi đ&quot;i >> nth=3</value>
+      </entry>
+   </smartLocatorCollection>
+   <smartLocatorEnabled>false</smartLocatorEnabled>
+   <useRalativeImagePath>true</useRalativeImagePath>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>tag</name>
+      <type>Main</type>
+      <value>div</value>
+      <webElementGuid>3e46cec7-69ad-4ffb-8bed-a0e6aaa8af3b</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>class</name>
+      <type>Main</type>
+      <value>group bg-white rounded-[2.5rem] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-gray-100</value>
+      <webElementGuid>2d4ca10d-eb56-4a4d-ba36-c6e0dde8aec6</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>true</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>text</name>
+      <type>Main</type>
+      <value>Phòng 101Standard2 người25m²Sức chứa2 ngườiTrạng tháiCòn trống1.125.000 đ/ mỗi đêm</value>
+      <webElementGuid>d1e97540-b0e9-40f9-84ab-8eb99441693d</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>parent</name>
+      <type>Main</type>
+      <value>md5.v1-b173aba1c39da31e6e49aff77f824f30</value>
+      <webElementGuid>fce25bb9-d2e7-4015-a480-f723a39e5792</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath</name>
+      <type>Main</type>
+      <value>//*[@class and contains(concat(' ', normalize-space(@class), ' '), ' shadow-xl ') and contains(concat(' ', normalize-space(@class), ' '), ' group ') and (position() = 1)]</value>
+      <webElementGuid>74619022-5a99-43b3-9971-77e3b330e0fe</webElementGuid>
+   </webElementProperties>
+   <webElementXpaths>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath:attributes</name>
+      <type>Main</type>
+      <value>//*[@class and contains(concat(' ', normalize-space(@class), ' '), ' shadow-xl ') and contains(concat(' ', normalize-space(@class), ' '), ' group ') and (position() = 1)]</value>
+      <webElementGuid>49b9806e-72ed-4fb5-ad74-dd2cb4100654</webElementGuid>
+   </webElementXpaths>
+   <webElementXpaths>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath:customAttributes</name>
+      <type>Main</type>
+      <value>//div[(text() = 'Phòng 101Standard2 người25m²Sức chứa2 ngườiTrạng tháiCòn trống1.125.000 đ/ mỗi đêm' or . = 'Phòng 101Standard2 người25m²Sức chứa2 ngườiTrạng tháiCòn trống1.125.000 đ/ mỗi đêm')]</value>
+      <webElementGuid>73acf0fe-67ec-47ba-8300-6c1cf004083b</webElementGuid>
+   </webElementXpaths>
+</WebElementEntity>

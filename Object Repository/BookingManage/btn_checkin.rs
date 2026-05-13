@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebElementEntity>
+   <description></description>
+   <name>btn_checkin</name>
+   <tag></tag>
+   <elementGuidId>0f4bef47-6d72-49a1-9acc-3d94d45dc22c</elementGuidId>
+   <selectorCollection>
+      <entry>
+         <key>XPATH</key>
+         <value>(//button[@title='Check-in'])[1]</value>
+      </entry>
+      <entry>
+         <key>CSS</key>
+         <value>tr.group:nth-child(2) [title=&quot;Check-in&quot;]</value>
+      </entry>
+   </selectorCollection>
+   <selectorMethod>XPATH</selectorMethod>
+   <smartLocatorEnabled>false</smartLocatorEnabled>
+   <useRalativeImagePath>true</useRalativeImagePath>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>tag</name>
+      <type>Main</type>
+      <value>button</value>
+      <webElementGuid>328fa34d-4534-4958-b3ad-67e2471c1d98</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>class</name>
+      <type>Main</type>
+      <value>w-11 h-11 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all shadow-sm</value>
+      <webElementGuid>cb373fdc-41b2-4b12-a332-088049cc90f2</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>true</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>title</name>
+      <type>Main</type>
+      <value>Check-in</value>
+      <webElementGuid>1f71db1b-8b8c-460c-a04b-47494e9ee1b2</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>parent</name>
+      <type>Main</type>
+      <value>md5.v1-6d1fedc979a191b011b07321ce6e3926</value>
+      <webElementGuid>d561ef5e-290d-40df-9cc4-a9117324e576</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath</name>
+      <type>Main</type>
+      <value>//*[@class and contains(concat(' ', normalize-space(@class), ' '), ' group ') and (name() = 'tr') and (position() = 2)]//*[@title = 'Check-in']</value>
+      <webElementGuid>cd98c689-bc5e-49d8-84db-f095884da01d</webElementGuid>
+   </webElementProperties>
+   <webElementXpaths>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath:attributes</name>
+      <type>Main</type>
+      <value>//*[@class and contains(concat(' ', normalize-space(@class), ' '), ' group ') and (name() = 'tr') and (position() = 2)]//*[@title = 'Check-in']</value>
+      <webElementGuid>9ae06270-0c48-4190-8f22-c1f69991f9ca</webElementGuid>
+   </webElementXpaths>
+   <webElementXpaths>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath:customAttributes</name>
+      <type>Main</type>
+      <value>//button[@title = 'Check-in']</value>
+      <webElementGuid>d9fbe592-65fc-4c86-b85b-7bc41aed4fff</webElementGuid>
+   </webElementXpaths>
+</WebElementEntity>
