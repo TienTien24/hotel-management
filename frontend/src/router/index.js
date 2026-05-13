@@ -26,6 +26,7 @@ import AdminReports from '../views/AdminReports.vue'
 import AdminServices from '../views/AdminServices.vue'
 import AdminRooms from '../views/AdminRooms.vue'
 import AdminSettings from '../views/AdminSettings.vue'
+import Profile from '../views/Profile.vue'
 
 const routes = [
   { path: '/login', component: Login },
@@ -117,6 +118,11 @@ const routes = [
   { 
     path: '/my-bookings', 
     component: MyBookings,
+    meta: { requiresAuth: true }
+  },
+  { 
+    path: '/profile', 
+    component: Profile,
     meta: { requiresAuth: true }
   },
   { 

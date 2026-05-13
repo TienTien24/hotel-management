@@ -1,7 +1,6 @@
 com\hotel\management\service\ContactMessageService.class
 com\hotel\management\dto\ReviewRequest.class
 com\hotel\management\security\AuthEntryPointJwt.class
-com\hotel\management\HotelManagementApplication.class
 com\hotel\management\enums\RoomStatus.class
 com\hotel\management\enums\PaymentMethod.class
 com\hotel\management\security\WebSecurityConfig.class

@@ -1,13 +1,17 @@
 package com.hotel.management.controller;
 
+import com.hotel.management.dto.ChangePasswordRequest;
 import com.hotel.management.dto.JwtResponse;
 import com.hotel.management.dto.LoginRequest;
 import com.hotel.management.dto.RegisterRequest;
+import com.hotel.management.dto.UpdateProfileRequest;
+import com.hotel.management.model.User;
 import com.hotel.management.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -77,5 +81,41 @@ public class AuthController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllUsers() {
         return ResponseEntity.ok(authService.getAllUsers());
+    }
+
+    @GetMapping("/profile")
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('STAFF') or hasRole('ADMIN')")
+    public ResponseEntity<?> getCurrentUserProfile(Authentication authentication) {
+        try {
+            String username = authentication.getName();
+            User user = authService.getCurrentUser(username);
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/profile")
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('STAFF') or hasRole('ADMIN')")
+    public ResponseEntity<?> updateProfile(Authentication authentication, @RequestBody UpdateProfileRequest request) {
+        try {
+            String username = authentication.getName();
+            User updatedUser = authService.updateProfile(username, request);
+            return ResponseEntity.ok(updatedUser);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/change-password")
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('STAFF') or hasRole('ADMIN')")
+    public ResponseEntity<?> changePassword(Authentication authentication, @Valid @RequestBody ChangePasswordRequest request) {
+        try {
+            String username = authentication.getName();
+            authService.changePassword(username, request);
+            return ResponseEntity.ok("Đổi mật khẩu thành công");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
