@@ -47,13 +47,13 @@ public class HotelManagementApplication {
                 System.out.println("Đã tạo xong dữ liệu dịch vụ mẫu!");
             }
             if (!userRepository.existsByUsername("admin")) {
-                userRepository.save(new User(null, "admin", passwordEncoder.encode("password"), "System Admin", "admin@hotel.com", "0123456789", RoleName.ADMIN, false));
+                userRepository.save(new User(null, "admin", passwordEncoder.encode("password"), "System Admin", "admin@hotel.com", "0123456789", null, RoleName.ADMIN, false));
             }
             if (!userRepository.existsByUsername("staff")) {
-                userRepository.save(new User(null, "staff", passwordEncoder.encode("password"), "Hotel Staff", "staff@hotel.com", "0987654321", RoleName.STAFF, false));
+                userRepository.save(new User(null, "staff", passwordEncoder.encode("password"), "Hotel Staff", "staff@hotel.com", "0987654321", null, RoleName.STAFF, false));
             }
             if (!userRepository.existsByUsername("customer")) {
-                userRepository.save(new User(null, "customer", passwordEncoder.encode("password"), "John Doe", "john@gmail.com", "0111222333", RoleName.CUSTOMER, false));
+                userRepository.save(new User(null, "customer", passwordEncoder.encode("password"), "John Doe", "john@gmail.com", "0111222333", null, RoleName.CUSTOMER, false));
             }
 
             if (roomRepository.count() != 64) {

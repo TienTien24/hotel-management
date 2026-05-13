@@ -1,8 +1,10 @@
 package com.hotel.management.service;
 
+import com.hotel.management.dto.ChangePasswordRequest;
 import com.hotel.management.dto.JwtResponse;
 import com.hotel.management.dto.LoginRequest;
 import com.hotel.management.dto.RegisterRequest;
+import com.hotel.management.dto.UpdateProfileRequest;
 import com.hotel.management.enums.RoleName;
 import com.hotel.management.model.User;
 import com.hotel.management.repository.UserRepository;
@@ -78,6 +80,7 @@ public class AuthService {
                 signUpRequest.getFullName(),
                 signUpRequest.getEmail(),
                 signUpRequest.getPhone(),
+                null,
                 RoleName.CUSTOMER,
                 false);
 
@@ -103,6 +106,7 @@ public class AuthService {
                 signUpRequest.getFullName(),
                 signUpRequest.getEmail(),
                 signUpRequest.getPhone(),
+                null,
                 RoleName.STAFF,
                 false);
 
@@ -140,5 +144,43 @@ public class AuthService {
         }
 
         userRepository.delete(user);
+    }
+
+    public User getCurrentUser(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+    }
+
+    public User updateProfile(String username, UpdateProfileRequest request) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        
+        if (request.getFullName() != null) {
+            user.setFullName(request.getFullName());
+        }
+        if (request.getPhone() != null) {
+            user.setPhone(request.getPhone());
+        }
+        if (request.getAvatar() != null) {
+            user.setAvatar(request.getAvatar());
+        }
+        
+        return userRepository.save(user);
+    }
+
+    public void changePassword(String username, ChangePasswordRequest request) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new RuntimeException("Mật khẩu hiện tại không đúng");
+        }
+        
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new RuntimeException("Mật khẩu xác nhận không khớp");
+        }
+        
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 }

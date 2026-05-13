@@ -121,14 +121,12 @@ const menuItems = computed(() => {
   ]
   
   if (user.value) {
+    items.push({ name: 'Tài khoản', path: '/profile' })
+    
     if (user.value.role === 'ADMIN') {
       items.push({ name: 'Dashboard', path: '/dashboard' })
     } else if (user.value.role === 'STAFF') {
       items.push({ name: 'Dashboard', path: '/staff-dashboard' })
-    }
-    
-    if (user.value.role === 'CUSTOMER') {
-      items.push({ name: 'Booking', path: '/my-bookings' })
     }
   }
   

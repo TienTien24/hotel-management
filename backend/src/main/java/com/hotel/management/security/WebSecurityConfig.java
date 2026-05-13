@@ -71,7 +71,8 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                                .requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers("/api/auth/signin").permitAll()
+                                .requestMatchers("/api/auth/signup").permitAll()
                                 .requestMatchers("/api/contact/submit").permitAll()
                                 .requestMatchers("/api/rooms/**").permitAll()
                                 .requestMatchers("/api/hotel-services").permitAll()
