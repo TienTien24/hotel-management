@@ -26,25 +26,25 @@ Booking remains "CHỜ XÁC NHẬN".
 
 
 
-
-
 \## TC48 – Check-in
 
 
 
 \### Issue
 
-Cannot complete check-in process.
+System allows check-in when booking is not confirmed.
+
+Cannot complete check-in after entering information.
 
 
 
 \### Expected Result
 
-Booking should be checked-in successfully.
+Booking should change to "ĐANG LƯU TRÚ".
 
 
 
 \### Actual Result
 
-No status update after reload.
+No status update after completing check-in.
 

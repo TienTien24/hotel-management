@@ -1,0 +1,114 @@
+{
+  "brokenTestObjects": [
+    {
+      "approved": true,
+      "testObjectId": "Object Repository/Page_Hotel Management/link_dang_ky",
+      "brokenLocator": "//a[contains(text(),\u0027Đăng ký\u0027)]",
+      "brokenLocatorMethod": "XPATH",
+      "proposedLocator": "//div[@id\u003d\u0027app\u0027]/div/main/div/section[8]/div/div[2]/div[2]/form/button",
+      "proposedLocatorMethod": "XPATH",
+      "recoveryMethod": "XPATH",
+      "pathToScreenshot": "Reports/Self-healing/Object Repository/Page_Hotel Management/link_dang_ky_XPATH.png"
+    },
+    {
+      "approved": true,
+      "testObjectId": "Object Repository/Page_Hotel Management/link_dang_ky",
+      "brokenLocator": "//h2[text()\u003d\u0027Đăng ký\u0027]",
+      "brokenLocatorMethod": "XPATH",
+      "proposedLocator": "//div[@id\u003d\u0027app\u0027]/div/main/div/section[8]/div/div[2]/div[2]/form/button",
+      "proposedLocatorMethod": "XPATH",
+      "recoveryMethod": "XPATH",
+      "pathToScreenshot": "Reports/Self-healing/Object Repository/Page_Hotel Management/link_dang_ky_XPATH.png"
+    },
+    {
+      "approved": true,
+      "testObjectId": "Object Repository/Search/menu_room",
+      "brokenLocator": "//a[contains(.,\u0027PHÒNG\u0027)]",
+      "brokenLocatorMethod": "XPATH",
+      "proposedLocator": "//a[@class and contains(concat(\u0027 \u0027, normalize-space(@class), \u0027 \u0027), \u0027 relative \u0027) and (@href \u003d \u0027/rooms\u0027)]",
+      "proposedLocatorMethod": "XPATH",
+      "recoveryMethod": "XPATH",
+      "pathToScreenshot": "Reports/Self-healing/Object Repository/Search/menu_room_attributes.png"
+    },
+    {
+      "approved": true,
+      "testObjectId": "Object Repository/Search/btn_view_room",
+      "brokenLocator": "//*[@class and contains(concat(\u0027 \u0027, normalize-space(@class), \u0027 \u0027), \u0027 shadow-xl \u0027) and contains(concat(\u0027 \u0027, normalize-space(@class), \u0027 \u0027), \u0027 group \u0027) and (position() \u003d 2)]//*[@class and contains(concat(\u0027 \u0027, normalize-space(@class), \u0027 \u0027), \u0027 shadow-xl \u0027) and contains(concat(\u0027 \u0027, normalize-space(@class), \u0027 \u0027), \u0027 absolute \u0027)]",
+      "brokenLocatorMethod": "XPATH",
+      "proposedLocator": "//div[@id\u003d\u0027app\u0027]/div/div/button",
+      "proposedLocatorMethod": "XPATH",
+      "recoveryMethod": "XPATH",
+      "pathToScreenshot": "Reports/Self-healing/Object Repository/Search/btn_view_room_XPATH.png"
+    },
+    {
+      "approved": true,
+      "testObjectId": "Object Repository/Booking/button_book_now",
+      "brokenLocator": "//button[contains(.,\u0027Đặt phòng\u0027)]",
+      "brokenLocatorMethod": "XPATH",
+      "proposedLocator": "//div[@id\u003d\u0027app\u0027]/div/nav/div/div/div[3]/a",
+      "proposedLocatorMethod": "XPATH",
+      "recoveryMethod": "XPATH",
+      "pathToScreenshot": "Reports/Self-healing/Object Repository/Booking/button_book_now_XPATH.png"
+    },
+    {
+      "approved": true,
+      "testObjectId": "Object Repository/Search/room_item",
+      "brokenLocator": "(//a[contains(.,\u0027Xem\u0027)])[1]",
+      "brokenLocatorMethod": "XPATH",
+      "proposedLocator": "//*[@class and contains(concat(\u0027 \u0027, normalize-space(@class), \u0027 \u0027), \u0027 shadow-xl \u0027) and contains(concat(\u0027 \u0027, normalize-space(@class), \u0027 \u0027), \u0027 group \u0027) and (position() \u003d 2)]",
+      "proposedLocatorMethod": "XPATH",
+      "recoveryMethod": "XPATH",
+      "pathToScreenshot": "Reports/Self-healing/Object Repository/Search/room_item_attributes.png"
+    },
+    {
+      "approved": true,
+      "testObjectId": "Object Repository/Booking/input_name",
+      "brokenLocator": "//input[@placeholder\u003d\u0027Họ tên khách\u0027]",
+      "brokenLocatorMethod": "XPATH",
+      "proposedLocator": "//*[(name() \u003d \u0027div\u0027) and (position() \u003d 1)]/*[(@type \u003d \u0027text\u0027) and (@required \u003d \u0027\u0027)]",
+      "proposedLocatorMethod": "XPATH",
+      "recoveryMethod": "XPATH",
+      "pathToScreenshot": "Reports/Self-healing/Object Repository/Booking/input_name_attributes.png"
+    },
+    {
+      "approved": true,
+      "testObjectId": "Object Repository/Booking/input_phone",
+      "brokenLocator": "//input[@placeholder\u003d\u0027Số điện thoại\u0027]",
+      "brokenLocatorMethod": "XPATH",
+      "proposedLocator": "//*[(name() \u003d \u0027div\u0027) and (position() \u003d 2)]/*[(@type \u003d \u0027text\u0027) and (@required \u003d \u0027\u0027)]",
+      "proposedLocatorMethod": "XPATH",
+      "recoveryMethod": "XPATH",
+      "pathToScreenshot": "Reports/Self-healing/Object Repository/Booking/input_phone_attributes.png"
+    },
+    {
+      "approved": true,
+      "testObjectId": "Object Repository/Booking/input_email",
+      "brokenLocator": "//input[@placeholder\u003d\u0027Email\u0027]",
+      "brokenLocatorMethod": "XPATH",
+      "proposedLocator": "//*[@type \u003d \u0027email\u0027]",
+      "proposedLocatorMethod": "XPATH",
+      "recoveryMethod": "XPATH",
+      "pathToScreenshot": "Reports/Self-healing/Object Repository/Booking/input_email_attributes.png"
+    },
+    {
+      "approved": true,
+      "testObjectId": "Object Repository/Booking/input_people",
+      "brokenLocator": "//input[@placeholder\u003d\u0027Số người\u0027]",
+      "brokenLocatorMethod": "XPATH",
+      "proposedLocator": "//*[@type \u003d \u0027number\u0027]",
+      "proposedLocatorMethod": "XPATH",
+      "recoveryMethod": "XPATH",
+      "pathToScreenshot": "Reports/Self-healing/Object Repository/Booking/input_people_attributes.png"
+    },
+    {
+      "approved": true,
+      "testObjectId": "Object Repository/Booking/input_address",
+      "brokenLocator": "//input[@placeholder\u003d\u0027Địa chỉ\u0027]",
+      "brokenLocatorMethod": "XPATH",
+      "proposedLocator": "//*[(name() \u003d \u0027div\u0027) and (position() \u003d 4)]//*[@type \u003d \u0027text\u0027]",
+      "proposedLocatorMethod": "XPATH",
+      "recoveryMethod": "XPATH",
+      "pathToScreenshot": "Reports/Self-healing/Object Repository/Booking/input_address_attributes.png"
+    }
+  ]
+}

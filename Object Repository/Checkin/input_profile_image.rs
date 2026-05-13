@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebElementEntity>
+   <description></description>
+   <name>input_profile_image</name>
+   <tag></tag>
+   <elementGuidId>fedc40fc-2396-4596-b91c-fa006095345e</elementGuidId>
+   <selectorCollection>
+      <entry>
+         <key>XPATH</key>
+         <value>//input[contains(@placeholder,'URL')]</value>
+      </entry>
+      <entry>
+         <key>CSS</key>
+         <value>[placeholder=&quot;Dán\ URL\ hình\ ảnh\ hồ\ sơ\.\.\.&quot;]</value>
+      </entry>
+   </selectorCollection>
+   <selectorMethod>XPATH</selectorMethod>
+   <smartLocatorEnabled>false</smartLocatorEnabled>
+   <useRalativeImagePath>true</useRalativeImagePath>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>tag</name>
+      <type>Main</type>
+      <value>input</value>
+      <webElementGuid>106eac70-f11f-44a7-9ce7-f6a70e1c5833</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>true</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>type</name>
+      <type>Main</type>
+      <value>text</value>
+      <webElementGuid>b359a1df-44fc-497b-bfdd-7bc3933a07d7</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>true</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>placeholder</name>
+      <type>Main</type>
+      <value>Dán URL hình ảnh hồ sơ...</value>
+      <webElementGuid>227abaa8-af31-4304-8b2e-4156142fabcb</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>class</name>
+      <type>Main</type>
+      <value>w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 outline-none focus:border-indigo-600 transition-all font-bold</value>
+      <webElementGuid>be744e98-77d0-4146-aeac-1677f683a4c0</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>parent</name>
+      <type>Main</type>
+      <value>md5.v1-958dbb5b4318b9a7b2324b3dc957e219</value>
+      <webElementGuid>a9e7485c-ad81-469a-88d9-5eaa5c606c1c</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath</name>
+      <type>Main</type>
+      <value>//*[@placeholder = 'Dán URL hình ảnh hồ sơ...']</value>
+      <webElementGuid>6bda8d71-202b-415a-bd3c-3d8ea9d7cecf</webElementGuid>
+   </webElementProperties>
+   <webElementXpaths>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath:attributes</name>
+      <type>Main</type>
+      <value>//*[@placeholder = 'Dán URL hình ảnh hồ sơ...']</value>
+      <webElementGuid>d72a51da-53fe-4638-8e78-ba6ea6fc1d9f</webElementGuid>
+   </webElementXpaths>
+   <webElementXpaths>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath:customAttributes</name>
+      <type>Main</type>
+      <value>//input[@type = 'text' and @placeholder = 'Dán URL hình ảnh hồ sơ...']</value>
+      <webElementGuid>05cd54fa-ef75-40b3-9a40-2fb4df272f5f</webElementGuid>
+   </webElementXpaths>
+</WebElementEntity>
