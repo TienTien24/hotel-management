@@ -155,35 +155,19 @@ const sendMessage = async () => {
 
   isTyping.value = true
   
-  // Simulate AI delay
-  setTimeout(async () => {
-    let response = ''
-    const lowerMsg = userMsg.toLowerCase()
-
-    if (lowerMsg.includes('giá') || lowerMsg.includes('bao nhiêu')) {
-      response = 'Tại Grand Hotel, chúng tôi có các hạng phòng: Standard từ 1.200.000đ, Deluxe từ 2.500.000đ và Suite từ 5.000.000đ mỗi đêm. Bạn muốn xem chi tiết hạng phòng nào không?'
-    } else if (lowerMsg.includes('deluxe') && (lowerMsg.includes('còn') || lowerMsg.includes('trống'))) {
-      try {
-        const res = await axios.get('/rooms/search', { params: { category: 'Deluxe' } })
-        const availableRooms = res.data.filter(r => r.status === 'AVAILABLE')
-        if (availableRooms.length > 0) {
-          response = `Hiện tại chúng tôi còn ${availableRooms.length} phòng Deluxe trống. Bạn có muốn đặt ngay không?`
-        } else {
-          response = 'Rất tiếc, hiện tại hạng phòng Deluxe đã hết. Bạn có muốn tham khảo sang hạng phòng Suite sang trọng hơn không?'
-        }
-      } catch (e) {
-        response = 'Hiện tại tôi không thể kiểm tra trạng thái phòng trực tiếp, nhưng thông thường phòng Deluxe luôn có sẵn. Bạn có thể vào mục Loại Phòng để xem trực tiếp nhé!'
-      }
-    } else if (lowerMsg.includes('đặt phòng')) {
-      response = 'Để đặt phòng, bạn có thể vào mục "Loại Phòng", chọn phòng ưng ý và nhấn "Đặt phòng ngay". Tôi có thể dẫn bạn đến đó!'
-    } else {
-      response = 'Cảm ơn bạn đã quan tâm! Tôi có thể giúp bạn kiểm tra giá phòng, tình trạng phòng trống hoặc hỗ trợ quy trình đặt phòng. Bạn có muốn hỏi thêm gì không?'
-    }
-
-    messages.value.push({ role: 'bot', content: response })
+  try {
+    const res = await axios.post('/chat/ask', { message: userMsg })
+    messages.value.push({ role: 'bot', content: res.data.response })
+  } catch (e) {
+    console.error('Lỗi gọi AI API:', e)
+    messages.value.push({ 
+      role: 'bot', 
+      content: 'Rất tiếc, tôi đang gặp sự cố kết nối. Bạn có thể xem giá phòng và đặt trực tiếp tại mục Loại Phòng nhé!' 
+    })
+  } finally {
     isTyping.value = false
     scrollToBottom()
-  }, 1000)
+  }
 }
 </script>
 

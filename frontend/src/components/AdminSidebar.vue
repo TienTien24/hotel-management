@@ -1,8 +1,8 @@
 <template>
   <aside class="w-72 bg-[#004d26] text-white min-h-screen flex flex-col shadow-2xl shrink-0 z-50">
-    <div class="p-8 border-b border-white/5">
+    <div class="p-8 border-b border-white border-opacity-5">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center font-black text-xl border border-white/20">H</div>
+        <div class="w-10 h-10 bg-white bg-opacity-10 rounded-lg flex items-center justify-center font-black text-xl border border-white border-opacity-20">H</div>
         <div>
           <h1 class="text-lg font-black uppercase tracking-tight leading-none">Grand Hotel</h1>
           <span class="text-[10px] text-green-300 font-bold uppercase tracking-[0.2em] mt-1 block">Quản trị hệ thống</span>
@@ -16,17 +16,17 @@
         :key="item.to"
         :to="item.to"
         class="flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group"
-        :class="isActive(item.to) ? 'bg-white/10 text-white shadow-lg' : 'text-white/60 hover:bg-white/5 hover:text-white'"
+        :class="isActive(item.to) ? 'bg-white bg-opacity-10 text-white shadow-lg' : 'text-white text-opacity-60 hover:bg-white hover:bg-opacity-5 hover:text-white'"
       >
         <i :class="[item.icon, 'text-lg']"></i>
         <span class="font-bold text-sm tracking-tight">{{ item.label }}</span>
       </router-link>
     </nav>
 
-    <div class="p-8 border-t border-white/5">
+    <div class="p-8 border-t border-white border-opacity-5">
       <button
         @click="logout"
-        class="w-full py-4 px-6 bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white rounded-xl transition-all duration-300 flex items-center justify-center gap-3 font-black uppercase tracking-widest text-[10px]"
+        class="w-full py-4 px-6 bg-rose-500 bg-opacity-10 hover:bg-rose-500 text-rose-500 hover:text-white rounded-xl transition-all duration-300 flex items-center justify-center gap-3 font-black uppercase tracking-widest text-[10px]"
       >
         <i class="fas fa-sign-out-alt"></i>
         Đăng xuất

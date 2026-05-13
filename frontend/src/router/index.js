@@ -15,6 +15,7 @@ import Services from '../views/Services.vue'
 import StaffManagement from '../views/StaffManagement.vue'
 import StaffDashboard from '../views/StaffDashboard.vue'
 import StaffRoomManagement from '../views/StaffRoomManagement.vue'
+import StaffCheckInOut from '../views/StaffCheckInOut.vue'
 import ManageServices from '../views/ManageServices.vue'
 import CancellationPolicy from '../views/CancellationPolicy.vue'
 import StaffMessages from '../views/StaffMessages.vue'
@@ -97,6 +98,11 @@ const routes = [
   { 
     path: '/staff-rooms', 
     component: StaffRoomManagement,
+    meta: { requiresAuth: true }
+  },
+  { 
+    path: '/staff-check-in-out', 
+    component: StaffCheckInOut,
     meta: { requiresAuth: true }
   },
   { 
