@@ -68,51 +68,29 @@ public class DashboardService {
 
             double occupancyRate = totalRooms > 0 ? (double) (occupiedRooms + bookedRooms) / totalRooms * 100 : 0;
             
-            double totalRevenue = 0;
+            Double totalRevenue = 0.0;
             try {
-                // Tính tổng doanh thu từ tất cả hóa đơn đã thanh toán HOẶC các booking đang hoạt động/hoàn tất
-                List<Invoice> allInvoices = invoiceRepository.findAll();
-                Map<Long, Invoice> invoicesByBookingId = allInvoices.stream()
-                        .filter(i -> i.getBooking() != null)
-                        .collect(Collectors.toMap(i -> i.getBooking().getId(), i -> i, (a, b) -> a));
-
-                List<Booking> allBookings = bookingRepository.findAll();
-                totalRevenue = allBookings.stream()
-                        .mapToDouble(b -> {
-                            Invoice inv = invoicesByBookingId.get(b.getId());
-                            // 1. Nếu có hóa đơn và đã thanh toán
-                            if (inv != null && inv.getPaymentStatus() == PaymentStatus.PAID) {
-                                return inv.getTotalAmount() != null ? inv.getTotalAmount() : 0.0;
-                            }
-                            // 2. Nếu booking ở trạng thái CONFIRMED, CHECKED_IN hoặc COMPLETED
-                            if (b.getStatus() == BookingStatus.CONFIRMED || 
-                                b.getStatus() == BookingStatus.CHECKED_IN || 
-                                b.getStatus() == BookingStatus.COMPLETED) {
-                                return b.getTotalPrice() != null ? b.getTotalPrice() : 0.0;
-                            }
-                            return 0.0;
-                        })
-                        .sum();
-                System.out.println("DEBUG Dashboard: totalRevenue = " + totalRevenue + " from " + allBookings.size() + " bookings");
+                // Tối ưu: Sử dụng query trực tiếp để tính tổng doanh thu
+                totalRevenue = invoiceRepository.sumTotalRevenue();
+                if (totalRevenue == null) totalRevenue = 0.0;
+                
+                // Cộng thêm doanh thu từ các booking đang hoạt động nhưng chưa có hóa đơn (nếu cần)
+                // Tuy nhiên, báo cáo thường dựa trên hóa đơn đã thanh toán nên sumTotalRevenue là đủ.
+                
+                System.out.println("DEBUG Dashboard: totalRevenue = " + totalRevenue);
             } catch (Exception e) {
                 System.err.println("Lỗi tính doanh thu: " + e.getMessage());
             }
 
-            // Đếm số lượng booking mới trong ngày (không lọc theo createdAt nếu nó có thể null)
+            // Đếm số lượng booking mới trong ngày (Tối ưu bằng query)
             LocalDateTime todayStart = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
             LocalDateTime todayEnd = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
             long newBookings = 0;
             try {
-                newBookings = bookingRepository.findAll().stream()
-                        .filter(b -> b.getCreatedAt() != null)
-                        .filter(b -> !b.getCreatedAt().isBefore(todayStart) && !b.getCreatedAt().isAfter(todayEnd))
-                        .count();
+                newBookings = bookingRepository.countByCreatedAtBetween(todayStart, todayEnd);
                 
-                // Nếu newBookings hôm nay là 0, hãy thử đếm tổng số booking đang hoạt động để tránh hiện số 0 quá đơn điệu
                 if (newBookings == 0) {
-                    newBookings = bookingRepository.findAll().stream()
-                            .filter(b -> b.getStatus() != BookingStatus.CANCELLED)
-                            .count();
+                    newBookings = bookingRepository.countActiveBookings();
                 }
             } catch (Exception e) {
                 System.err.println("Lỗi tính booking mới: " + e.getMessage());
@@ -152,20 +130,12 @@ public class DashboardService {
         LocalDateTime startDateTime = fromDate.atStartOfDay();
         LocalDateTime endDateTime = toDate.atTime(LocalTime.MAX);
 
-        // Lấy tất cả hóa đơn để tra cứu
-        Map<Long, Invoice> invoicesByBookingId = invoiceRepository.findAll().stream()
-                .filter(i -> i.getBooking() != null)
+        // Tối ưu: Lấy hóa đơn có booking liên kết bằng query thay vì findAll()
+        Map<Long, Invoice> invoicesByBookingId = invoiceRepository.findAllWithBooking().stream()
                 .collect(Collectors.toMap(i -> i.getBooking().getId(), i -> i, (a, b) -> a));
 
-        // Lấy tất cả các booking trong khoảng thời gian (dựa trên ngày checkout, ngày checkin hoặc ngày tạo)
-        List<Booking> bookingsInRange = bookingRepository.findAll().stream()
-                .filter(b -> {
-                    LocalDateTime date = b.getCheckedOutAt() != null ? b.getCheckedOutAt() : 
-                                       (b.getCreatedAt() != null ? b.getCreatedAt() : 
-                                       (b.getCheckInDate() != null ? b.getCheckInDate().atStartOfDay() : null));
-                    return date != null && !date.isBefore(startDateTime) && !date.isAfter(endDateTime);
-                })
-                .toList();
+        // Tối ưu: Sử dụng repository method để lọc booking theo ngày
+        List<Booking> bookingsInRange = bookingRepository.findBookingsInDateRange(startDateTime, endDateTime);
 
         // Tính doanh thu và phân loại
         double totalRevenue = 0;

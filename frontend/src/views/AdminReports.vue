@@ -14,6 +14,14 @@
           <button @click="fetchReport" class="bg-[#004d26] hover:bg-[#003d1e] text-white px-6 py-3 rounded-xl font-black uppercase tracking-widest text-xs transition-all">
             Xem báo cáo
           </button>
+          <div class="flex gap-2">
+            <button @click="exportToExcel" class="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 px-4 py-3 rounded-xl font-bold text-xs transition-all flex items-center gap-2">
+              <i class="fas fa-file-excel"></i> Excel
+            </button>
+            <button @click="exportToPDF" class="bg-red-100 text-red-700 hover:bg-red-200 px-4 py-3 rounded-xl font-bold text-xs transition-all flex items-center gap-2">
+              <i class="fas fa-file-pdf"></i> PDF
+            </button>
+          </div>
         </div>
       </header>
 
@@ -108,6 +116,9 @@ import axios from '../api/axios'
 import AdminSidebar from '../components/AdminSidebar.vue'
 import { Line, Doughnut } from 'vue-chartjs'
 import { ArcElement, CategoryScale, Chart as ChartJS, Legend, LineElement, LinearScale, PointElement, Title, Tooltip } from 'chart.js'
+import * as XLSX from 'xlsx'
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
 
 ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, LinearScale, CategoryScale, ArcElement)
 
@@ -143,6 +154,39 @@ const fetchReport = async () => {
     console.error('Lỗi tải báo cáo:', error)
     alert('Không thể tải báo cáo doanh thu.')
   }
+}
+
+const exportToExcel = () => {
+  const data = report.value.details.map(d => ({
+    'Ngày': formatDate(d.date),
+    'Số Booking': d.bookings,
+    'Doanh thu (VND)': d.revenue * 25000
+  }))
+  
+  const ws = XLSX.utils.json_to_sheet(data)
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, 'Báo cáo doanh thu')
+  XLSX.writeFile(wb, `BaoCaoDoanhThu_${filters.value.fromDate}_${filters.value.toDate}.xlsx`)
+}
+
+const exportToPDF = () => {
+  const doc = new jsPDF()
+  doc.text('BAO CAO DOANH THU - GRAND HOTEL', 14, 15)
+  doc.text(`Tu ngay: ${filters.value.fromDate} - Den ngay: ${filters.value.toDate}`, 14, 25)
+  
+  const tableData = report.value.details.map(d => [
+    formatDate(d.date),
+    d.bookings,
+    formatCurrency(d.revenue)
+  ])
+  
+  doc.autoTable({
+    startY: 30,
+    head: [['Ngay', 'So Booking', 'Doanh thu']],
+    body: tableData,
+  })
+  
+  doc.save(`BaoCaoDoanhThu_${filters.value.fromDate}_${filters.value.toDate}.pdf`)
 }
 
 const serviceRows = computed(() => Object.entries(report.value.serviceRevenue || {}).map(([name, revenue]) => ({ name, revenue })))

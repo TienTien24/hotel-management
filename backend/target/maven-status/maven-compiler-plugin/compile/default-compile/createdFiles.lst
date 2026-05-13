@@ -6,6 +6,7 @@ com\hotel\management\enums\RoomStatus.class
 com\hotel\management\enums\PaymentMethod.class
 com\hotel\management\security\WebSecurityConfig.class
 com\hotel\management\security\UserDetailsServiceImpl.class
+com\hotel\management\controller\AIChatController.class
 com\hotel\management\model\SystemSettings.class
 com\hotel\management\controller\SystemSettingsController.class
 com\hotel\management\repository\UserRepository.class

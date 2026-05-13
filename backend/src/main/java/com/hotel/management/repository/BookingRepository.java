@@ -22,4 +22,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT b FROM Booking b WHERE b.reviewRating IS NOT NULL ORDER BY b.reviewCreatedAt DESC")
     List<Booking> findAllReviews();
+
+    @Query("SELECT COUNT(b) FROM Booking b WHERE b.createdAt >= :start AND b.createdAt <= :end")
+    long countByCreatedAtBetween(java.time.LocalDateTime start, java.time.LocalDateTime end);
+
+    @Query("SELECT COUNT(b) FROM Booking b WHERE b.status != 'CANCELLED'")
+    long countActiveBookings();
+
+    @Query("SELECT b FROM Booking b WHERE " +
+           "(b.checkedOutAt >= :start AND b.checkedOutAt <= :end) OR " +
+           "(b.checkedOutAt IS NULL AND b.createdAt >= :start AND b.createdAt <= :end)")
+    List<Booking> findBookingsInDateRange(java.time.LocalDateTime start, java.time.LocalDateTime end);
 }
