@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description></description>
+   <name>TC31_CheckoutEarlierThanCheckin</name>
+   <tag></tag>
+   <comment></comment>
+   <origin>WEB_RECORDER</origin>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>f8be9104-aa7b-426e-b9eb-7c9a17728ce2</testCaseGuid>
+</TestCaseEntity>

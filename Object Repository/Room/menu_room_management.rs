@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WebElementEntity>
+   <description></description>
+   <name>menu_room_management</name>
+   <tag></tag>
+   <elementGuidId>bfc1b4ef-d0bd-49bb-b679-ae6c20ad9a73</elementGuidId>
+   <selectorCollection>
+      <entry>
+         <key>CSS</key>
+         <value>[href=&quot;\/admin\/rooms&quot;]</value>
+      </entry>
+      <entry>
+         <key>XPATH</key>
+         <value>//*[@href = '/admin/rooms']</value>
+      </entry>
+   </selectorCollection>
+   <selectorMethod>XPATH</selectorMethod>
+   <smartLocatorEnabled>false</smartLocatorEnabled>
+   <useRalativeImagePath>true</useRalativeImagePath>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>tag</name>
+      <type>Main</type>
+      <value>a</value>
+      <webElementGuid>931e7c50-dda7-4bcb-aacb-8752e0ad1d76</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>true</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>href</name>
+      <type>Main</type>
+      <value>/admin/rooms</value>
+      <webElementGuid>3bf6e3be-2ce3-4254-a4cd-07390e0cee39</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>class</name>
+      <type>Main</type>
+      <value>flex items-center gap-4 py-4 px-6 rounded-xl transition-all duration-300 group text-white/60 hover:bg-white/5 hover:text-white</value>
+      <webElementGuid>cd899d9a-e9e5-45ab-b1e6-38390f568088</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>true</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>text</name>
+      <type>Main</type>
+      <value>Quản lý phòng</value>
+      <webElementGuid>a62e4345-2105-4b9a-a8fd-d28a464ca220</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>parent</name>
+      <type>Main</type>
+      <value>md5.v1-bd7048156e023c1735be57a49c3824eb</value>
+      <webElementGuid>f50a14fe-63b6-4002-b6df-f4acc09f0824</webElementGuid>
+   </webElementProperties>
+   <webElementProperties>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath</name>
+      <type>Main</type>
+      <value>//*[@href = '/admin/rooms']</value>
+      <webElementGuid>44452f2c-543b-4f60-b9fe-21f3ca8a0abe</webElementGuid>
+   </webElementProperties>
+   <webElementXpaths>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath:attributes</name>
+      <type>Main</type>
+      <value>//*[@href = '/admin/rooms']</value>
+      <webElementGuid>55535836-d6a9-4686-8f87-62c6d92d5260</webElementGuid>
+   </webElementXpaths>
+   <webElementXpaths>
+      <isSelected>false</isSelected>
+      <matchCondition>equals</matchCondition>
+      <name>xpath:customAttributes</name>
+      <type>Main</type>
+      <value>//a[@href = '/admin/rooms' and (text() = 'Quản lý phòng' or . = 'Quản lý phòng')]</value>
+      <webElementGuid>12c6e9c0-3b09-4b8d-8b99-795c857bca94</webElementGuid>
+   </webElementXpaths>
+</WebElementEntity>
