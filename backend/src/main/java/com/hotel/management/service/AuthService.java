@@ -52,6 +52,8 @@ public class AuthService {
                     user.getId(),
                     user.getUsername(),
                     user.getEmail(),
+                    user.getFullName(),
+                    user.getPhone(),
                     user.getRole());
         } catch (org.springframework.security.authentication.BadCredentialsException e) {
             System.out.println("Authentication failed for user " + loginRequest.getUsername() + ": Sai mật khẩu");
