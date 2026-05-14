@@ -246,7 +246,7 @@
             </div>
 
             <div v-if="booking.status === 'PENDING' || booking.status === 'CONFIRMED'" class="flex flex-wrap gap-4 pt-8 border-t border-gray-50">
-              <button class="flex items-center gap-3 px-8 py-4 bg-emerald-50 text-emerald-800 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-emerald-800 hover:text-white transition-all shadow-sm">
+              <button @click="openBookingDetail(booking)" class="flex items-center gap-3 px-8 py-4 bg-emerald-50 text-emerald-800 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-emerald-800 hover:text-white transition-all shadow-sm">
                 <i class="fas fa-file-invoice"></i>
                 Chi tiết đặt phòng
               </button>
@@ -283,6 +283,125 @@
               >
                 <i class="fas fa-star"></i>
                 Gửi đánh giá trải nghiệm
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Booking Detail Modal -->
+      <div v-if="showBookingDetailModal && selectedBookingForDetail" class="fixed inset-0 bg-emerald-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-[3rem] shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+          <div class="p-8 md:p-12">
+            <div class="flex justify-between items-center mb-10">
+              <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-800 text-2xl">
+                  <i class="fas fa-calendar-check"></i>
+                </div>
+                <div>
+                  <h3 class="text-2xl font-black text-emerald-950 uppercase tracking-tight">Chi tiết đặt phòng #{{ selectedBookingForDetail.id }}</h3>
+                  <p class="text-xs text-gray-400 font-bold mt-1 uppercase tracking-widest italic">Đặt ngày {{ formatDate(selectedBookingForDetail.createdAt) }}</p>
+                </div>
+              </div>
+              <button @click="closeBookingDetail" class="text-gray-400 hover:text-emerald-800 transition-colors">
+                <i class="fas fa-times text-2xl"></i>
+              </button>
+            </div>
+
+            <div class="space-y-10">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-gray-50 rounded-[2.5rem] p-8 border border-gray-100">
+                <div class="space-y-5">
+                  <div>
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Thông tin khách hàng</p>
+                    <div class="space-y-3">
+                      <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-500">Họ tên</span>
+                        <span class="text-sm font-black text-emerald-950">{{ selectedBookingForDetail.guestFullName }}</span>
+                      </div>
+                      <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-500">Số điện thoại</span>
+                        <span class="text-sm font-black text-emerald-950">{{ selectedBookingForDetail.guestPhone }}</span>
+                      </div>
+                      <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-500">Email</span>
+                        <span class="text-sm font-black text-emerald-950">{{ selectedBookingForDetail.guestEmail || '--' }}</span>
+                      </div>
+                      <div v-if="selectedBookingForDetail.guestAddress" class="flex justify-between items-start">
+                        <span class="text-sm font-medium text-gray-500">Địa chỉ</span>
+                        <span class="text-sm font-black text-emerald-950 text-right max-w-[200">{{ selectedBookingForDetail.guestAddress }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="space-y-5">
+                  <div>
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Thông tin phòng</p>
+                    <div class="space-y-3">
+                      <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-500">Phòng</span>
+                        <span class="text-sm font-black text-emerald-950">{{ selectedBookingForDetail.room?.roomNumber }} - {{ selectedBookingForDetail.room?.category }}</span>
+                      </div>
+                      <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-500">Loại phòng</span>
+                        <span class="text-sm font-black text-emerald-950">{{ selectedBookingForDetail.room?.type }}</span>
+                      </div>
+                      <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-500">Số khách</span>
+                        <span class="text-sm font-black text-emerald-950">{{ selectedBookingForDetail.numberOfGuests }} người</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-emerald-50 rounded-[2.5rem] p-8 border border-emerald-100">
+                  <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-3">Ngày check-in</p>
+                  <p class="text-xl font-black text-emerald-950">{{ formatDate(selectedBookingForDetail.checkInDate) }}</p>
+                  <p class="text-xs text-emerald-600 font-bold mt-1">14:00</p>
+                </div>
+                <div class="bg-emerald-50 rounded-[2.5rem] p-8 border border-emerald-100">
+                  <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-3">Ngày check-out</p>
+                  <p class="text-xl font-black text-emerald-950">{{ formatDate(selectedBookingForDetail.checkOutDate) }}</p>
+                  <p class="text-xs text-emerald-600 font-bold mt-1">12:00</p>
+                </div>
+                <div class="bg-emerald-50 rounded-[2.5rem] p-8 border border-emerald-100">
+                  <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-3">Trạng thái</p>
+                  <span :class="getStatusClass(selectedBookingForDetail.status)" class="px-6 py-2.5 text-[10px] font-black rounded-full uppercase tracking-[0.2em] shadow-sm inline-block">
+                    {{ formatStatus(selectedBookingForDetail.status) }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="bg-gray-50 rounded-[2.5rem] p-8 border border-gray-100">
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Thông tin thanh toán</p>
+                <div class="space-y-4">
+                  <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                    <span class="text-sm font-medium text-gray-500">Phương thức thanh toán</span>
+                    <span class="text-sm font-black text-emerald-950">{{ selectedBookingForDetail.paymentMethod }}</span>
+                  </div>
+                  <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                    <span class="text-sm font-medium text-gray-500">Trạng thái thanh toán</span>
+                    <span class="text-sm font-black text-emerald-950">{{ selectedBookingForDetail.paymentStatus }}</span>
+                  </div>
+                  <div class="flex justify-between items-center pt-2">
+                    <span class="text-sm font-black text-emerald-950 uppercase tracking-widest">Tổng tiền</span>
+                    <span class="text-2xl font-black text-emerald-800">{{ formatPrice(selectedBookingForDetail.totalPrice) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-10 flex gap-4">
+              <button @click="closeBookingDetail" class="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-600 py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs hover:text-gray-800 transition-all">
+                Đóng
+              </button>
+              <button 
+                v-if="selectedBookingForDetail.status === 'PENDING' || selectedBookingForDetail.status === 'CONFIRMED'"
+                @click="cancelBooking(selectedBookingForDetail)"
+                class="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs transition-all"
+              >
+                Hủy đặt phòng
               </button>
             </div>
           </div>
@@ -358,8 +477,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import axios from '../api/axios'
 
+const route = useRoute()
 const activeTab = ref('profile')
 
 const loading = ref(true)
@@ -379,6 +500,8 @@ const showReviewModal = ref(false)
 const selectedBooking = ref(null)
 const submittingReview = ref(false)
 const reviewData = ref({ title: '', rating: 0, comment: '' })
+const showBookingDetailModal = ref(false)
+const selectedBookingForDetail = ref(null)
 
 const fetchProfile = async () => {
   try {
@@ -555,6 +678,7 @@ const cancelBooking = async (booking) => {
       const isAdmin = user.role === 'ADMIN'
       await axios.put(`/bookings/${booking.id}/cancel?userId=${user.id}&isAdmin=${isAdmin}`)
       alert('Đặt phòng đã được hủy thành công!')
+      closeBookingDetail()
       fetchBookings()
     } catch (error) {
       console.error('Lỗi khi hủy đặt phòng:', error)
@@ -572,6 +696,16 @@ const openReviewModal = (booking) => {
 const closeReviewModal = () => {
   showReviewModal.value = false
   selectedBooking.value = null
+}
+
+const openBookingDetail = (booking) => {
+  selectedBookingForDetail.value = booking
+  showBookingDetailModal.value = true
+}
+
+const closeBookingDetail = () => {
+  showBookingDetailModal.value = false
+  selectedBookingForDetail.value = null
 }
 
 const submitReview = async () => {
@@ -604,6 +738,9 @@ const submitReview = async () => {
 }
 
 onMounted(() => {
+  if (route.query.tab === 'bookings') {
+    activeTab.value = 'bookings'
+  }
   fetchProfile()
   fetchBookings()
   window.scrollTo(0, 0)

@@ -117,18 +117,18 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Họ tên khách</label>
-                <input v-model="bookingData.guestFullName" type="text" class="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none" required>
+                <input v-model="bookingData.guestFullName" type="text" :disabled="isLoggedIn" class="w-full border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none" :class="isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : 'bg-gray-50'" required>
               </div>
               <div>
                 <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Số điện thoại</label>
-                <input v-model="bookingData.guestPhone" type="text" class="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none" required>
+                <input v-model="bookingData.guestPhone" type="text" :disabled="isLoggedIn" class="w-full border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none" :class="isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : 'bg-gray-50'" required>
               </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Email</label>
-                <input v-model="bookingData.guestEmail" type="email" class="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none">
+                <input v-model="bookingData.guestEmail" type="email" :disabled="isLoggedIn" class="w-full border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none" :class="isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : 'bg-gray-50'">
               </div>
               <div>
                 <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Số người</label>
@@ -207,6 +207,10 @@ const bookingData = ref({
 
 const canBook = computed(() => room.value && room.value.status === 'AVAILABLE')
 const roomSpec = computed(() => getRoomSpec(room.value))
+const isLoggedIn = computed(() => {
+  const user = JSON.parse(localStorage.getItem('user') || 'null')
+  return user !== null
+})
 
 const getStatusLabel = (status) => {
   switch (status) {
@@ -295,7 +299,7 @@ const handleBooking = async () => {
 
     alert('Đặt phòng thành công!')
     showBookingForm.value = false
-    router.push('/my-bookings')
+    router.push({ path: '/profile', query: { tab: 'bookings' } })
   } catch (error) {
     console.error('Booking failed:', error)
     alert(error.response?.data?.message || 'Đặt phòng thất bại, vui lòng kiểm tra lại thông tin')
