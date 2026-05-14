@@ -140,14 +140,6 @@
             <p class="text-emerald-800 font-medium">{{ selectedService.hours }}</p>
           </div>
 
-          <div class="flex gap-4">
-            <button class="flex-1 bg-emerald-800 text-white py-4 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-emerald-900 transition-all shadow-xl">
-              Đặt dịch vụ
-            </button>
-            <button @click="closeServiceDetail" class="px-8 py-4 bg-white text-emerald-800 border-2 border-emerald-200 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-emerald-50 transition-all">
-              Đóng
-            </button>
-          </div>
         </div>
       </div>
     </div>
