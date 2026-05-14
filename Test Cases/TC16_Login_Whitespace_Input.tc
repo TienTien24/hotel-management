@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description></description>
+   <name>TC16_Login_Whitespace_Input</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>72c0a149-22e6-4e87-b13d-6ad04b3b6f42</testCaseGuid>
+</TestCaseEntity>
