@@ -63,198 +63,180 @@
     <!-- Services Section -->
     <section class="max-w-7xl mx-auto px-6 py-32">
       <div class="text-center mb-24">
-        <h2 class="text-4xl md:text-5xl font-black text-emerald-950 uppercase tracking-tighter mb-4">DANH SÁCH DỊCH VỤ</h2>
+        <p class="text-amber-400 font-bold uppercase tracking-[0.3em] text-[10px] mb-4 italic">Dịch vụ & Tiện ích</p>
+        <h2 class="text-4xl md:text-6xl font-black text-emerald-950 uppercase tracking-tighter mb-4">Danh sách dịch vụ</h2>
         <div class="w-24 h-1 bg-[#004d26] mx-auto mb-8"></div>
         <p class="text-gray-400 font-bold uppercase tracking-widest text-sm">Khám phá các tiện ích và dịch vụ đẳng cấp tại Grand Hotel</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-        <!-- Service Card 1 -->
-        <div class="group bg-white rounded-[3rem] shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 flex flex-col sm:flex-row">
+        <!-- Service Cards -->
+        <div v-for="service in services" :key="service.id" 
+             @click="openServiceDetail(service)"
+             class="group bg-white rounded-[3rem] shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 flex flex-col sm:flex-row cursor-pointer hover:-translate-y-2">
           <div class="sm:w-2/5 h-64 sm:h-auto overflow-hidden">
-            <img src="https://viphouse.vn/viphouse/images/2017/t7/thiet%20ke%20bar%20khach%20s%E1%BA%A1n/201408-w-best-rooftop-bars-in-nyc-hotel-hugo.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
+            <img :src="service.image" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
           </div>
           <div class="sm:w-3/5 p-10 flex flex-col justify-between">
             <div>
               <div class="flex items-center gap-4 mb-4">
                 <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-800 text-lg shadow-inner">
-                  <i class="fas fa-utensils"></i>
+                  <i :class="service.icon"></i>
                 </div>
-                <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Nhà hàng & Bar</h3>
+                <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tight">{{ service.title }}</h3>
               </div>
-              <p class="text-sm text-gray-500 leading-relaxed font-medium mb-6">Thưởng thức ẩm thực đa dạng từ Á đến Âu được chế biến bởi đội ngũ đầu bếp chuyên nghiệp.</p>
+              <p class="text-sm text-gray-500 leading-relaxed font-medium mb-6">{{ service.shortDesc }}</p>
               <ul class="space-y-3 mb-8">
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Thực đơn đa dạng
-                </li>
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Nguyên liệu tươi ngon
-                </li>
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Không gian sang trọng
+                <li v-for="feature in service.features.slice(0, 3)" :key="feature" class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
+                  <i class="fas fa-check-circle text-emerald-500"></i> {{ feature }}
                 </li>
               </ul>
             </div>
-          </div>
-        </div>
-
-        <!-- Service Card 2 -->
-        <div class="group bg-white rounded-[3rem] shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 flex flex-col sm:flex-row">
-          <div class="sm:w-2/5 h-64 sm:h-auto overflow-hidden">
-            <img src="https://vinapad.com/wp-content/uploads/2019/07/cac-goi-dich-vu-spa-1.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
-          </div>
-          <div class="sm:w-3/5 p-10 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center gap-4 mb-4">
-                <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-800 text-lg shadow-inner">
-                  <i class="fas fa-spa"></i>
-                </div>
-                <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Spa & Wellness</h3>
-              </div>
-              <p class="text-sm text-gray-500 leading-relaxed font-medium mb-6">Thư giãn và tái tạo năng lượng với các liệu trình spa chuyên nghiệp.</p>
-              <ul class="space-y-3 mb-8">
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Massage thư giãn
-                </li>
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Chăm sóc da chuyên sâu
-                </li>
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Phòng xông hơi & sauna
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- Service Card 3 -->
-        <div class="group bg-white rounded-[3rem] shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 flex flex-col sm:flex-row">
-          <div class="sm:w-2/5 h-64 sm:h-auto overflow-hidden">
-            <img src="https://danang-shopping.com/wp-content/uploads/2017/05/khach-san-da-nang-co-ho-boi-dep-diamond-sea-hotel.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
-          </div>
-          <div class="sm:w-3/5 p-10 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center gap-4 mb-4">
-                <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-800 text-lg shadow-inner">
-                  <i class="fas fa-swimming-pool"></i>
-                </div>
-                <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Hồ bơi vô cực</h3>
-              </div>
-              <p class="text-sm text-gray-500 leading-relaxed font-medium mb-6">Hồ bơi vô cực view thành phố tuyệt đẹp, mang đến trải nghiệm thư giãn tuyệt vời.</p>
-              <ul class="space-y-3 mb-8">
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> View panorama 360°
-                </li>
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Nước sạch 4 mùa
-                </li>
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Quầy bar bên hồ bơi
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- Service Card 4 -->
-        <div class="group bg-white rounded-[3rem] shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 flex flex-col sm:flex-row">
-          <div class="sm:w-2/5 h-64 sm:h-auto overflow-hidden">
-            <img src="https://vinapad.com/wp-content/uploads/2019/04/phong-hop-khach-san-1.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
-          </div>
-          <div class="sm:w-3/5 p-10 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center gap-4 mb-4">
-                <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-800 text-lg shadow-inner">
-                  <i class="fas fa-users"></i>
-                </div>
-                <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Phòng họp & Sự kiện</h3>
-              </div>
-              <p class="text-sm text-gray-500 leading-relaxed font-medium mb-6">Không gian tổ chức sự kiện chuyên nghiệp, hiện đại với đầy đủ trang thiết bị.</p>
-              <ul class="space-y-3 mb-8">
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Sức chứa linh hoạt
-                </li>
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Thiết bị âm thanh ánh sáng
-                </li>
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Hỗ trợ kỹ thuật 24/7
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- Service Card 5 -->
-        <div class="group bg-white rounded-[3rem] shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 flex flex-col sm:flex-row">
-          <div class="sm:w-2/5 h-64 sm:h-auto overflow-hidden">
-            <img src="https://vinapad.com/wp-content/uploads/2019/04/phong-hop-khach-san-1.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
-          </div>
-          <div class="sm:w-3/5 p-8 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center gap-4 mb-3">
-                <div class="w-10 h-10 bg-[#004d26] rounded-full flex items-center justify-center text-white text-sm shadow-lg">
-                  <i class="fas fa-users"></i>
-                </div>
-                <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Phòng họp & Sự kiện</h3>
-              </div>
-              <p class="text-sm text-gray-500 leading-relaxed font-medium mb-4">Không gian tổ chức sự kiện chuyên nghiệp, hiện đại với đầy đủ trang thiết bị.</p>
-              <ul class="space-y-2 mb-6">
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Sức chứa linh hoạt
-                </li>
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Thiết bị âm thanh ánh sáng
-                </li>
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Hỗ trợ kỹ thuật 24/7
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- Service Card 6 -->
-        <div class="group bg-white rounded-[3rem] shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 flex flex-col sm:flex-row">
-          <div class="sm:w-2/5 h-64 sm:h-auto overflow-hidden">
-            <img src="https://vcdn1-kinhdoanh.vnecdn.net/2022/07/21/May-giat-S-Class-2-1658392102.jpg?w=1200&h=0&q=100&dpr=1&fit=crop&s=Zp8T8T-w-w-w-w-w-w-w" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
-          </div>
-          <div class="sm:w-3/5 p-8 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center gap-4 mb-3">
-                <div class="w-10 h-10 bg-[#004d26] rounded-full flex items-center justify-center text-white text-sm shadow-lg">
-                  <i class="fas fa-tshirt"></i>
-                </div>
-                <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Giặt ủi</h3>
-              </div>
-              <p class="text-sm text-gray-500 leading-relaxed font-medium mb-4">Dịch vụ giặt ủi nhanh chóng, sạch sẽ với công nghệ hiện đại.</p>
-              <ul class="space-y-2 mb-6">
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Giặt ủi nhanh chóng
-                </li>
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Sấy khô, là ủi chuyên nghiệp
-                </li>
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Nhận & trả tại phòng
-                </li>
-                <li class="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                  <i class="fas fa-check-circle text-emerald-500"></i> Giá cả hợp lý
-                </li>
-              </ul>
+            <div class="flex items-center gap-2 text-emerald-800 text-xs font-black uppercase tracking-widest">
+              <span>Xem chi tiết</span>
+              <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
             </div>
           </div>
         </div>
       </div>
     </section>
+
+    <!-- Service Detail Modal -->
+    <div v-if="selectedService" class="fixed inset-0 bg-emerald-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-[3rem] max-w-4xl w-full shadow-2xl transform transition-all max-h-[90vh] overflow-y-auto">
+        <div class="relative">
+          <div class="aspect-video overflow-hidden rounded-t-[3rem]">
+            <img :src="selectedService.image" class="w-full h-full object-cover">
+          </div>
+          <button @click="closeServiceDetail" class="absolute top-4 right-4 w-12 h-12 bg-white/90 hover:bg-white rounded-full flex items-center justify-center text-emerald-900 shadow-lg transition-all">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        <div class="p-10">
+          <div class="flex items-center gap-4 mb-6">
+            <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-800 text-2xl shadow-inner">
+              <i :class="selectedService.icon"></i>
+            </div>
+            <div>
+              <h2 class="text-3xl font-black text-emerald-950 uppercase tracking-tighter">{{ selectedService.title }}</h2>
+              <p v-if="selectedService.price" class="text-emerald-700 font-black text-xl mt-1">{{ selectedService.price }}</p>
+            </div>
+          </div>
+          
+          <p class="text-gray-600 leading-relaxed mb-8">{{ selectedService.fullDesc }}</p>
+
+          <div class="mb-8">
+            <h4 class="text-sm font-black text-emerald-900 uppercase tracking-widest mb-4">Tính năng nổi bật</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div v-for="feature in selectedService.features" :key="feature" class="flex items-center gap-3 text-gray-600">
+                <i class="fas fa-check-circle text-emerald-600 text-lg"></i>
+                <span class="font-medium">{{ feature }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="selectedService.hours" class="bg-emerald-50 rounded-2xl p-6 border border-emerald-100 mb-8">
+            <h4 class="text-sm font-black text-emerald-900 uppercase tracking-widest mb-3">Giờ hoạt động</h4>
+            <p class="text-emerald-800 font-medium">{{ selectedService.hours }}</p>
+          </div>
+
+          <div class="flex gap-4">
+            <button class="flex-1 bg-emerald-800 text-white py-4 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-emerald-900 transition-all shadow-xl">
+              Đặt dịch vụ
+            </button>
+            <button @click="closeServiceDetail" class="px-8 py-4 bg-white text-emerald-800 border-2 border-emerald-200 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-emerald-50 transition-all">
+              Đóng
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 </template>
 
 <script setup>
-// No specific script needed for this static content page
+import { ref } from 'vue'
+
+const selectedService = ref(null)
+
+const services = ref([
+  {
+    id: 1,
+    title: 'Nhà hàng & Bar',
+    icon: 'fas fa-utensils',
+    image: 'https://viphouse.vn/viphouse/images/2017/t7/thiet%20ke%20bar%20khach%20s%E1%BA%A1n/201408-w-best-rooftop-bars-in-nyc-hotel-hugo.jpg',
+    shortDesc: 'Thưởng thức ẩm thực đa dạng từ Á đến Âu được chế biến bởi đội ngũ đầu bếp chuyên nghiệp.',
+    fullDesc: ' Nhà hàng & Bar của Grand Hotel mang đến trải nghiệm ẩm thực tuyệt vời với thực đơn đa dạng từ các món ăn Á Đông đến Âu Mỹ. Đội ngũ đầu bếp chuyên nghiệp với nhiều năm kinh nghiệm sẽ chế biến những món ăn ngon mắt, ngon miệng từ nguyên liệu tươi ngon nhất. Không gian nhà hàng sang trọng, ấm cúng với view thành phố tuyệt đẹp là nơi hoàn hảo cho những bữa ăn gia đình, hẹn hò lãng mạn hoặc các buổi tiệc công sự.',
+    features: ['Thực đơn đa dạng', 'Nguyên liệu tươi ngon', 'Không gian sang trọng', 'Đầu bếp quốc tế', 'Dịch vụ tận tâm', 'View thành phố tuyệt đẹp'],
+    hours: '06:00 - 23:00 hàng ngày',
+    price: 'Từ 200.000đ/người'
+  },
+  {
+    id: 2,
+    title: 'Spa & Wellness',
+    icon: 'fas fa-spa',
+    image: 'https://vinapad.com/wp-content/uploads/2019/07/cac-goi-dich-vu-spa-1.jpg',
+    shortDesc: 'Thư giãn và tái tạo năng lượng với các liệu trình spa chuyên nghiệp.',
+    fullDesc: 'Spa & Wellness của Grand Hotel là thiên đường thư giãn hoàn hảo để bạn giải tỏa căng thẳng và tái tạo năng lượng. Chúng tôi cung cấp các liệu trình massage chuyên nghiệp, chăm sóc da chuyên sâu, phòng xông hơi và sauna hiện đại. Đội ngũ kỹ thuật viên được đào tạo bài bản sẽ mang đến trải nghiệm thư giãn tuyệt vời giúp bạn cảm thấy trẻ hóa và tràn đầy năng lượng.',
+    features: ['Massage thư giãn', 'Chăm sóc da chuyên sâu', 'Phòng xông hơi & sauna', 'Liệu trình dầu thơm', 'Kỹ thuật viên chuyên nghiệp', 'Không gian yên bình'],
+    hours: '09:00 - 22:00 hàng ngày',
+    price: 'Từ 500.000đ/liệu trình'
+  },
+  {
+    id: 3,
+    title: 'Hồ bơi vô cực',
+    icon: 'fas fa-swimming-pool',
+    image: 'https://danang-shopping.com/wp-content/uploads/2017/05/khach-san-da-nang-co-ho-boi-dep-diamond-sea-hotel.jpg',
+    shortDesc: 'Hồ bơi vô cực view thành phố tuyệt đẹp, mang đến trải nghiệm thư giãn tuyệt vời.',
+    fullDesc: 'Hồ bơi vô cực của Grand Hotel nằm trên tầng thượng với view panorama 360° toàn cảnh thành phố. Đây là nơi hoàn hảo để bạn thư giãn, tận hưởng ánh nắng và không khí trong lành. Hồ bơi được bảo dưỡng và làm sạch hàng ngày đảm bảo nước luôn trong và an toàn. Bên cạnh hồ bơi là quầy bar phục vụ các đồ uống mát lạnh và các món ăn nhẹ.',
+    features: ['View panorama 360°', 'Nước sạch 4 mùa', 'Quầy bar bên hồ bơi', 'Ghế thư giãn', 'Giường nằm', 'Nhân viên cứu hộ 24/7'],
+    hours: '06:00 - 21:00 hàng ngày',
+    price: 'Miễn phí cho khách lưu trú'
+  },
+  {
+    id: 4,
+    title: 'Phòng họp & Sự kiện',
+    icon: 'fas fa-users',
+    image: 'https://acihome.vn/uploads/15/kha-nang-tuy-bien-cua-phong-hop-da-nang-khach-san.jpg',
+    shortDesc: 'Không gian tổ chức sự kiện chuyên nghiệp, hiện đại với đầy đủ trang thiết bị.',
+    fullDesc: 'Phòng họp & Sự kiện của Grand Hotel là lựa chọn hoàn hảo cho các hội nghị, hội thảo, tiệc cưới, tiệc sinh nhật và các sự kiện khác. Chúng tôi có nhiều phòng họp với sức chứa linh hoạt từ 10 đến 500 người, được trang bị đầy đủ trang thiết bị hiện đại như máy chiếu, âm thanh, ánh sáng chuyên nghiệp. Đội ngũ nhân viên chuyên nghiệp sẽ hỗ trợ bạn từ khâu lên kế hoạch đến khi sự kiện hoàn thành.',
+    features: ['Sức chứa linh hoạt', 'Thiết bị âm thanh ánh sáng', 'Hỗ trợ kỹ thuật 24/7', 'Đăng ký chỗ', 'Dịch vụ ăn uống', 'Bảo vệ an ninh'],
+    hours: 'Liên hệ để đặt lịch',
+    price: 'Liên hệ để báo giá'
+  },
+  {
+    id: 5,
+    title: 'Đưa đón sân bay',
+    icon: 'fas fa-shuttle-van',
+    image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    shortDesc: 'Dịch vụ đưa đón sân bay an toàn, tiện lợi với đội ngũ tài xế chuyên nghiệp.',
+    fullDesc: 'Dịch vụ đưa đón sân bay của Grand Hotel giúp bạn có một chuyến đi an toàn và tiện lợi từ sân bay đến khách sạn và ngược lại. Chúng tôi có đội xe sang trọng, hiện đại với đầy đủ trang thiết bị an toàn. Đội ngũ tài xế chuyên nghiệp, có nhiều năm kinh nghiệm sẽ đưa đón bạn đúng giờ và an toàn. Bạn có thể đặt lịch trước 24/7 qua điện thoại hoặc email.',
+    features: ['Xe sang trọng, hiện đại', 'Tài xế chuyên nghiệp', 'Đặt lịch trước 24/7', 'Đưa đón đúng giờ', 'Trang bị an toàn đầy đủ', 'Giá cả hợp lý'],
+    hours: '24/7',
+    price: 'Từ 400.000đ/chuyến'
+  },
+  {
+    id: 6,
+    title: 'Giặt ủi',
+    icon: 'fas fa-tshirt',
+    image: 'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    shortDesc: 'Dịch vụ giặt ủi nhanh chóng, sạch sẽ với công nghệ hiện đại.',
+    fullDesc: 'Dịch vụ giặt ủi của Grand Hotel giúp bạn giữ quần áo sạch sẽ và thơm mát trong suốt kỳ nghỉ. Chúng tôi sử dụng công nghệ giặt ủi hiện đại, chất tẩy rửa an toàn và thân thiện với môi trường. Dịch vụ bao gồm giặt, sấy khô, là ủi và giặt khô. Chúng tôi nhận và trả quần áo tại phòng của bạn, tiết kiệm thời gian cho bạn.',
+    features: ['Giặt ủi nhanh chóng', 'Sấy khô, là ủi chuyên nghiệp', 'Nhận & trả tại phòng', 'Giá cả hợp lý', 'Chất tẩy rửa an toàn', 'Công nghệ hiện đại'],
+    hours: '08:00 - 20:00 hàng ngày',
+    price: 'Từ 20.000đ/chiếc'
+  }
+])
+
+const openServiceDetail = (service) => {
+  selectedService.value = service
+}
+
+const closeServiceDetail = () => {
+  selectedService.value = null
+}
 </script>
 
 <style scoped>
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
-/* Add any specific styles for the services page here */
 </style>
