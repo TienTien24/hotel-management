@@ -20,7 +20,7 @@
       </div>
     </header>
 
-    <div class="max-w-7xl mx-auto px-6 py-32">
+    <div class="max-w-7xl mx-auto px-6 py-16">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
         <!-- Contact Info Column -->
         <div class="space-y-12">

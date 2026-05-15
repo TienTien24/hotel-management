@@ -34,11 +34,6 @@
               <p class="text-sm text-gray-400 font-bold mt-1">Hiển thị {{ rooms.length }} phòng của toàn khách sạn</p>
             </div>
           </div>
-
-          <router-link v-if="user" to="/my-bookings" class="bg-[#004d26] hover:bg-[#003d1e] text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-xl shadow-green-900/20 flex items-center gap-3">
-            <i class="fas fa-history"></i>
-            Lịch sử đặt phòng
-          </router-link>
         </div>
 
         <div class="flex flex-wrap gap-4">
