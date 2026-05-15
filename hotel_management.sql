@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 15, 2026 at 09:42 AM
+-- Generation Time: May 15, 2026 at 10:11 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -62,7 +62,8 @@ INSERT INTO `booking` (`check_in_date`, `check_out_date`, `total_price`, `id`, `
 ('2026-05-10', '2026-05-12', 100, 13, 271, 3, 'COMPLETED', '2026-05-10 07:26:18.000000', '2026-05-12 07:26:18.000000', '2026-05-15 07:26:18.000000', '456 Oak Ave', 'jane@gmail.com', 'Jane Smith', '0444555666', 1, 'MOMO', 'PAID', 'Trải nghiệm tốt, nhưng hơi ồn ào một chút.', '2026-05-13 07:26:18.000000', 4, 'Trải nghiệm tốt', NULL, NULL),
 ('2026-04-25', '2026-04-27', 110, 14, 272, 3, 'COMPLETED', '2026-04-25 07:26:18.000000', '2026-04-27 07:26:18.000000', '2026-05-15 07:26:18.000000', '789 Pine Ln', 'peter@gmail.com', 'Peter Jones', '0777888999', 3, 'COD', 'PAID', 'Khách sạn sang trọng, rất đáng tiền!', '2026-04-28 07:26:18.000000', 5, 'Sang trọng và đẳng cấp', NULL, NULL),
 ('2026-05-03', '2026-05-05', 340, 15, 300, 3, 'COMPLETED', '2026-05-03 07:26:18.000000', '2026-05-05 07:26:18.000000', '2026-05-15 07:26:18.000000', 'Hà Nội', 'lethid@gmail.com', 'Lê Thị D', '0123456789', 2, 'VNPAY', 'PAID', 'Phòng Deluxe có view biển tuyệt đẹp, ngắm bình minh ngay tại giường. Dịch vụ phòng rất nhanh chóng.', '2026-05-06 07:26:18.000000', 5, 'View biển cực đẹp', NULL, NULL),
-('2026-04-20', '2026-04-23', 1050, 16, 320, 3, 'COMPLETED', '2026-04-20 07:26:18.000000', '2026-04-23 07:26:18.000000', '2026-05-15 07:26:18.000000', 'Đà Nẵng', 'phamvane@gmail.com', 'Phạm Văn E', '0987654321', 4, 'MOMO', 'PAID', 'Chúng tôi đã có một kỳ nghỉ gia đình tuyệt vời tại phòng Suite. Không gian rộng rãi, các con rất thích hồ bơi vô cực của khách sạn.', '2026-04-24 07:26:18.000000', 5, 'Kỳ nghỉ gia đình ấm áp', NULL, NULL);
+('2026-04-20', '2026-04-23', 1050, 16, 320, 3, 'COMPLETED', '2026-04-20 07:26:18.000000', '2026-04-23 07:26:18.000000', '2026-05-15 07:26:18.000000', 'Đà Nẵng', 'phamvane@gmail.com', 'Phạm Văn E', '0987654321', 4, 'MOMO', 'PAID', 'Chúng tôi đã có một kỳ nghỉ gia đình tuyệt vời tại phòng Suite. Không gian rộng rãi, các con rất thích hồ bơi vô cực của khách sạn.', '2026-04-24 07:26:18.000000', 5, 'Kỳ nghỉ gia đình ấm áp', NULL, NULL),
+('2026-05-15', '2026-05-18', 135, 17, 270, 3, 'PENDING', NULL, NULL, '2026-05-15 08:10:26.000000', '', 'john@gmail.com', 'John Doe', '0111222333', 2, 'COD', 'UNPAID', NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -199,7 +200,7 @@ CREATE TABLE `room` (
 --
 
 INSERT INTO `room` (`price`, `id`, `category`, `description`, `image_url`, `room_number`, `type`, `status`, `capacity`) VALUES
-(45, 270, 'Standard', 'Phòng Standard mang đến không gian nghỉ ngơi ấm cúng và tiện nghi với mức giá hợp lý, là lựa chọn hoàn hảo cho những ai tìm kiếm sự thoải mái đơn giản nhưng đầy đủ. Với thiết kế gọn gàng, trang bị hiện đại và không gian dễ chịu, đây chính là điểm dừng chân lý tưởng sau một ngày dài khám phá hoặc làm việc.', 'https://loremflickr.com/800/600/hotel,room,bedroom/all?lock=101', '101', 'Single', 'AVAILABLE', 2),
+(45, 270, 'Standard', 'Phòng Standard mang đến không gian nghỉ ngơi ấm cúng và tiện nghi với mức giá hợp lý, là lựa chọn hoàn hảo cho những ai tìm kiếm sự thoải mái đơn giản nhưng đầy đủ. Với thiết kế gọn gàng, trang bị hiện đại và không gian dễ chịu, đây chính là điểm dừng chân lý tưởng sau một ngày dài khám phá hoặc làm việc.', 'https://loremflickr.com/800/600/hotel,room,bedroom/all?lock=101', '101', 'Single', 'BOOKED', 2),
 (50, 271, 'Standard', 'Phòng Standard mang đến không gian nghỉ ngơi ấm cúng và tiện nghi với mức giá hợp lý, là lựa chọn hoàn hảo cho những ai tìm kiếm sự thoải mái đơn giản nhưng đầy đủ. Với thiết kế gọn gàng, trang bị hiện đại và không gian dễ chịu, đây chính là điểm dừng chân lý tưởng sau một ngày dài khám phá hoặc làm việc.', 'https://loremflickr.com/800/600/hotel,room,bedroom/all?lock=102', '102', 'Double', 'AVAILABLE', 2),
 (55, 272, 'Standard', 'Phòng Standard mang đến không gian nghỉ ngơi ấm cúng và tiện nghi với mức giá hợp lý, là lựa chọn hoàn hảo cho những ai tìm kiếm sự thoải mái đơn giản nhưng đầy đủ. Với thiết kế gọn gàng, trang bị hiện đại và không gian dễ chịu, đây chính là điểm dừng chân lý tưởng sau một ngày dài khám phá hoặc làm việc.', 'https://loremflickr.com/800/600/hotel,room,bedroom/all?lock=103', '103', 'Twin', 'AVAILABLE', 1),
 (60, 273, 'Standard', 'Phòng Standard mang đến không gian nghỉ ngơi ấm cúng và tiện nghi với mức giá hợp lý, là lựa chọn hoàn hảo cho những ai tìm kiếm sự thoải mái đơn giản nhưng đầy đủ. Với thiết kế gọn gàng, trang bị hiện đại và không gian dễ chịu, đây chính là điểm dừng chân lý tưởng sau một ngày dài khám phá hoặc làm việc.', 'https://loremflickr.com/800/600/hotel,room,bedroom/all?lock=104', '104', 'Single', 'AVAILABLE', 2),
@@ -379,7 +380,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `booking_service_usage`

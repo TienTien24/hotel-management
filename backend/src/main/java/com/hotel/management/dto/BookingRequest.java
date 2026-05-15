@@ -16,5 +16,6 @@ public class BookingRequest {
     private String guestPhone;
     private String guestEmail;
     private String guestAddress;
+    private String specialRequests;
     private PaymentMethod paymentMethod;
 }

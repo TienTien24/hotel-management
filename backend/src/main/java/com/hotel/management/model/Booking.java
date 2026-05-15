@@ -61,6 +61,9 @@ public class Booking {
 
     private String guestIdNumber;
     private String guestIdImageUrl;
+    
+    @Column(columnDefinition = "TEXT")
+    private String specialRequests;
 
     @PrePersist
     protected void onCreate() {
