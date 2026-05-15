@@ -44,3 +44,4 @@ Thumbs.db
 # Database
 *.sql
 !hotel_management.sql
+!hotel_management_update.sql
