@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-50 pb-20">
-    <div v-if="room" class="max-w-7xl mx-auto px-4 pt-8">
+    <div v-if="room" class="max-w-7xl mx-auto px-4 pt-16">
       <nav class="flex mb-8 text-sm font-medium text-gray-500 uppercase tracking-widest">
         <router-link to="/" class="hover:text-emerald-800 transition-colors">Trang chủ</router-link>
         <span class="mx-3">/</span>
@@ -94,79 +94,264 @@
       </div>
 
       <div v-if="showBookingForm" class="fixed inset-0 bg-emerald-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-[2rem] max-w-2xl w-full p-8 shadow-2xl transform transition-all max-h-[90vh] overflow-y-auto">
-          <div class="flex justify-between items-center mb-8">
-            <h3 class="text-3xl font-black text-emerald-950 uppercase tracking-tighter">Booking phòng {{ room.roomNumber }}</h3>
-            <button @click="showBookingForm = false" class="text-gray-400 hover:text-emerald-800 transition-colors">
+        <div class="bg-white rounded-[2rem] max-w-6xl w-full shadow-2xl transform transition-all max-h-[95vh] overflow-hidden flex flex-col">
+          <!-- Modal Header -->
+          <div class="p-8 pb-4 flex justify-between items-start">
+            <div>
+              <h3 class="text-3xl font-black text-emerald-950 uppercase tracking-tighter mb-2">BOOKING PHÒNG {{ room.roomNumber }}</h3>
+              <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
+                <span class="text-emerald-800">{{ room.category }}</span>
+                <div class="flex items-center gap-2">
+                  <i class="fas fa-map-marker-alt text-emerald-600"></i>
+                  <span>Phòng {{ room.roomNumber }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i class="fas fa-users text-emerald-600"></i>
+                  <span>{{ roomSpec.capacityValue }} người</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i class="fas fa-expand text-emerald-600"></i>
+                  <span>35m²</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i class="fas fa-bed text-emerald-600"></i>
+                  <span>{{ roomSpec.bedType }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i class="fas fa-eye text-emerald-600"></i>
+                  <span>Sea View</span>
+                </div>
+                <div class="flex items-center gap-1 bg-amber-50 text-amber-500 px-3 py-1 rounded-full border border-amber-100">
+                  <i class="fas fa-star text-[10px]"></i>
+                  <span>4.9 (128 đánh giá)</span>
+                </div>
+              </div>
+            </div>
+            <button @click="showBookingForm = false" class="text-gray-400 hover:text-emerald-800 transition-colors p-2">
               <i class="fas fa-times text-2xl"></i>
             </button>
           </div>
 
-          <form @submit.prevent="handleBooking" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Ngày check-in</label>
-                <input v-model="bookingData.checkInDate" type="date" class="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none" required>
+          <div class="flex-grow overflow-y-auto p-8 pt-4">
+            <div class="flex flex-col lg:flex-row gap-8">
+              <!-- Form Left Column -->
+              <div class="lg:w-2/3 space-y-8">
+                <form @submit.prevent="handleBooking" id="bookingForm" class="space-y-8">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label class="block text-[10px] font-black text-emerald-900 uppercase tracking-widest mb-3">Ngày check-in</label>
+                      <div class="relative">
+                        <i class="far fa-calendar-alt absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input v-model="bookingData.checkInDate" type="date" class="w-full bg-gray-50 border border-gray-100 rounded-2xl pl-12 pr-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none font-bold text-sm text-slate-700" required>
+                      </div>
+                    </div>
+                    <div>
+                      <label class="block text-[10px] font-black text-emerald-900 uppercase tracking-widest mb-3">Ngày check-out</label>
+                      <div class="relative">
+                        <i class="far fa-calendar-check absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input v-model="bookingData.checkOutDate" type="date" class="w-full bg-gray-50 border border-gray-100 rounded-2xl pl-12 pr-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none font-bold text-sm text-slate-700" required>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label class="block text-[10px] font-black text-emerald-900 uppercase tracking-widest mb-3">Họ tên khách</label>
+                      <div class="relative">
+                        <i class="far fa-user absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input v-model="bookingData.guestFullName" type="text" :disabled="isLoggedIn" placeholder="Họ và tên của bạn" class="w-full border border-gray-100 rounded-2xl pl-12 pr-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none font-bold text-sm text-slate-700" :class="isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : 'bg-gray-50'" required>
+                      </div>
+                    </div>
+                    <div>
+                      <label class="block text-[10px] font-black text-emerald-900 uppercase tracking-widest mb-3">Số điện thoại</label>
+                      <div class="relative">
+                        <i class="fas fa-phone-alt absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input v-model="bookingData.guestPhone" type="tel" :disabled="isLoggedIn" placeholder="Số điện thoại liên lạc" class="w-full border border-gray-100 rounded-2xl pl-12 pr-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none font-bold text-sm text-slate-700" :class="isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : 'bg-gray-50'" required>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label class="block text-[10px] font-black text-emerald-900 uppercase tracking-widest mb-3">Email</label>
+                      <div class="relative">
+                        <i class="far fa-envelope absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input v-model="bookingData.guestEmail" type="email" :disabled="isLoggedIn" placeholder="Địa chỉ email nhận xác nhận" class="w-full border border-gray-100 rounded-2xl pl-12 pr-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none font-bold text-sm text-slate-700" :class="isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : 'bg-gray-50'">
+                      </div>
+                    </div>
+                    <div>
+                      <label class="block text-[10px] font-black text-emerald-900 uppercase tracking-widest mb-3">Số người</label>
+                      <div class="relative">
+                        <i class="fas fa-user-friends absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <select v-model.number="bookingData.numberOfGuests" class="w-full bg-gray-50 border border-gray-100 rounded-2xl pl-12 pr-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none font-bold text-sm text-slate-700 appearance-none" required>
+                          <option v-for="n in roomSpec.capacityValue || 4" :key="n" :value="n">{{ n }} người lớn</option>
+                        </select>
+                        <i class="fas fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-[10px] font-black text-emerald-900 uppercase tracking-widest mb-3">Địa chỉ</label>
+                    <div class="relative">
+                      <i class="fas fa-map-marker-alt absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                      <input v-model="bookingData.guestAddress" type="text" placeholder="Nhập địa chỉ của bạn (không bắt buộc)" class="w-full bg-gray-50 border border-gray-100 rounded-2xl pl-12 pr-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none font-bold text-sm text-slate-700">
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-[10px] font-black text-emerald-900 uppercase tracking-widest mb-3">Yêu cầu đặc biệt (không bắt buộc)</label>
+                    <div class="relative">
+                      <i class="far fa-comment-alt absolute left-5 top-6 text-gray-400"></i>
+                      <textarea v-model="bookingData.specialRequests" rows="3" placeholder="Ví dụ: Phòng tầng cao, không hút thuốc, trang trí sinh nhật..." class="w-full bg-gray-50 border border-gray-100 rounded-2xl pl-12 pr-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none font-bold text-sm text-slate-700 resize-none"></textarea>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-[10px] font-black text-emerald-900 uppercase tracking-widest mb-4">Phương thức thanh toán</label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <label 
+                        v-for="method in paymentMethods" 
+                        :key="method.value" 
+                        class="relative flex items-center p-4 border-2 rounded-2xl cursor-pointer transition-all group"
+                        :class="bookingData.paymentMethod === method.value ? 'border-emerald-800 bg-emerald-50' : 'border-gray-100 bg-white hover:border-emerald-200'"
+                      >
+                        <input v-model="bookingData.paymentMethod" :value="method.value" type="radio" class="sr-only">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mr-4" :class="bookingData.paymentMethod === method.value ? 'bg-emerald-800 text-white' : 'bg-gray-50 text-emerald-800'">
+                          <i :class="method.icon"></i>
+                        </div>
+                        <div class="flex-grow">
+                          <p class="font-black text-[11px] uppercase tracking-widest">{{ method.label }}</p>
+                          <p class="text-[9px] font-bold text-gray-400 uppercase mt-0.5">{{ method.desc }}</p>
+                        </div>
+                        <div v-if="bookingData.paymentMethod === method.value" class="absolute top-2 right-2">
+                          <i class="fas fa-check-circle text-emerald-800 text-xs"></i>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </form>
               </div>
-              <div>
-                <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Ngày check-out</label>
-                <input v-model="bookingData.checkOutDate" type="date" class="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none" required>
+
+              <!-- Sidebar Right Column -->
+              <div class="lg:w-1/3 space-y-6">
+                <!-- Room Info Box -->
+                <div class="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
+                  <div class="h-48 overflow-hidden relative">
+                    <img :src="room.imageUrl || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80'" class="w-full h-full object-cover">
+                    <div class="absolute bottom-4 right-4 bg-black/50 backdrop-blur-md text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">
+                      1/5
+                    </div>
+                  </div>
+                  <div class="p-6">
+                    <h4 class="text-[11px] font-black text-emerald-900 uppercase tracking-widest mb-4 italic">Thông tin phòng</h4>
+                    <div class="space-y-3">
+                      <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Loại phòng</span>
+                        <span class="font-black text-emerald-950 uppercase">{{ room.category }}</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Phòng</span>
+                        <span class="font-black text-emerald-950">{{ room.roomNumber }}</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Sức chứa</span>
+                        <span class="font-black text-emerald-950">{{ roomSpec.capacityValue }} người lớn</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Diện tích</span>
+                        <span class="font-black text-emerald-950">35m²</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Giường</span>
+                        <span class="font-black text-emerald-950">{{ roomSpec.bedType }}</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Hướng view</span>
+                        <span class="font-black text-emerald-950">Nhìn ra biển</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Price Breakdown Box -->
+                <div class="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
+                  <h4 class="text-[11px] font-black text-emerald-900 uppercase tracking-widest mb-4 italic">Chi tiết thanh toán</h4>
+                  <div class="space-y-4">
+                    <div class="flex justify-between items-center text-sm">
+                      <span class="text-gray-500 font-bold">Giá phòng / đêm</span>
+                      <span class="font-black text-emerald-950">{{ formatPrice(room.price) }}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                      <span class="text-gray-500 font-bold">Số đêm</span>
+                      <span class="font-black text-emerald-950">{{ totalNights }} đêm</span>
+                    </div>
+                    <div class="pt-4 border-t border-gray-50 space-y-3">
+                      <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-500 font-bold">Tạm tính</span>
+                        <span class="font-black text-emerald-950">{{ formatPrice(subtotal) }}</span>
+                      </div>
+                      <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-500 font-bold">Thuế & phí dịch vụ (5%)</span>
+                        <span class="font-black text-emerald-950">{{ formatPrice(taxAndServiceFee) }}</span>
+                      </div>
+                    </div>
+                    <div class="pt-6 mt-6 border-t border-emerald-100">
+                      <div class="flex justify-between items-end">
+                        <span class="text-[11px] font-black text-emerald-900 uppercase tracking-widest">Tổng tiền</span>
+                        <div class="text-right">
+                          <p class="text-2xl font-black text-emerald-800 leading-none mb-2">{{ formatPrice(finalTotal) }}</p>
+                          <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Đã bao gồm VAT và phí dịch vụ</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Họ tên khách</label>
-                <input v-model="bookingData.guestFullName" type="text" :disabled="isLoggedIn" class="w-full border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none" :class="isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : 'bg-gray-50'" required>
+            <!-- Policy Info -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+              <div class="bg-emerald-50/50 p-4 rounded-2xl flex items-start gap-3 border border-emerald-100/50">
+                <i class="fas fa-history text-emerald-600 mt-1"></i>
+                <div>
+                  <p class="text-[10px] font-black text-emerald-900 uppercase tracking-widest mb-1">Miễn phí hủy phòng</p>
+                  <p class="text-[9px] text-emerald-600/70 font-bold uppercase tracking-widest leading-relaxed">Hủy miễn phí trước 24h trước ngày nhận phòng</p>
+                </div>
               </div>
-              <div>
-                <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Số điện thoại</label>
-                <input v-model="bookingData.guestPhone" type="text" :disabled="isLoggedIn" class="w-full border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none" :class="isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : 'bg-gray-50'" required>
+              <div class="bg-emerald-50/50 p-4 rounded-2xl flex items-start gap-3 border border-emerald-100/50">
+                <i class="fas fa-check-circle text-emerald-600 mt-1"></i>
+                <div>
+                  <p class="text-[10px] font-black text-emerald-900 uppercase tracking-widest mb-1">Xác nhận ngay</p>
+                  <p class="text-[9px] text-emerald-600/70 font-bold uppercase tracking-widest leading-relaxed">Bạn sẽ nhận được xác nhận ngay sau khi đặt phòng</p>
+                </div>
               </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Email</label>
-                <input v-model="bookingData.guestEmail" type="email" :disabled="isLoggedIn" class="w-full border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none" :class="isLoggedIn ? 'bg-gray-100 cursor-not-allowed' : 'bg-gray-50'">
-              </div>
-              <div>
-                <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Số người</label>
-                <input v-model.number="bookingData.numberOfGuests" min="1" :max="roomSpec.capacityValue || 10" type="number" class="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none" required>
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Địa chỉ</label>
-              <input v-model="bookingData.guestAddress" type="text" class="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-emerald-800 outline-none">
-            </div>
-
-            <div>
-              <label class="block text-xs font-black text-emerald-900 uppercase tracking-widest mb-3">Phương thức thanh toán</label>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <label v-for="method in paymentMethods" :key="method.value" class="border rounded-2xl px-5 py-4 cursor-pointer transition-all" :class="bookingData.paymentMethod === method.value ? 'border-emerald-800 bg-emerald-50' : 'border-gray-200 bg-white'">
-                  <input v-model="bookingData.paymentMethod" :value="method.value" type="radio" class="mr-2">
-                  <span class="font-bold text-sm text-gray-700">{{ method.label }}</span>
-                </label>
+              <div class="bg-emerald-50/50 p-4 rounded-2xl flex items-start gap-3 border border-emerald-100/50">
+                <i class="fas fa-shield-alt text-emerald-600 mt-1"></i>
+                <div>
+                  <p class="text-[10px] font-black text-emerald-900 uppercase tracking-widest mb-1">Thanh toán an toàn</p>
+                  <p class="text-[9px] text-emerald-600/70 font-bold uppercase tracking-widest leading-relaxed">Thông tin của bạn được bảo mật tuyệt đối</p>
+                </div>
               </div>
             </div>
 
-            <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-100">
-              <div class="flex justify-between items-center mb-2">
-                <span class="text-sm font-bold text-emerald-900 uppercase tracking-widest">Số đêm</span>
-                <span class="text-lg font-black text-emerald-800">{{ totalNights }}</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-sm font-bold text-emerald-900 uppercase tracking-widest">Tổng tiền dự kiến</span>
-                <span class="text-xl font-black text-emerald-800">{{ totalPrice }}</span>
-              </div>
-              <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest italic mt-3">Online payment hiện được xử lý theo luồng xác nhận nội bộ</p>
+            <!-- Submit Button -->
+            <div class="mt-10 space-y-4">
+              <button 
+                form="bookingForm"
+                type="submit" 
+                :disabled="loading" 
+                class="w-full bg-[#004d26] text-white py-6 rounded-2xl font-black uppercase tracking-[0.2em] text-sm hover:bg-emerald-900 transition-all shadow-2xl shadow-green-900/30 flex items-center justify-center gap-4 group disabled:opacity-50"
+              >
+                <i class="fas fa-lock group-hover:scale-110 transition-transform"></i>
+                {{ loading ? 'ĐANG XỬ LÝ...' : 'XÁC NHẬN BOOKING' }}
+              </button>
+              <p class="text-center text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                <i class="fas fa-check-circle text-emerald-500 mr-2"></i>
+                Bằng việc xác nhận, bạn đồng ý với <span class="text-emerald-800 underline cursor-pointer">Điều khoản & Chính sách</span> của chúng tôi.
+              </p>
             </div>
-
-            <button type="submit" :disabled="loading" class="w-full bg-emerald-800 text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-emerald-900 transition-all shadow-xl disabled:opacity-50">
-              {{ loading ? 'Đang xử lý...' : 'Xác nhận booking' }}
-            </button>
-          </form>
+          </div>
         </div>
       </div>
     </div>
@@ -189,9 +374,9 @@ const room = ref(null)
 const showBookingForm = ref(false)
 const loading = ref(false)
 const paymentMethods = [
-  { value: 'COD', label: 'COD' },
-  { value: 'VNPAY', label: 'VNPay' },
-  { value: 'MOMO', label: 'Momo' }
+  { value: 'COD', label: 'COD', icon: 'fas fa-money-bill-wave', desc: 'Thanh toán khi nhận phòng' },
+  { value: 'VNPAY', label: 'VNPay', icon: 'fas fa-credit-card', desc: 'Thanh toán qua VNPay' },
+  { value: 'MOMO', label: 'Momo', icon: 'fas fa-wallet', desc: 'Thanh toán qua MoMo' }
 ]
 
 const bookingData = ref({
@@ -202,7 +387,21 @@ const bookingData = ref({
   guestPhone: '',
   guestAddress: '',
   numberOfGuests: 1,
+  specialRequests: '',
   paymentMethod: 'COD'
+})
+
+const subtotal = computed(() => {
+  if (!room.value || totalNights.value <= 0) return 0
+  return room.value.price * totalNights.value
+})
+
+const taxAndServiceFee = computed(() => {
+  return subtotal.value * 0.05
+})
+
+const finalTotal = computed(() => {
+  return subtotal.value + taxAndServiceFee.value
 })
 
 const canBook = computed(() => room.value && room.value.status === 'AVAILABLE')
@@ -294,6 +493,7 @@ const handleBooking = async () => {
       guestPhone: bookingData.value.guestPhone,
       guestAddress: bookingData.value.guestAddress,
       numberOfGuests: bookingData.value.numberOfGuests,
+      specialRequests: bookingData.value.specialRequests,
       paymentMethod: bookingData.value.paymentMethod
     })
 

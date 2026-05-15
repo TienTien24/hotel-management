@@ -81,10 +81,15 @@ public class BookingService {
         booking.setGuestPhone(isBlank(request.getGuestPhone()) ? customer.getPhone() : request.getGuestPhone());
         booking.setGuestEmail(isBlank(request.getGuestEmail()) ? customer.getEmail() : request.getGuestEmail());
         booking.setGuestAddress(request.getGuestAddress());
+        booking.setSpecialRequests(request.getSpecialRequests());
         booking.setPaymentMethod(request.getPaymentMethod() == null ? PaymentMethod.COD : request.getPaymentMethod());
         booking.setPaymentStatus(PaymentStatus.UNPAID);
         booking.setStatus(BookingStatus.PENDING);
-        booking.setTotalPrice(room.getPrice() * nights);
+        
+        // Tính tổng tiền bao gồm 5% thuế và phí dịch vụ
+        double subtotal = room.getPrice() * nights;
+        double taxAndServiceFee = subtotal * 0.05;
+        booking.setTotalPrice(subtotal + taxAndServiceFee);
 
         Booking savedBooking = bookingRepository.save(booking);
         
