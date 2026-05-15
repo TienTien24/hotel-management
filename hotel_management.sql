@@ -193,7 +193,7 @@ CREATE TABLE `room` (
   `image_url` varchar(255) DEFAULT NULL,
   `room_number` varchar(255) DEFAULT NULL,
   `type` varchar(255) DEFAULT NULL,
-  `status` enum('AVAILABLE','BOOKED','OCCUPIED','MAINTENANCE') DEFAULT NULL,
+  `status` enum('AVAILABLE','BOOKED','OCCUPIED','MAINTENANCE','CLEANING') DEFAULT NULL,
   `capacity` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

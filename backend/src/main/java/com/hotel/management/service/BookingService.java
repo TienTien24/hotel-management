@@ -8,10 +8,10 @@ import com.hotel.management.enums.PaymentStatus;
 import com.hotel.management.enums.RoomStatus;
 import com.hotel.management.model.Booking;
 import com.hotel.management.model.Room;
-import com.hotel.management.model.BookingServiceUsage;
 import com.hotel.management.model.User;
 import com.hotel.management.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,10 +33,11 @@ public class BookingService {
     private UserRepository userRepository;
 
     @Autowired
-    private BookingServiceUsageRepository bookingServiceUsageRepository;
+    private RoomService roomService;
 
     @Autowired
-    private RoomService roomService;
+    @Lazy
+    private InvoiceService invoiceService;
 
     public Booking createBooking(BookingRequest request) {
         if (request.getCheckInDate() == null || request.getCheckOutDate() == null) {
@@ -115,19 +116,44 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy booking với ID: " + bookingId));
         
-        booking.setPaymentStatus(PaymentStatus.PAID);
-        // Thanh toán thành công luôn dẫn đến trạng thái CONFIRMED (trừ khi đã hủy)
         if (booking.getStatus() == BookingStatus.CANCELLED) {
             throw new RuntimeException("Không thể thanh toán cho booking đã bị hủy");
         }
-        
-        booking.setStatus(BookingStatus.CONFIRMED);
-        
+
+        if (booking.getStatus() != BookingStatus.CHECKED_IN) {
+            throw new RuntimeException("Chỉ có thể thanh toán khi khách đã check-in (Trạng thái hiện tại: " + booking.getStatus() + "). Vui lòng check-in trước.");
+        }
+
+        invoiceService.settlePayment(bookingId);
+
+        booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy booking với ID: " + bookingId));
+
         Room room = booking.getRoom();
-        // Cập nhật trạng thái phòng thông minh dựa trên tất cả các booking active
         roomService.syncRoomStatus(room);
-        
-        bookingRepository.save(booking);
+    }
+
+    public Booking markAsPaid(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy booking với ID: " + bookingId));
+
+        if (booking.getStatus() == BookingStatus.CANCELLED) {
+            throw new RuntimeException("Không thể thanh toán cho booking đã bị hủy");
+        }
+
+        if (booking.getStatus() != BookingStatus.CHECKED_IN) {
+            throw new RuntimeException("Chỉ có thể thanh toán khi khách đã check-in (Trạng thái hiện tại: " + booking.getStatus() + "). Vui lòng check-in trước.");
+        }
+
+        invoiceService.settlePayment(bookingId);
+
+        booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy booking với ID: " + bookingId));
+
+        Room room = booking.getRoom();
+        roomService.syncRoomStatus(room);
+
+        return bookingRepository.save(booking);
     }
 
     public Booking checkIn(Long bookingId, String guestIdNumber, String guestIdImageUrl) {
@@ -138,8 +164,8 @@ public class BookingService {
             return booking;
         }
 
-        if (booking.getStatus() != BookingStatus.CONFIRMED && booking.getStatus() != BookingStatus.PENDING) {
-            throw new RuntimeException("Booking #" + bookingId + " không ở trạng thái Chờ xác nhận hoặc Đã xác nhận (Trạng thái hiện tại: " + booking.getStatus() + "). Không thể thực hiện check-in.");
+        if (booking.getStatus() != BookingStatus.CONFIRMED) {
+            throw new RuntimeException("Booking #" + bookingId + " không ở trạng thái Đã xác nhận (Trạng thái hiện tại: " + booking.getStatus() + "). Không thể thực hiện check-in. Vui lòng xác nhận đặt phòng trước.");
         }
 
         if (guestIdNumber == null || guestIdNumber.isBlank()) {
@@ -173,7 +199,9 @@ public class BookingService {
         room.setStatus(RoomStatus.OCCUPIED);
         roomRepository.save(room);
         
-        return bookingRepository.save(booking);
+        Booking saved = bookingRepository.save(booking);
+        invoiceService.recalculateAndSyncInvoice(bookingId);
+        return saved;
     }
 
     public List<Booking> getAllBookings() {
@@ -312,18 +340,16 @@ public class BookingService {
             throw new RuntimeException("Booking #" + bookingId + " không ở trạng thái Đã check-in. Không thể thực hiện check-out.");
         }
 
-        // Tính toán lại tổng tiền bao gồm dịch vụ
-        List<BookingServiceUsage> usages = bookingServiceUsageRepository.findByBookingId(bookingId);
-        double serviceTotal = usages.stream()
-                .filter(u -> u.getStatus() == com.hotel.management.enums.ServiceStatus.COMPLETED)
-                .mapToDouble(u -> u.getService().getPrice() * u.getQuantity())
-                .sum();
-        
-        long nights = ChronoUnit.DAYS.between(booking.getCheckInDate(), booking.getCheckOutDate());
-        if (nights <= 0) nights = 1; // Tối thiểu 1 đêm
-        double roomTotal = booking.getRoom().getPrice() * nights;
-        
-        booking.setTotalPrice(roomTotal + serviceTotal);
+        invoiceService.recalculateAndSyncInvoice(bookingId);
+
+        booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy booking với ID: " + bookingId));
+
+        if (booking.getPaymentStatus() != PaymentStatus.PAID) {
+            throw new RuntimeException(
+                    "Khách chưa thanh toán đủ hóa đơn. Vui lòng thu tiền (phòng + dịch vụ) trước khi check-out.");
+        }
+
         booking.setStatus(BookingStatus.COMPLETED);
         booking.setCheckedOutAt(LocalDateTime.now());
 

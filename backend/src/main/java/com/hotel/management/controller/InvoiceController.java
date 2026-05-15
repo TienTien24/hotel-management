@@ -18,7 +18,17 @@ public class InvoiceController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<?> generateInvoice(@PathVariable Long bookingId) {
         try {
-            return ResponseEntity.ok(invoiceService.generateInvoice(bookingId));
+            return ResponseEntity.ok(invoiceService.recalculateAndSyncInvoice(bookingId));
+        } catch (Throwable t) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", t.getMessage()));
+        }
+    }
+
+    @PutMapping("/booking/{bookingId}/sync")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    public ResponseEntity<?> syncInvoice(@PathVariable Long bookingId) {
+        try {
+            return ResponseEntity.ok(invoiceService.recalculateAndSyncInvoice(bookingId));
         } catch (Throwable t) {
             return ResponseEntity.badRequest().body(java.util.Map.of("message", t.getMessage()));
         }

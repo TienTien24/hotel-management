@@ -1,6 +1,8 @@
 com\hotel\management\service\ContactMessageService.class
 com\hotel\management\dto\ReviewRequest.class
+com\hotel\management\dto\ChangePasswordRequest.class
 com\hotel\management\security\AuthEntryPointJwt.class
+com\hotel\management\HotelManagementApplication.class
 com\hotel\management\enums\RoomStatus.class
 com\hotel\management\enums\PaymentMethod.class
 com\hotel\management\security\WebSecurityConfig.class
@@ -9,6 +11,7 @@ com\hotel\management\controller\AIChatController.class
 com\hotel\management\model\SystemSettings.class
 com\hotel\management\controller\SystemSettingsController.class
 com\hotel\management\repository\UserRepository.class
+com\hotel\management\dto\UpdateProfileRequest.class
 com\hotel\management\dto\BookingRequest.class
 com\hotel\management\enums\RoleName.class
 com\hotel\management\service\InvoiceService.class
@@ -53,5 +56,6 @@ com\hotel\management\service\BookingService.class
 com\hotel\management\service\PaymentService.class
 com\hotel\management\model\Room.class
 com\hotel\management\model\Booking.class
+com\hotel\management\service\AIChatService.class
 com\hotel\management\controller\DashboardController.class
 com\hotel\management\enums\ServiceStatus.class

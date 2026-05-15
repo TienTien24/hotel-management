@@ -1,7 +1,8 @@
 <template>
   <div class="min-h-screen flex bg-[#f8faff] font-sans text-[#2d3748]">
     <!-- Sidebar -->
-    <StaffSidebar />
+    <AdminSidebar v-if="isAdmin" />
+    <StaffSidebar v-else />
 
     <!-- Main Content -->
     <main class="flex-1 p-8 overflow-y-auto">
@@ -18,31 +19,6 @@
                 {{ unreadNotificationsCount }}
               </span>
             </button>
-            
-            <!-- Notification Dropdown -->
-            <div v-if="showNotifications" class="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 z-[60] overflow-hidden">
-              <div class="p-4 border-b border-gray-50 flex items-center justify-between bg-gray-50 bg-opacity-50">
-                <span class="font-bold text-sm">Thông báo</span>
-                <button @click="markAllAsRead" class="text-[10px] font-bold text-blue-600 hover:underline">Đánh dấu đã đọc</button>
-              </div>
-              <div class="max-h-96 overflow-y-auto">
-                <div v-for="(noti, index) in notifications" :key="index" 
-                  class="p-4 border-b border-gray-50 hover:bg-gray-50 transition-all cursor-pointer flex gap-3"
-                  :class="{'bg-blue-50': !noti.read}"
-                >
-                  <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                    <span class="text-sm">🔔</span>
-                  </div>
-                  <div>
-                    <p class="text-xs font-medium text-gray-800 leading-relaxed">{{ noti.message }}</p>
-                    <span class="text-[10px] text-gray-400 mt-1 block">{{ noti.time }}</span>
-                  </div>
-                </div>
-              </div>
-              <div class="p-3 text-center border-t border-gray-50">
-                <button class="text-[11px] font-bold text-gray-500 hover:text-gray-700">Xem tất cả thông báo</button>
-              </div>
-            </div>
           </div>
 
           <!-- Create Booking Button -->
@@ -129,15 +105,9 @@
                   </span>
                 </td>
                 <td class="px-6 py-5">
-                  <div class="flex items-center justify-center gap-2">
-                    <button @click="openDetailModal(booking)" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white transition-all flex items-center justify-center border border-blue-100" title="Xem chi tiết">
+                  <div class="flex items-center justify-center gap-2 flex-wrap">
+                    <button @click="openDetailModal(booking)" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center border border-blue-100" title="Xem chi tiết">
                       <i class="far fa-eye text-xs"></i>
-                    </button>
-                    <button @click="openUpdateModal(booking)" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-500 hover:bg-gray-800 hover:text-white transition-all flex items-center justify-center border border-gray-100" title="Chỉnh sửa">
-                      <i class="far fa-edit text-xs"></i>
-                    </button>
-                    <button @click="handleCancel(booking.id)" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center border border-rose-100" title="Hủy">
-                      <i class="far fa-trash-alt text-xs"></i>
                     </button>
                   </div>
                 </td>
@@ -149,23 +119,11 @@
         <!-- Pagination -->
         <div class="p-6 border-t border-gray-50 flex items-center justify-between">
           <p class="text-xs text-gray-400 font-medium">Hiển thị 1 - {{ filteredBookings.length }} trong {{ bookings.length }} đặt phòng</p>
-          <div class="flex items-center gap-2">
-            <button class="w-8 h-8 rounded-lg border border-gray-100 flex items-center justify-center text-gray-400 hover:bg-gray-50 transition-all">
-              <i class="fas fa-chevron-left text-[10px]"></i>
-            </button>
-            <button v-for="p in 5" :key="p" class="w-8 h-8 rounded-lg font-bold text-xs transition-all"
-              :class="p === 1 ? 'bg-[#3182ce] text-white' : 'text-gray-400 hover:bg-gray-50'">
-              {{ p }}
-            </button>
-            <button class="w-8 h-8 rounded-lg border border-gray-100 flex items-center justify-center text-gray-400 hover:bg-gray-50 transition-all">
-              <i class="fas fa-chevron-right text-[10px]"></i>
-            </button>
-          </div>
         </div>
       </div>
     </main>
 
-    <!-- Modal Chi tiết đặt phòng (Image 3) -->
+    <!-- Modal Chi tiết đặt phòng -->
     <div v-if="showDetailModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900 bg-opacity-40 backdrop-blur-sm overflow-y-auto">
       <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl animate-in fade-in zoom-in duration-300 my-auto">
         <!-- Modal Header -->
@@ -199,7 +157,7 @@
           <div class="space-y-4">
             <div class="flex items-center justify-between">
               <h5 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Thông tin khách hàng</h5>
-              <button @click="openUpdateModal(selectedBooking)" class="text-blue-500 font-bold text-[10px] hover:underline px-3 py-1 bg-blue-50 rounded-lg">Sửa</button>
+              <button v-if="selectedBooking?.status !== 'CANCELLED'" @click="openUpdateModal(selectedBooking)" class="text-blue-600 font-bold text-[10px] hover:underline px-3 py-1 bg-blue-50 rounded-lg">Sửa</button>
             </div>
             <div class="grid grid-cols-2 gap-y-4 bg-gray-50 bg-opacity-50 p-6 rounded-2xl border border-gray-100">
               <div class="space-y-1">
@@ -221,14 +179,6 @@
               <div class="space-y-1 col-span-2">
                 <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Địa chỉ</span>
                 <p class="text-sm font-bold text-gray-800">{{ selectedBooking?.guestAddress || '123 Đường ABC, Quận 1, TP. HCM' }}</p>
-              </div>
-              <div class="space-y-1">
-                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Số giấy tờ</span>
-                <p class="text-sm font-bold text-gray-800">{{ selectedBooking?.guestIdNumber || '--' }}</p>
-              </div>
-              <div class="space-y-1">
-                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ghi chú</span>
-                <p class="text-sm font-bold text-gray-800">Khách VIP - Yêu cầu phòng yên tĩnh</p>
               </div>
             </div>
           </div>
@@ -275,92 +225,135 @@
           <!-- Section: Thanh toán -->
           <div class="space-y-4">
             <h5 class="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-              Thanh toán
+              Thanh toán & Hóa đơn
               <span :class="getPaymentStatusStyles(selectedBooking?.paymentStatus)" class="px-2 py-0.5 rounded text-[9px] font-bold">
                 {{ formatPaymentStatus(selectedBooking?.paymentStatus) }}
               </span>
             </h5>
-            <div class="bg-gray-50 bg-opacity-50 p-6 rounded-2xl border border-gray-100 space-y-3">
+            <div v-if="invoiceLoading" class="text-center text-xs text-gray-400 py-4">Đang tải hóa đơn...</div>
+            <div v-else class="bg-gray-50 bg-opacity-50 p-6 rounded-2xl border border-gray-100 space-y-3">
               <div class="flex justify-between items-center">
                 <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Phương thức</span>
                 <span class="text-sm font-bold text-gray-800">{{ selectedBooking?.paymentMethod || 'Tiền mặt' }}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tiền cọc</span>
-                <span class="text-sm font-bold text-gray-800">{{ formatCurrency((selectedBooking?.totalPrice || 0) * 0.4) }}</span>
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tiền phòng</span>
+                <span class="text-sm font-bold text-gray-800">{{ formatCurrency(invoice?.roomCharges) }}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Thanh toán ngày</span>
-                <span class="text-sm font-bold text-gray-800">{{ formatDateTime(selectedBooking?.createdAt) }}</span>
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Dịch vụ (đã hoàn thành)</span>
+                <span class="text-sm font-bold text-gray-800">{{ formatCurrency(invoice?.serviceCharges) }}</span>
               </div>
               <div class="flex justify-between items-center pt-3 border-t border-gray-100">
                 <span class="text-[11px] font-bold text-gray-800 uppercase tracking-widest">Tổng thanh toán</span>
-                <span class="text-lg font-bold text-emerald-600">{{ formatCurrency(selectedBooking?.totalPrice) }}</span>
+                <span class="text-lg font-bold text-emerald-600">{{ formatCurrency(invoice?.totalAmount ?? selectedBooking?.totalPrice) }}</span>
               </div>
-            </div>
-          </div>
-
-          <!-- Section: Ghi chú -->
-          <div class="space-y-4">
-            <h5 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Ghi chú & Yêu cầu đặc biệt</h5>
-            <div class="bg-gray-50 bg-opacity-50 p-6 rounded-2xl border border-gray-100 space-y-4">
-              <div class="space-y-1">
-                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Yêu cầu</span>
-                <p class="text-sm font-bold text-gray-800">Phòng yên tĩnh, tầng cao</p>
-              </div>
-              <div class="space-y-1">
-                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ghi chú</span>
-                <p class="text-sm font-bold text-gray-800">Khách đi công tác</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section: Lịch sử đặt phòng -->
-          <div class="space-y-4">
-            <h5 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Lịch sử đặt phòng</h5>
-            <div class="relative pl-8 space-y-6 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-100">
-              <div class="relative">
-                <div class="absolute -left-8 top-1.5 w-6 h-6 rounded-full bg-blue-500 border-4 border-white shadow-sm flex items-center justify-center"></div>
-                <div class="flex justify-between items-center">
-                  <span class="text-[11px] font-bold text-gray-800">{{ formatDateTime(selectedBooking?.createdAt) }}</span>
-                  <span class="text-[11px] font-medium text-gray-600">Tạo đặt phòng bởi {{ staffName }}</span>
-                </div>
-              </div>
-              <div v-if="selectedBooking?.status === 'CHECKED_IN' || selectedBooking?.status === 'COMPLETED'" class="relative">
-                <div class="absolute -left-8 top-1.5 w-6 h-6 rounded-full bg-blue-500 border-4 border-white shadow-sm flex items-center justify-center"></div>
-                <div class="flex justify-between items-center">
-                  <span class="text-[11px] font-bold text-gray-800">{{ formatDateTime(selectedBooking?.checkedInAt) }}</span>
-                  <span class="text-[11px] font-medium text-gray-600">Khách check-in</span>
-                </div>
-              </div>
-              <div v-if="selectedBooking?.paymentStatus === 'PAID'" class="relative">
-                <div class="absolute -left-8 top-1.5 w-6 h-6 rounded-full bg-emerald-500 border-4 border-white shadow-sm flex items-center justify-center"></div>
-                <div class="flex justify-between items-center">
-                  <span class="text-[11px] font-bold text-gray-800">{{ formatDateTime(selectedBooking?.createdAt) }}</span>
-                  <span class="text-[11px] font-medium text-gray-600">Thanh toán {{ formatCurrency((selectedBooking?.totalPrice || 0) * 0.4) }} (Tiền cọc)</span>
-                </div>
-              </div>
-              <div v-if="selectedBooking?.status === 'COMPLETED'" class="relative">
-                <div class="absolute -left-8 top-1.5 w-6 h-6 rounded-full bg-emerald-500 border-4 border-white shadow-sm flex items-center justify-center"></div>
-                <div class="flex justify-between items-center">
-                  <span class="text-[11px] font-bold text-gray-800">{{ formatDateTime(selectedBooking?.checkedOutAt) }}</span>
-                  <span class="text-[11px] font-medium text-gray-600">Thanh toán {{ formatCurrency((selectedBooking?.totalPrice || 0) * 0.6) }} (Còn lại)</span>
-                </div>
+              <div v-if="selectedBooking?.paymentStatus === 'PAID' && invoice?.paymentDate" class="flex justify-between items-center text-xs">
+                <span class="text-gray-400 font-medium">Ngày thanh toán</span>
+                <span class="font-bold text-gray-700">{{ formatDateTime(invoice.paymentDate) }}</span>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Modal Footer -->
-        <div class="p-6 border-t border-gray-100 flex gap-4 sticky bottom-0 bg-white rounded-b-2xl">
-          <button @click="printInvoice" class="flex-1 border border-gray-200 hover:bg-gray-50 text-gray-600 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
-            <i class="fas fa-print"></i>
-            In phiếu đặt phòng
+        <div class="p-6 border-t border-gray-100 flex flex-wrap gap-3 sticky bottom-0 bg-white rounded-b-2xl">
+          <button v-if="selectedBooking?.paymentStatus === 'PAID'" @click="openInvoiceModal" class="flex-1 min-w-[140px] bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
+            <i class="fas fa-file-invoice"></i>
+            In hóa đơn
           </button>
-          <button @click="handleCancel(selectedBooking.id)" class="flex-1 border border-rose-200 hover:bg-rose-50 text-rose-500 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
+          <button v-if="selectedBooking?.paymentStatus !== 'PAID' && (selectedBooking?.status === 'CHECKED_IN' || selectedBooking?.status === 'CONFIRMED' || selectedBooking?.status === 'PENDING')" @click="handlePayment(selectedBooking.id)" class="flex-1 min-w-[140px] bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
+            <i class="fas fa-credit-card"></i>
+            {{ selectedBooking?.status === 'CHECKED_IN' ? 'Quyết toán & Thu tiền' : 'Xác nhận thanh toán' }}
+          </button>
+          <button v-if="selectedBooking?.status === 'PENDING'" @click="handleConfirm(selectedBooking.id)" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
+            <i class="fas fa-check"></i>
+            Xác nhận
+          </button>
+          <button v-if="selectedBooking?.status !== 'CANCELLED'" @click="handleCancel(selectedBooking.id)" class="flex-1 border border-rose-200 hover:bg-rose-50 text-rose-500 py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2">
             <i class="far fa-trash-alt"></i>
             Hủy đặt phòng
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal In hóa đơn -->
+    <div v-if="showInvoiceModal" class="fixed inset-0 z-[120] flex items-center justify-center p-6 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
+      <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl my-auto border border-gray-100 overflow-hidden">
+        <div class="p-4 border-b border-gray-50 flex items-center justify-between">
+          <h3 class="text-sm font-bold text-gray-800">Hóa đơn thanh toán</h3>
+          <button @click="showInvoiceModal = false" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div id="invoice-print-area" class="p-8 space-y-6 text-gray-800">
+          <div class="flex items-center gap-4 pb-6 border-b border-dashed border-gray-200">
+            <div class="w-12 h-12 bg-emerald-800 rounded-xl flex items-center justify-center text-white">
+              <i class="fas fa-hotel text-xl"></i>
+            </div>
+            <div>
+              <h4 class="font-black text-sm uppercase tracking-tight">Grand Hotel</h4>
+              <p class="text-[9px] text-gray-500 mt-1">170 An Dương Vương, Quy Nhơn Nam, Gia Lai</p>
+              <p class="text-[9px] text-gray-500">Hotline: +84 123 456 789</p>
+            </div>
+          </div>
+
+          <div class="text-center py-2">
+            <h2 class="text-lg font-black uppercase tracking-widest">Hóa đơn thanh toán</h2>
+            <p class="text-emerald-700 font-black text-xs mt-1">HD{{ String(invoice?.id || selectedBooking?.id).padStart(8, '0') }}</p>
+            <p class="text-blue-600 font-bold text-[10px] mt-0.5">BK{{ String(selectedBooking?.id).padStart(8, '0') }}</p>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <h5 class="text-[10px] font-black uppercase text-gray-400 border-b pb-1">Khách hàng</h5>
+            <p><span class="text-gray-400">Họ tên:</span> <strong>{{ selectedBooking?.guestFullName || selectedBooking?.customer?.fullName }}</strong></p>
+            <p><span class="text-gray-400">SĐT:</span> <strong>{{ selectedBooking?.guestPhone || selectedBooking?.customer?.phone }}</strong></p>
+            <p><span class="text-gray-400">Phòng:</span> <strong>{{ selectedBooking?.room?.roomNumber }} - {{ selectedBooking?.room?.category }}</strong></p>
+            <p><span class="text-gray-400">Lưu trú:</span> <strong>{{ formatDate(selectedBooking?.checkInDate) }} → {{ formatDate(selectedBooking?.checkOutDate) }}</strong></p>
+          </div>
+
+          <div class="bg-gray-50 rounded-2xl p-5 space-y-2.5 text-xs">
+            <div class="flex justify-between">
+              <span class="text-gray-500">Tiền phòng</span>
+              <span class="font-bold">{{ formatCurrency(invoice?.roomCharges) }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-500">Dịch vụ</span>
+              <span class="font-bold">{{ formatCurrency(invoice?.serviceCharges) }}</span>
+            </div>
+            <div class="flex justify-between pt-2 border-t border-gray-200">
+              <span class="font-black uppercase">Tổng cộng</span>
+              <span class="font-black text-emerald-700">{{ formatCurrency(invoice?.totalAmount) }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-500">Phương thức</span>
+              <span class="font-bold">{{ formatPaymentMethod(selectedBooking?.paymentMethod) }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-500">Ngày thanh toán</span>
+              <span class="font-bold">{{ formatDateTime(invoice?.paymentDate) }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-500">Trạng thái</span>
+              <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded font-black text-[9px]">Đã thanh toán</span>
+            </div>
+          </div>
+
+          <p class="text-[9px] text-center text-gray-400 italic">Cảm ơn quý khách đã lưu trú tại Grand Hotel!</p>
+        </div>
+
+        <div class="p-6 border-t border-gray-100 flex gap-3">
+          <button @click="printInvoice" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2">
+            <i class="fas fa-print"></i>
+            In hóa đơn
+          </button>
+          <button @click="downloadInvoicePDF" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2">
+            <i class="fas fa-download"></i>
+            Tải PDF
+          </button>
+          <button @click="showInvoiceModal = false" class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-3 rounded-xl font-bold text-xs">Đóng</button>
         </div>
       </div>
     </div>
@@ -422,64 +415,16 @@
         </form>
       </div>
     </div>
-
-    <!-- Modal Check-in -->
-    <div v-if="showCheckInModal" class="fixed inset-0 z-[120] flex items-center justify-center p-6 bg-slate-900 bg-opacity-40 backdrop-blur-sm overflow-y-auto">
-      <div class="bg-white rounded-[2.5rem] max-w-lg w-full shadow-2xl animate-in fade-in zoom-in duration-300 my-auto overflow-hidden">
-        <div class="bg-indigo-600 p-8 text-white relative">
-          <button @click="closeCheckInModal" class="absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-xl bg-white bg-opacity-10 hover:bg-white hover:bg-opacity-20 transition-all">
-            <i class="fas fa-times"></i>
-          </button>
-          <h3 class="text-2xl font-bold uppercase tracking-tight">Thủ tục Check-in</h3>
-          <p class="text-white text-opacity-70 text-sm font-medium mt-1">BK{{ String(selectedBooking?.id).padStart(8, '0') }} - P.{{ selectedBooking?.room?.roomNumber }}</p>
-        </div>
-
-        <form @submit.prevent="handleCheckIn" class="p-8 space-y-6">
-          <div class="space-y-2">
-            <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Số CCCD / Passport</label>
-            <input v-model="checkInForm.guestIdNumber" type="text" required placeholder="Nhập số định danh..." class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-indigo-400 transition-all font-bold text-sm">
-          </div>
-
-          <div class="space-y-2">
-            <label class="block text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">Hình ảnh giấy tờ</label>
-            <div class="w-full h-48 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center overflow-hidden relative group">
-              <video v-if="isCameraActive" ref="cameraRef" autoplay playsinline class="w-full h-full object-cover"></video>
-              <template v-else-if="checkInForm.guestIdImageUrl">
-                <img :src="checkInForm.guestIdImageUrl" class="w-full h-full object-cover">
-                <button @click="clearImage" type="button" class="absolute top-3 right-3 w-8 h-8 bg-rose-500 text-white rounded-lg flex items-center justify-center shadow-lg">
-                  <i class="fas fa-times text-xs"></i>
-                </button>
-              </template>
-              <template v-else>
-                <i class="fas fa-id-card text-3xl text-gray-200 mb-2"></i>
-                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Chưa có ảnh</span>
-              </template>
-            </div>
-            
-            <div class="flex gap-2">
-              <input type="file" ref="fileInputRef" accept="image/*" @change="handleFileSelect" class="hidden">
-              <button @click="openFilePicker" type="button" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all">Upload</button>
-              <button v-if="!isCameraActive" @click="startCamera" type="button" class="flex-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all">Camera</button>
-              <button v-else @click="capturePhoto" type="button" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all">Chụp ảnh</button>
-            </div>
-          </div>
-
-          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-xl font-bold uppercase tracking-widest text-sm transition-all shadow-lg shadow-indigo-100 flex items-center justify-center gap-3">
-            <i class="fas fa-user-check"></i>
-            Hoàn tất nhận phòng
-          </button>
-        </form>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from '../api/axios'
-import AdminSidebar from '../components/AdminSidebar.vue'
 import StaffSidebar from '../components/StaffSidebar.vue'
+import AdminSidebar from '../components/AdminSidebar.vue'
+import jsPDF from 'jspdf'
 
 const router = useRouter()
 const isAdmin = computed(() => {
@@ -497,9 +442,11 @@ const availableRooms = ref([])
 const loading = ref(true)
 const showModal = ref(false)
 const showDetailModal = ref(false)
-const showCheckInModal = ref(false)
 const isEditing = ref(false)
 const selectedBooking = ref(null)
+const invoice = ref(null)
+const invoiceLoading = ref(false)
+const showInvoiceModal = ref(false)
 
 // Notifications Logic
 const showNotifications = ref(false)
@@ -507,13 +454,7 @@ const notifications = ref([
   { message: '🔔 Có khách vừa đặt phòng mới', time: '5 phút trước', read: false },
   { message: '🔔 Có booking chờ xác nhận', time: '10 phút trước', read: false },
   { message: '🔔 Khách vừa hủy đặt phòng', time: '1 giờ trước', read: true },
-  { message: '🔔 Đặt phòng sắp đến ngày check-in', time: '2 giờ trước', read: false },
-  { message: '🔔 Khách sắp check-out hôm nay', time: '3 giờ trước', read: false },
-  { message: '🔔 Phòng khách đặt hiện không khả dụng', time: '1 ngày trước', read: true },
-  { message: '🔔 Khách chưa thanh toán tiền cọc', time: '1 ngày trước', read: false },
-  { message: '🔔 Có yêu cầu đổi phòng / đổi ngày', time: '2 ngày trước', read: false },
-  { message: '🔔 Booking quá hạn chưa check-in', time: '2 ngày trước', read: true },
-  { message: '🔔 Có ghi chú đặc biệt từ khách VIP', time: '3 ngày trước', read: false }
+  { message: '🔔 Đặt phòng sắp đến ngày check-in', time: '2 giờ trước', read: false }
 ])
 
 const unreadNotificationsCount = computed(() => notifications.value.filter(n => !n.read).length)
@@ -526,12 +467,13 @@ const markAllAsRead = () => {
   notifications.value.forEach(n => n.read = true)
 }
 
-// Tabs Logic
+// Tabs Logic - Only allowed statuses
 const tabItems = [
   { label: 'Tất cả', value: '' },
-  { label: 'Đã đặt', value: 'CONFIRMED' },
+  { label: 'Chờ xác nhận', value: 'PENDING' },
+  { label: 'Đã xác nhận', value: 'CONFIRMED' },
   { label: 'Đã nhận phòng', value: 'CHECKED_IN' },
-  { label: 'Đã trả phòng', value: 'COMPLETED' },
+  { label: 'Đã hoàn thành', value: 'COMPLETED' },
   { label: 'Đã hủy', value: 'CANCELLED' }
 ]
 
@@ -553,8 +495,14 @@ const fetchBookings = async () => {
   }
 }
 
+// Only show allowed statuses (including CHECKED_IN for payment purposes)
+const allowedStatuses = ['PENDING', 'CONFIRMED', 'CANCELLED', 'CHECKED_IN', 'COMPLETED']
+
 const filteredBookings = computed(() => {
   return bookings.value.filter(b => {
+    // Only include allowed statuses
+    if (!allowedStatuses.includes(b.status)) return false
+    
     const searchStr = filters.value.search.toLowerCase()
     const matchSearch = !filters.value.search || 
       (b.guestFullName || b.customer?.fullName || '').toLowerCase().includes(searchStr) ||
@@ -601,9 +549,9 @@ const calculateNights = (checkIn, checkOut) => {
 const formatStatus = (status) => {
   switch (status) {
     case 'PENDING': return 'Chờ xác nhận'
-    case 'CONFIRMED': return 'Đã đặt'
+    case 'CONFIRMED': return 'Đã xác nhận'
     case 'CHECKED_IN': return 'Đã nhận phòng'
-    case 'COMPLETED': return 'Đã trả phòng'
+    case 'COMPLETED': return 'Đã hoàn thành'
     case 'CANCELLED': return 'Đã hủy'
     default: return status
   }
@@ -611,26 +559,65 @@ const formatStatus = (status) => {
 
 const getStatusStyles = (status) => {
   switch (status) {
+    case 'PENDING': return 'bg-amber-50 text-amber-600 border border-amber-100'
     case 'CONFIRMED': return 'bg-blue-50 text-blue-600 border border-blue-100'
     case 'CHECKED_IN': return 'bg-emerald-50 text-emerald-600 border border-emerald-100'
-    case 'COMPLETED': return 'bg-gray-50 text-gray-500 border border-gray-100'
-    case 'CANCELLED': return 'bg-rose-50 text-rose-500 border border-rose-100'
-    default: return 'bg-amber-50 text-amber-600 border border-amber-100'
+    case 'COMPLETED': return 'bg-purple-50 text-purple-600 border border-purple-100'
+    case 'CANCELLED': return 'bg-rose-50 text-rose-600 border border-rose-100'
+    default: return 'bg-gray-50 text-gray-600 border border-gray-100'
   }
 }
 
 const getStatusDotClass = (status) => {
   switch (status) {
+    case 'PENDING': return 'bg-amber-500'
     case 'CONFIRMED': return 'bg-blue-500'
     case 'CHECKED_IN': return 'bg-emerald-500'
-    case 'COMPLETED': return 'bg-gray-400'
+    case 'COMPLETED': return 'bg-purple-500'
     case 'CANCELLED': return 'bg-rose-500'
-    default: return 'bg-amber-500'
+    default: return 'bg-gray-400'
   }
 }
 
 const formatPaymentStatus = (status) => {
   return status === 'PAID' ? 'Đã thanh toán' : 'Chưa thanh toán'
+}
+
+const formatPaymentMethod = (method) => {
+  switch (method) {
+    case 'VNPAY': return 'VNPay'
+    case 'MOMO': return 'MoMo'
+    case 'COD': return 'Tiền mặt'
+    default: return method || 'Tiền mặt'
+  }
+}
+
+const openInvoiceModal = async () => {
+  if (!selectedBooking.value?.id) return
+  await fetchInvoice(selectedBooking.value.id)
+  showInvoiceModal.value = true
+}
+
+const printInvoice = () => {
+  window.print()
+}
+
+const downloadInvoicePDF = () => {
+  const doc = new jsPDF()
+  const b = selectedBooking.value
+  const inv = invoice.value
+  doc.setFontSize(18)
+  doc.text('HOA DON THANH TOAN', 105, 20, { align: 'center' })
+  doc.setFontSize(11)
+  doc.text(`Ma HD: HD${String(inv?.id || b?.id).padStart(8, '0')}`, 20, 35)
+  doc.text(`Ma dat phong: BK${String(b?.id).padStart(8, '0')}`, 20, 42)
+  doc.text(`Khach: ${b?.guestFullName || b?.customer?.fullName || ''}`, 20, 52)
+  doc.text(`Phong: ${b?.room?.roomNumber} - ${b?.room?.category || ''}`, 20, 59)
+  doc.text(`Tien phong: ${formatCurrency(inv?.roomCharges)}`, 20, 72)
+  doc.text(`Dich vu: ${formatCurrency(inv?.serviceCharges)}`, 20, 79)
+  doc.text(`Tong: ${formatCurrency(inv?.totalAmount)}`, 20, 86)
+  doc.text(`Ngay TT: ${formatDateTime(inv?.paymentDate)}`, 20, 93)
+  doc.save(`HoaDon_BK${String(b?.id).padStart(8, '0')}.pdf`)
 }
 
 const getPaymentStatusStyles = (status) => {
@@ -639,9 +626,23 @@ const getPaymentStatusStyles = (status) => {
     : 'bg-amber-50 text-amber-600'
 }
 
+const fetchInvoice = async (bookingId) => {
+  invoiceLoading.value = true
+  invoice.value = null
+  try {
+    const response = await axios.get(`/invoices/booking/${bookingId}`)
+    invoice.value = response.data
+  } catch (error) {
+    console.error('Error fetching invoice:', error)
+  } finally {
+    invoiceLoading.value = false
+  }
+}
+
 const openDetailModal = (booking) => {
   selectedBooking.value = booking
   showDetailModal.value = true
+  fetchInvoice(booking.id)
 }
 
 const fetchRooms = async () => {
@@ -661,17 +662,6 @@ const form = ref({
   roomId: '',
   numberOfGuests: 1
 })
-
-const checkInForm = ref({
-  guestIdNumber: '',
-  guestIdImageUrl: ''
-})
-const isCameraActive = ref(false)
-const cameraRef = ref(null)
-const fileInputRef = ref(null)
-let cameraStream = null
-const showInvoiceModal = ref(false)
-const currentInvoice = ref(null)
 
 const openCreateModal = () => {
   isEditing.value = false
@@ -737,104 +727,45 @@ const handleSubmit = async () => {
   }
 }
 
-const openCheckInModal = (booking) => {
-  selectedBooking.value = booking
-  checkInForm.value = {
-    guestIdNumber: booking.guestIdNumber || '',
-    guestIdImageUrl: booking.guestIdImageUrl || ''
-  }
-  showCheckInModal.value = true
-}
-
-const closeCheckInModal = () => {
-  showCheckInModal.value = false
-  stopCamera()
-}
-
-const startCamera = async () => {
+const handleConfirm = async (id) => {
+  if (!confirm('Xác nhận đặt phòng này?')) return
   try {
-    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true })
-    isCameraActive.value = true
-    await nextTick()
-    if (cameraRef.value) {
-      cameraRef.value.srcObject = cameraStream
-    }
-  } catch (error) {
-    console.error('Lỗi khi mở camera:', error)
-    alert('Không thể mở camera. Vui lòng kiểm tra quyền truy cập.')
-  }
-}
-
-const stopCamera = () => {
-  if (cameraStream) {
-    cameraStream.getTracks().forEach(track => track.stop())
-    cameraStream = null
-  }
-  isCameraActive.value = false
-}
-
-const capturePhoto = () => {
-  if (!cameraRef.value) return
-  
-  const canvas = document.createElement('canvas')
-  canvas.width = cameraRef.value.videoWidth
-  canvas.height = cameraRef.value.videoHeight
-  const ctx = canvas.getContext('2d')
-  ctx.drawImage(cameraRef.value, 0, 0)
-  checkInForm.value.guestIdImageUrl = canvas.toDataURL('image/jpeg')
-  stopCamera()
-}
-
-const openFilePicker = () => {
-  fileInputRef.value?.click()
-}
-
-const handleFileSelect = (event) => {
-  const file = event.target.files[0]
-  if (file) {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      checkInForm.value.guestIdImageUrl = e.target.result
-    }
-    reader.readAsDataURL(file)
-  }
-}
-
-const clearImage = () => {
-  checkInForm.value.guestIdImageUrl = ''
-}
-
-const handleCheckIn = async () => {
-  try {
-    await axios.put(`/bookings/${selectedBooking.value.id}/check-in`, checkInForm.value)
-    showCheckInModal.value = false
-    stopCamera()
+    await axios.put(`/bookings/${id}/confirm`)
     fetchBookings()
-    alert('Khách đã nhận phòng thành công!')
+    if (showDetailModal.value) {
+      // Refresh the selected booking
+      const updatedBooking = bookings.value.find(b => b.id === id)
+      if (updatedBooking) {
+        selectedBooking.value = updatedBooking
+      }
+    }
+    alert('Xác nhận đặt phòng thành công!')
   } catch (error) {
-    alert('Lỗi: ' + (error.response?.data?.message || 'Check-in thất bại'))
+    alert('Lỗi: ' + (error.response?.data?.message || 'Không thể xác nhận'))
   }
 }
 
-const handleCheckOut = async (id) => {
-  if (!confirm('Xác nhận trả phòng (Check-out) cho khách?')) return
+const handlePayment = async (id) => {
+  await fetchInvoice(id)
+  const total = invoice.value?.totalAmount ?? selectedBooking.value?.totalPrice ?? 0
+  const room = invoice.value?.roomCharges ?? 0
+  const services = invoice.value?.serviceCharges ?? 0
+  const msg = `Xác nhận thu tiền?\n\nTiền phòng: ${formatCurrency(room)}\nDịch vụ: ${formatCurrency(services)}\nTổng: ${formatCurrency(total)}`
+  if (!confirm(msg)) return
   try {
-    const response = await axios.put(`/invoices/booking/${id}/check-out`)
-    currentInvoice.value = response.data
-    fetchBookings()
-    showInvoiceModal.value = true
+    await axios.put(`/bookings/${id}/mark-paid`)
+    await fetchBookings()
+    if (showDetailModal.value) {
+      const updatedBooking = bookings.value.find(b => b.id === id)
+      if (updatedBooking) {
+        selectedBooking.value = updatedBooking
+        await fetchInvoice(id)
+      }
+    }
+    alert('Thanh toán thành công! Bạn có thể in hóa đơn ngay bây giờ.')
+    await openInvoiceModal()
   } catch (error) {
-    alert('Lỗi: ' + (error.response?.data?.message || 'Check-out thất bại'))
-  }
-}
-
-const openInvoiceModal = async (booking) => {
-  try {
-    const response = await axios.get(`/invoices/booking/${booking.id}`)
-    currentInvoice.value = response.data
-    showInvoiceModal.value = true
-  } catch (error) {
-    alert('Lỗi: ' + (error.response?.data?.message || 'Không tìm thấy hóa đơn'))
+    alert('Lỗi: ' + (error.response?.data?.message || 'Không thể thanh toán'))
   }
 }
 
@@ -844,13 +775,16 @@ const handleCancel = async (id) => {
     const user = JSON.parse(localStorage.getItem('user'))
     await axios.put(`/bookings/${id}/cancel?userId=${user.id}&isAdmin=true`)
     fetchBookings()
+    if (showDetailModal.value) {
+      // Refresh the selected booking
+      const updatedBooking = bookings.value.find(b => b.id === id)
+      if (updatedBooking) {
+        selectedBooking.value = updatedBooking
+      }
+    }
   } catch (error) {
     console.error('Cancel failed:', error)
   }
-}
-
-const printInvoice = () => {
-  window.print()
 }
 
 onMounted(() => {
@@ -885,21 +819,19 @@ onMounted(() => {
   }
 }
 
-/* Hide some elements during print */
 @media print {
-  aside, header, .flex-row.gap-4, .border-b.px-2, .pagination {
-    display: none !important;
+  body * {
+    visibility: hidden;
   }
-  main {
-    padding: 0 !important;
+  #invoice-print-area,
+  #invoice-print-area * {
+    visibility: visible;
   }
-  .bg-slate-900 {
-    background: white !important;
-    position: static !important;
-  }
-  .max-w-2xl {
-    max-width: 100% !important;
-    box-shadow: none !important;
+  #invoice-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
   }
 }
 </style>

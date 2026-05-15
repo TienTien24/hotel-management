@@ -36,6 +36,16 @@ public class BookingController {
         }
     }
 
+    @PutMapping("/{id}/mark-paid")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    public ResponseEntity<?> markAsPaid(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(bookingService.markAsPaid(id));
+        } catch (Throwable t) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", t.getMessage()));
+        }
+    }
+
     @PutMapping("/{id}/check-in")
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResponseEntity<?> checkIn(@PathVariable Long id, @RequestBody java.util.Map<String, String> payload) {

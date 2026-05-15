@@ -182,10 +182,12 @@ router.beforeEach((to, from, next) => {
     }
   }
 
-  // Nếu là ADMIN, chuyển hướng từ trang khách sang admin-dashboard
-  if (user && user.role === 'ADMIN' && (guestPaths.includes(to.path) || to.path === '/staff-dashboard')) {
-    next('/admin-dashboard')
-    return
+  // Nếu là ADMIN, chuyển hướng từ trang khách sang admin-dashboard, nhưng cho phép truy cập /bookings
+  if (user && user.role === 'ADMIN') {
+    if (guestPaths.includes(to.path) || to.path === '/staff-dashboard') {
+      next('/admin-dashboard')
+      return
+    }
   }
 
   if (to.matched.some(record => record.meta.requiresAuth)) {

@@ -248,13 +248,7 @@
                 </td>
                 <td class="px-6 py-5">
                   <div class="flex items-center justify-center gap-2">
-                    <button @click="openDetail(booking)" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white transition-all flex items-center justify-center border border-blue-100" title="Xem chi tiết">
-                      <i class="far fa-eye text-xs"></i>
-                    </button>
-                    <button @click="openVoucher(booking)" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-500 hover:bg-gray-800 hover:text-white transition-all flex items-center justify-center border border-gray-100" title="Phiếu đặt phòng">
-                      <i class="far fa-file-alt text-xs"></i>
-                    </button>
-                    <button v-if="booking.status === 'CONFIRMED' || booking.status === 'PENDING'" @click="handleCheckIn(booking)" 
+                    <button v-if="booking.status === 'CONFIRMED'" @click="handleCheckIn(booking)" 
                       class="px-4 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-all text-[10px] font-black uppercase tracking-widest shadow-md shadow-indigo-100">
                       Check-in
                     </button>
@@ -370,285 +364,6 @@
           <button @click="submitCheckIn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-5 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-xs transition-all shadow-xl shadow-indigo-100 mt-4">
             Hoàn tất nhận phòng
           </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal Chi tiết đặt phòng -->
-    <div v-if="showDetailModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900 bg-opacity-40 backdrop-blur-sm overflow-y-auto font-sans">
-      <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl animate-in fade-in zoom-in duration-300 my-auto border border-gray-100 overflow-hidden">
-        <div class="p-6 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10">
-          <div class="flex items-center gap-3">
-            <h3 class="text-lg font-bold text-gray-800">Chi tiết đặt phòng</h3>
-            <span :class="getStatusStyles(selectedBooking?.status)" class="px-2 py-0.5 rounded-md text-[9px] font-bold">
-              {{ formatStatus(selectedBooking?.status) }}
-            </span>
-          </div>
-          <button @click="showDetailModal = false" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-all text-gray-400">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-
-        <div class="p-8 space-y-8 max-h-[80vh] overflow-y-auto custom-scrollbar">
-          <!-- Header Info -->
-          <div class="flex items-center gap-5">
-            <div class="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center border border-blue-100 shadow-sm">
-              <i class="far fa-calendar-alt text-blue-500 text-2xl"></i>
-            </div>
-            <div>
-              <h4 class="text-xl font-bold text-blue-600 leading-none">BK{{ String(selectedBooking?.id).padStart(8, '0') }}</h4>
-              <p class="text-[10px] text-gray-400 font-bold mt-2 uppercase tracking-wider">Ngày đặt: 20/05/2025 - 10:30 AM</p>
-              <p class="text-[10px] text-gray-400 font-bold mt-1 uppercase tracking-wider">Lễ tân: {{ staffName }}</p>
-            </div>
-          </div>
-
-          <!-- Thông tin khách hàng -->
-          <div class="space-y-4">
-            <div class="flex items-center justify-between">
-              <h5 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest border-l-4 border-blue-500 pl-3">Thông tin khách hàng</h5>
-              <button class="text-blue-500 font-bold text-[10px] hover:underline px-3 py-1 bg-blue-50 rounded-lg">Sửa</button>
-            </div>
-            <div class="grid grid-cols-2 gap-x-4 gap-y-3 px-1">
-              <div class="space-y-1">
-                <span class="text-[9px] font-bold text-gray-400 uppercase">Họ tên</span>
-                <p class="text-xs font-bold text-gray-800">{{ selectedBooking?.guestFullName || selectedBooking?.customer?.fullName }}</p>
-              </div>
-              <div class="space-y-1">
-                <span class="text-[9px] font-bold text-gray-400 uppercase">SĐT</span>
-                <p class="text-xs font-bold text-gray-800">{{ selectedBooking?.guestPhone || selectedBooking?.customer?.phone }}</p>
-              </div>
-              <div class="space-y-1">
-                <span class="text-[9px] font-bold text-gray-400 uppercase">Email</span>
-                <p class="text-xs font-bold text-gray-800">{{ selectedBooking?.guestEmail || selectedBooking?.customer?.email || '--' }}</p>
-              </div>
-              <div class="space-y-1">
-                <span class="text-[9px] font-bold text-gray-400 uppercase">CMND/CCCD</span>
-                <p class="text-xs font-bold text-gray-800">{{ selectedBooking?.guestIdNumber || '034567890123' }}</p>
-              </div>
-              <div class="space-y-1">
-                <span class="text-[9px] font-bold text-gray-400 uppercase">Quốc tịch</span>
-                <p class="text-xs font-bold text-gray-800">Việt Nam</p>
-              </div>
-              <div class="space-y-1">
-                <span class="text-[9px] font-bold text-gray-400 uppercase">Địa chỉ</span>
-                <p class="text-xs font-bold text-gray-800">123 Đường ABC, Quận 1, TP. HCM</p>
-              </div>
-              <div class="col-span-2 space-y-1">
-                <span class="text-[9px] font-bold text-gray-400 uppercase">Ghi chú</span>
-                <p class="text-xs font-bold text-gray-800">Khách VIP - Yêu cầu phòng yên tĩnh</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Thông tin phòng -->
-          <div class="space-y-4">
-            <h5 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest border-l-4 border-blue-500 pl-3">Thông tin phòng</h5>
-            <div class="space-y-3 px-1">
-              <div class="flex justify-between items-center text-xs border-b border-gray-50 pb-2">
-                <span class="text-gray-400 font-medium">Phòng</span>
-                <span class="font-bold text-gray-800">{{ selectedBooking?.room?.roomNumber }} - {{ selectedBooking?.room?.category }}</span>
-              </div>
-              <div class="flex justify-between items-center text-xs border-b border-gray-50 pb-2">
-                <span class="text-gray-400 font-medium">Loại giường</span>
-                <span class="font-bold text-gray-800">1 giường đôi</span>
-              </div>
-              <div class="flex justify-between items-center text-xs border-b border-gray-50 pb-2">
-                <span class="text-gray-400 font-medium">Số khách</span>
-                <span class="font-bold text-gray-800">2 người lớn, 0 trẻ em</span>
-              </div>
-              <div class="flex justify-between items-center text-xs border-b border-gray-50 pb-2">
-                <span class="text-gray-400 font-medium">Giá phòng / đêm</span>
-                <span class="font-bold text-gray-800">1.200.000 đ</span>
-              </div>
-              <div class="flex justify-between items-center text-xs border-b border-gray-50 pb-2">
-                <span class="text-gray-400 font-medium">Check-in</span>
-                <span class="font-bold text-gray-800">{{ formatDate(selectedBooking?.checkInDate) }} (14:00)</span>
-              </div>
-              <div class="flex justify-between items-center text-xs border-b border-gray-50 pb-2">
-                <span class="text-gray-400 font-medium">Check-out</span>
-                <span class="font-bold text-gray-800">{{ formatDate(selectedBooking?.checkOutDate) }} (12:00)</span>
-              </div>
-              <div class="flex justify-between items-center text-xs">
-                <span class="text-gray-800 font-bold uppercase tracking-wider">Tổng tiền phòng</span>
-                <span class="font-black text-blue-600 text-sm">1.200.000 đ</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Trạng thái & Lưu trú -->
-          <div class="space-y-4">
-            <h5 class="text-[11px] font-bold text-gray-400 uppercase tracking-widest border-l-4 border-blue-500 pl-3">Trạng thái & Lưu trú</h5>
-            <div class="space-y-3 px-1">
-              <div class="flex justify-between items-center text-xs border-b border-gray-50 pb-2">
-                <span class="text-gray-400 font-medium">Trạng thái</span>
-                <span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded font-bold text-[10px]">Đã nhận phòng</span>
-              </div>
-              <div class="flex justify-between items-center text-xs border-b border-gray-50 pb-2">
-                <span class="text-gray-400 font-medium">Nhận phòng lúc</span>
-                <span class="font-bold text-gray-800">24/05/2025 - 14:10</span>
-              </div>
-              <div class="flex justify-between items-center text-xs">
-                <span class="text-gray-400 font-medium">Số đêm</span>
-                <span class="font-bold text-gray-800">1 đêm</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="p-6 border-t border-gray-100 bg-gray-50 bg-opacity-50 grid grid-cols-3 gap-3 sticky bottom-0 z-10">
-          <button @click="openVoucher(selectedBooking)" class="flex flex-col items-center justify-center gap-1 bg-white border border-gray-200 py-2.5 rounded-xl hover:bg-blue-50 hover:border-blue-200 transition-all group">
-            <i class="fas fa-print text-gray-400 group-hover:text-blue-500"></i>
-            <span class="text-[9px] font-bold text-gray-500 group-hover:text-blue-600">In phiếu lưu trú</span>
-          </button>
-          <button class="flex flex-col items-center justify-center gap-1 bg-white border border-gray-200 py-2.5 rounded-xl hover:bg-blue-50 hover:border-blue-200 transition-all group">
-            <i class="far fa-edit text-gray-400 group-hover:text-blue-500"></i>
-            <span class="text-[9px] font-bold text-gray-500 group-hover:text-blue-600">Sửa thông tin</span>
-          </button>
-          <button @click="handleCheckOut(selectedBooking)" class="flex flex-col items-center justify-center gap-1 bg-rose-50 border border-rose-100 py-2.5 rounded-xl hover:bg-rose-500 transition-all group">
-            <i class="fas fa-sign-out-alt text-rose-500 group-hover:text-white"></i>
-            <span class="text-[9px] font-bold text-rose-600 group-hover:text-white uppercase">Check-out</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal Phiếu đặt phòng (Booking Voucher) -->
-    <div v-if="showVoucherModal" class="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-slate-900 bg-opacity-40 backdrop-blur-sm overflow-y-auto font-sans">
-      <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl animate-in fade-in zoom-in duration-300 my-auto border border-gray-100 overflow-hidden">
-        <div class="p-4 border-b border-gray-50 flex items-center justify-between">
-          <h3 class="text-sm font-bold text-gray-800">Phiếu đặt phòng</h3>
-          <button @click="showVoucherModal = false" class="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-all text-gray-400">
-            <i class="fas fa-times text-xs"></i>
-          </button>
-        </div>
-
-        <div id="voucher-print-area" class="p-8 space-y-6 text-gray-800">
-          <!-- Hotel Logo & Info -->
-          <div class="flex items-center gap-4 pb-6 border-b border-dashed border-gray-200">
-            <div class="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center text-white shadow-lg">
-              <i class="fas fa-hotel text-xl"></i>
-            </div>
-            <div>
-              <h4 class="font-black text-sm uppercase tracking-tighter leading-none">Grand Hotel</h4>
-              <p class="text-[9px] text-gray-500 font-medium mt-1.5">170 An Dương Vương, phường Quy Nhơn Nam, tỉnh Gia Lai</p>
-              <p class="text-[9px] text-gray-500 font-medium leading-none">Hotline:+84 123 456 789 - Email: contact@grandhotel.com</p>
-            </div>
-          </div>
-
-          <!-- Voucher Title -->
-          <div class="text-center space-y-1 py-2">
-            <h2 class="text-lg font-black uppercase tracking-[0.2em] text-gray-800">Phiếu đặt phòng</h2>
-            <p class="text-blue-600 font-black text-xs">BK{{ String(selectedBooking?.id).padStart(8, '0') }}</p>
-          </div>
-
-          <!-- Customer Info -->
-          <div class="space-y-3">
-            <h5 class="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-1.5">Thông tin khách hàng</h5>
-            <div class="grid grid-cols-2 gap-y-2.5 text-xs">
-              <div class="flex flex-col gap-0.5">
-                <span class="text-[9px] text-gray-400 font-bold uppercase">Họ tên</span>
-                <span class="font-bold">{{ selectedBooking?.guestFullName || selectedBooking?.customer?.fullName }}</span>
-              </div>
-              <div class="flex flex-col gap-0.5 text-right">
-                <span class="text-[9px] text-gray-400 font-bold uppercase">SĐT</span>
-                <span class="font-bold">{{ selectedBooking?.guestPhone || selectedBooking?.customer?.phone }}</span>
-              </div>
-              <div class="flex flex-col gap-0.5 col-span-2">
-                <span class="text-[9px] text-gray-400 font-bold uppercase">Email</span>
-                <span class="font-bold">{{ selectedBooking?.guestEmail || selectedBooking?.customer?.email || '--' }}</span>
-              </div>
-              <div class="flex flex-col gap-0.5">
-                <span class="text-[9px] text-gray-400 font-bold uppercase">CMND/CCCD</span>
-                <span class="font-bold">034567890123</span>
-              </div>
-              <div class="flex flex-col gap-0.5 text-right">
-                <span class="text-[9px] text-gray-400 font-bold uppercase">Quốc tịch</span>
-                <span class="font-bold">Việt Nam</span>
-              </div>
-              <div class="flex flex-col gap-0.5 col-span-2">
-                <span class="text-[9px] text-gray-400 font-bold uppercase">Địa chỉ</span>
-                <span class="font-bold leading-tight">123 Đường ABC, Quận 1, TP. HCM</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Booking Details -->
-          <div class="space-y-3">
-            <h5 class="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-50 pb-1.5">Thông tin đặt phòng</h5>
-            <div class="grid grid-cols-2 gap-y-4 text-xs">
-              <div class="flex flex-col gap-0.5">
-                <span class="text-[9px] text-gray-400 font-bold uppercase">Phòng</span>
-                <span class="font-bold">101 - Deluxe Room</span>
-              </div>
-              <div class="flex flex-col gap-0.5 text-right">
-                <span class="text-[9px] text-gray-400 font-bold uppercase">Check-in</span>
-                <span class="font-bold">24/05/2025 (14:00)</span>
-              </div>
-              <div class="flex flex-col gap-0.5">
-                <span class="text-[9px] text-gray-400 font-bold uppercase">Loại giường</span>
-                <span class="font-bold">1 giường đôi</span>
-              </div>
-              <div class="flex flex-col gap-0.5 text-right">
-                <span class="text-[9px] text-gray-400 font-bold uppercase">Check-out</span>
-                <span class="font-bold">25/05/2025 (12:00)</span>
-              </div>
-              <div class="flex flex-col gap-0.5">
-                <span class="text-[9px] text-gray-400 font-bold uppercase">Số khách</span>
-                <span class="font-bold">2 người lớn, 0 trẻ em</span>
-              </div>
-              <div class="flex flex-col gap-0.5 text-right">
-                <span class="text-[9px] text-gray-400 font-bold uppercase">Số đêm</span>
-                <span class="font-bold">1 đêm</span>
-              </div>
-              <div class="flex flex-col gap-0.5">
-                <span class="text-[9px] text-gray-400 font-bold uppercase">Giá phòng / đêm</span>
-                <span class="font-bold">1.200.000 đ</span>
-              </div>
-              <div class="flex flex-col gap-0.5 text-right">
-                <span class="text-[9px] text-gray-400 font-bold uppercase">Tổng tiền</span>
-                <span class="font-black text-gray-800">1.200.000 đ</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Payment Info -->
-          <div class="bg-gray-50 rounded-2xl p-6 space-y-3">
-            <h5 class="text-[10px] font-black uppercase tracking-widest text-gray-400">Thanh toán</h5>
-            <div class="space-y-2.5 text-xs">
-              <div class="flex justify-between items-center">
-                <span class="text-gray-500 font-medium">Phương thức</span>
-                <span class="font-bold">Tiền mặt</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-gray-500 font-medium">Tiền cọc</span>
-                <span class="font-bold">500.000 đ</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-gray-500 font-medium">Thanh toán ngày</span>
-                <span class="font-bold">20/05/2025 10:45 AM</span>
-              </div>
-              <div class="flex justify-between items-center pt-2.5 border-t border-gray-200">
-                <span class="font-black uppercase tracking-widest">Tổng thanh toán</span>
-                <span class="font-black text-blue-600 text-sm">1.200.000 đ</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-gray-500 font-medium">Trạng thái</span>
-                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded font-black text-[9px]">Đã thanh toán</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="p-6 border-t border-gray-100 flex gap-3">
-          <button @click="printVoucher" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2">
-            <i class="fas fa-print"></i>
-            In phiếu
-          </button>
-          <button @click="downloadPDF" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 py-3 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2">
-            <i class="fas fa-download"></i>
-            Tải PDF
-          </button>
-          <button @click="showVoucherModal = false" class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-6 py-3 rounded-xl font-bold text-xs transition-all">Đóng</button>
         </div>
       </div>
     </div>
@@ -901,15 +616,39 @@ const submitCheckIn = async () => {
   }
 }
 
+const formatCurrency = (amount) => {
+  if (!amount) return '0 đ'
+  return new Intl.NumberFormat('vi-VN').format(amount * 25000) + ' đ'
+}
+
+const fetchInvoiceForBooking = async (bookingId) => {
+  const response = await axios.get(`/invoices/booking/${bookingId}`)
+  return response.data
+}
+
 const handleCheckOut = async (booking) => {
-  if (!confirm(`Xác nhận check-out cho phòng ${booking.room?.roomNumber}?`)) return
   try {
-    await axios.put(`/invoices/booking/${booking.id}/check-out`)
-    fetchBookings()
+    const invoice = await fetchInvoiceForBooking(booking.id)
+    const room = invoice.roomCharges || 0
+    const services = invoice.serviceCharges || 0
+    const total = invoice.totalAmount || 0
+
+    if (booking.paymentStatus !== 'PAID') {
+      const settleMsg = `Hóa đơn quyết toán:\n- Tiền phòng: ${formatCurrency(room)}\n- Dịch vụ: ${formatCurrency(services)}\n- Tổng: ${formatCurrency(total)}\n\nThu tiền và check-out?`
+      if (!confirm(settleMsg)) return
+      await axios.put(`/bookings/${booking.id}/mark-paid`)
+    } else if (!confirm(`Xác nhận check-out phòng ${booking.room?.roomNumber}?\nTổng đã thanh toán: ${formatCurrency(total)}`)) {
+      return
+    }
+
+    await axios.put(`/bookings/${booking.id}/check-out`)
+    showDetailModal.value = false
+    await fetchBookings()
     alert('Check-out thành công!')
   } catch (error) {
     console.error('Check-out failed:', error)
-    alert('Lỗi check-out')
+    const errorMsg = error.response?.data?.message || error.message || 'Không thể check-out'
+    alert('Lỗi check-out: ' + errorMsg)
   }
 }
 
