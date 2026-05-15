@@ -1,5 +1,6 @@
 package com.hotel.management.service;
 
+import com.hotel.management.enums.BookingStatus;
 import com.hotel.management.enums.ServiceStatus;
 import com.hotel.management.model.Booking;
 import com.hotel.management.model.BookingServiceUsage;
@@ -8,12 +9,15 @@ import com.hotel.management.repository.BookingRepository;
 import com.hotel.management.repository.BookingServiceUsageRepository;
 import com.hotel.management.repository.HotelServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional
 public class HotelServiceService {
     @Autowired
     private HotelServiceRepository hotelServiceRepository;
@@ -23,6 +27,10 @@ public class HotelServiceService {
 
     @Autowired
     private BookingServiceUsageRepository bookingServiceUsageRepository;
+
+    @Autowired
+    @Lazy
+    private InvoiceService invoiceService;
 
     public List<HotelService> getAllServices() {
         return hotelServiceRepository.findAll();
@@ -35,7 +43,15 @@ public class HotelServiceService {
     public BookingServiceUsage addServiceToBooking(Long bookingId, Long serviceId, Integer quantity, String note) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy booking"));
-        
+
+        if (booking.getStatus() != BookingStatus.CHECKED_IN) {
+            throw new RuntimeException("Chỉ có thể ghi nhận dịch vụ khi khách đang lưu trú (đã check-in)");
+        }
+
+        if (quantity == null || quantity <= 0) {
+            throw new RuntimeException("Số lượng phải lớn hơn 0");
+        }
+
         HotelService service = hotelServiceRepository.findById(serviceId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy dịch vụ"));
 
@@ -54,7 +70,13 @@ public class HotelServiceService {
         BookingServiceUsage usage = bookingServiceUsageRepository.findById(usageId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy yêu cầu dịch vụ"));
         usage.setStatus(status);
-        return bookingServiceUsageRepository.save(usage);
+        BookingServiceUsage saved = bookingServiceUsageRepository.save(usage);
+
+        if (usage.getBooking() != null && usage.getBooking().getId() != null) {
+            invoiceService.recalculateAndSyncInvoice(usage.getBooking().getId());
+        }
+
+        return saved;
     }
 
     public List<BookingServiceUsage> getUsagesByBookingId(Long bookingId) {
