@@ -337,6 +337,9 @@ const handleUpdateStatus = async (status) => {
     })
     showStatusModal.value = false
     fetchUsages()
+    if (status === 'COMPLETED') {
+      alert('Dịch vụ đã hoàn thành. Hóa đơn của khách đã được cập nhật — vui lòng thu thêm tiền khi check-out nếu chưa thanh toán đủ.')
+    }
   } catch (error) {
     alert('Lỗi: ' + (error.response?.data?.message || 'Không thể cập nhật'))
   }
