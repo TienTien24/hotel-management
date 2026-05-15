@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 pt-24 pb-20 font-sans">
+  <div class="min-h-screen bg-gray-50 pt-32 pb-20 font-sans">
     <div class="max-w-6xl mx-auto px-6">
       <!-- Header -->
       <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
@@ -7,10 +7,6 @@
           <h2 class="text-4xl font-black text-emerald-950 uppercase tracking-tighter leading-none">Tài khoản của bạn</h2>
           <p class="text-sm text-gray-400 font-bold mt-2 uppercase tracking-widest">Quản lý thông tin cá nhân và đặt phòng</p>
         </div>
-        <router-link to="/" class="group flex items-center gap-3 px-6 py-3 bg-white border-2 border-gray-100 rounded-2xl text-xs font-black text-gray-500 uppercase tracking-widest hover:border-emerald-800 hover:text-emerald-800 transition-all shadow-sm">
-          <i class="fas fa-arrow-left text-[10px] group-hover:-translate-x-1 transition-transform"></i>
-          Quay lại Trang chủ
-        </router-link>
       </header>
 
       <!-- Tabs -->
@@ -538,6 +534,16 @@ const handleUpdateProfile = async () => {
     updatingProfile.value = true
     const response = await axios.put('/auth/profile', editProfile.value)
     profile.value = response.data
+    
+    // Cập nhật thông tin trong localStorage để Navbar hiển thị đúng tên mới
+    const userData = JSON.parse(localStorage.getItem('user'))
+    if (userData) {
+      userData.fullName = response.data.fullName
+      localStorage.setItem('user', JSON.stringify(userData))
+      // Kích hoạt sự kiện storage để các component khác (Navbar) cập nhật theo
+      window.dispatchEvent(new Event('storage'))
+    }
+    
     alert('Cập nhật thông tin thành công!')
   } catch (error) {
     console.error('Lỗi khi cập nhật hồ sơ:', error)

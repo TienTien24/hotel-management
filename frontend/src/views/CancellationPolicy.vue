@@ -70,7 +70,7 @@
     </div>
 
     <!-- Main Content -->
-    <section class="max-w-5xl mx-auto px-6 py-32">
+    <section class="max-w-5xl mx-auto px-6 py-16">
       <!-- Section 1: Summary -->
       <div class="mb-24">
         <div class="flex items-center gap-6 mb-12">

@@ -61,8 +61,8 @@
     </div>
 
     <!-- Services Section -->
-    <section class="max-w-7xl mx-auto px-6 py-32">
-      <div class="text-center mb-24">
+    <section class="max-w-7xl mx-auto px-6 py-16">
+      <div class="text-center mb-12">
         <p class="text-amber-400 font-bold uppercase tracking-[0.3em] text-[10px] mb-4 italic">Dịch vụ & Tiện ích</p>
         <h2 class="text-4xl md:text-6xl font-black text-emerald-950 uppercase tracking-tighter mb-4">Danh sách dịch vụ</h2>
         <div class="w-24 h-1 bg-[#004d26] mx-auto mb-8"></div>

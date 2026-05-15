@@ -24,6 +24,11 @@ public class AIChatService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     public String getAIResponse(String userMessage) {
+        // Nếu API Key chưa được cấu hình, sử dụng phản hồi mặc định thông minh
+        if (apiKey == null || apiKey.equals("YOUR_GEMINI_API_KEY_HERE") || apiKey.isEmpty()) {
+            return getFallbackResponse(userMessage);
+        }
+
         try {
             List<Room> rooms = roomRepository.findAll();
             String roomContext = rooms.stream()
@@ -65,10 +70,24 @@ public class AIChatService {
                 }
             }
             
-            return "Xin lỗi, tôi đang gặp chút khó khăn khi kết nối. Bạn có thể thử lại sau hoặc liên hệ trực tiếp với chúng tôi nhé!";
+            return getFallbackResponse(userMessage);
         } catch (Exception e) {
             System.err.println("Error calling Gemini API: " + e.getMessage());
-            return "Chào bạn! Hiện tại tôi đang được bảo trì để thông minh hơn. Bạn có thể tham khảo giá phòng trực tiếp tại mục 'Loại Phòng' nhé!";
+            return getFallbackResponse(userMessage);
         }
+    }
+
+    private String getFallbackResponse(String message) {
+        String msg = message.toLowerCase();
+        if (msg.contains("giá") || msg.contains("bao nhiêu")) {
+            return "Grand Hotel có nhiều mức giá linh hoạt: Phòng Standard từ 1.000.000đ, Deluxe từ 1.850.000đ và Suite từ 2.850.000đ. Bạn có thể xem chi tiết tại mục 'Phòng' nhé!";
+        } else if (msg.contains("phòng") || msg.contains("còn không")) {
+            return "Hiện tại chúng tôi còn khá nhiều phòng trống ở các hạng Standard, Deluxe và Suite. Bạn vui lòng chọn ngày check-in và check-out ở trang chủ để tôi kiểm tra chính xác nhé!";
+        } else if (msg.contains("địa chỉ") || msg.contains("ở đâu")) {
+            return "Grand Hotel tọa lạc tại vị trí đắc địa ngay trung tâm thành phố, rất gần các khu vui chơi và bãi biển. Bạn có thể xem bản đồ tại mục 'Liên hệ'.";
+        } else if (msg.contains("chào")) {
+            return "Grand Hotel xin chào! Tôi có thể giúp gì cho bạn trong việc tìm kiếm thông tin phòng và dịch vụ không?";
+        }
+        return "Cảm ơn bạn đã quan tâm đến Grand Hotel! Tôi có thể giúp bạn tìm phòng, xem giá hoặc tư vấn các dịch vụ tiện ích của khách sạn. Bạn cần hỗ trợ thông tin gì ạ?";
     }
 }

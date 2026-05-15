@@ -56,8 +56,10 @@ public class HotelManagementApplication {
                 userRepository.save(new User(null, "customer", passwordEncoder.encode("password"), "John Doe", "john@gmail.com", "0111222333", null, RoleName.CUSTOMER, false));
             }
 
-            if (roomRepository.count() != 64) {
-                System.out.println("Đang tạo lại dữ liệu mẫu 64 phòng...");
+            // Trigger reset if current rooms use Unsplash (old logic) or if count is not 64
+            long unsplashRoomCount = roomRepository.findAll().stream().filter(r -> r.getImageUrl() != null && r.getImageUrl().contains("unsplash.com")).count();
+            if (roomRepository.count() != 64 || unsplashRoomCount > 0) {
+                System.out.println("Đang tạo lại dữ liệu mẫu 64 phòng với 64 hình ảnh khác nhau...");
                 invoiceRepository.deleteAll();
                 bookingRepository.deleteAll();
                 roomRepository.deleteAll();
@@ -73,10 +75,11 @@ public class HotelManagementApplication {
                     int roomInFloor = (i <= 12) ? i : i - 12;
                     String roomNum = floor + String.format("%02d", roomInFloor);
                     String type = standardTypes[(i - 1) % standardTypes.length];
-                    // Varying capacity and price for "small rooms" (Standard)
                     int capacity = (i % 3 == 0) ? 1 : 2;
                     double price = 40.0 + (i % 5) * 5.0;
-                    roomRepository.save(new Room(null, roomNum, "Standard", type, capacity, price, standardDesc, "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", RoomStatus.AVAILABLE));
+                    // Sử dụng LoremFlickr với lock để có hình ảnh khác nhau cho mỗi phòng
+                    String imageUrl = "https://loremflickr.com/800/600/hotel,room,bedroom/all?lock=" + (100 + i);
+                    roomRepository.save(new Room(null, roomNum, "Standard", type, capacity, price, standardDesc, imageUrl, RoomStatus.AVAILABLE));
                 }
                 
                 // Generate 20 Deluxe rooms (Floors 3-4)
@@ -86,10 +89,11 @@ public class HotelManagementApplication {
                     int roomInFloor = (i <= 10) ? i : i - 10;
                     String roomNum = floor + String.format("%02d", roomInFloor);
                     String type = deluxeTypes[(i - 1) % deluxeTypes.length];
-                    // Varying capacity and price for Deluxe
-                    int capacity = 2 + (i % 3); // 2, 3, 4
+                    int capacity = 2 + (i % 3);
                     double price = 100.0 + (i % 10) * 10.0;
-                    roomRepository.save(new Room(null, roomNum, "Deluxe", type, capacity, price, deluxeDesc, "https://images.unsplash.com/photo-1582719478250-c89cae4df85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", RoomStatus.AVAILABLE));
+                    // Sử dụng LoremFlickr với lock khác nhau cho mỗi phòng
+                    String imageUrl = "https://loremflickr.com/800/600/hotel,luxury,room/all?lock=" + (200 + i);
+                    roomRepository.save(new Room(null, roomNum, "Deluxe", type, capacity, price, deluxeDesc, imageUrl, RoomStatus.AVAILABLE));
                 }
                 
                 // Generate 20 Suite rooms (Floors 5-6)
@@ -99,12 +103,13 @@ public class HotelManagementApplication {
                     int roomInFloor = (i <= 10) ? i : i - 10;
                     String roomNum = floor + String.format("%02d", roomInFloor);
                     String type = suiteTypes[(i - 1) % suiteTypes.length];
-                    // Varying capacity and price for Suite
-                    int capacity = 4 + (i % 7); // 4 to 10
+                    int capacity = 4 + (i % 7);
                     double price = 250.0 + (i % 5) * 50.0;
-                    roomRepository.save(new Room(null, roomNum, "Suite", type, capacity, price, suiteDesc, "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", RoomStatus.AVAILABLE));
+                    // Sử dụng LoremFlickr với lock khác nhau cho mỗi phòng
+                    String imageUrl = "https://loremflickr.com/800/600/hotel,suite,luxury/all?lock=" + (300 + i);
+                    roomRepository.save(new Room(null, roomNum, "Suite", type, capacity, price, suiteDesc, imageUrl, RoomStatus.AVAILABLE));
                 }
-                System.out.println("Đã tạo xong 64 phòng mẫu thành công!");
+                System.out.println("Đã tạo xong 64 phòng mẫu với 64 hình ảnh khác nhau!");
             } else {
                 System.out.println("Dữ liệu đã có đủ 64 phòng, không cần tạo thêm.");
             }

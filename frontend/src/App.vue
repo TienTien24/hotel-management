@@ -5,7 +5,7 @@
       <router-view></router-view>
     </main>
     <Footer v-if="!isAuthPage && !isLoginPage" />
-    <AIChatbot v-if="!isAuthPage && !isLoginPage" />
+    <AIChatbot v-if="!isAuthPage && !isLoginPage && isHomePage" />
   </div>
 </template>
 
@@ -17,6 +17,7 @@ import Footer from './components/Footer.vue'
 import AIChatbot from './components/AIChatbot.vue'
 
 const route = useRoute()
+const isHomePage = computed(() => route.path === '/')
 const isAuthPage = computed(() => {
   const adminRoutes = ['/admin-dashboard', '/admin']
   const staffRoutes = [

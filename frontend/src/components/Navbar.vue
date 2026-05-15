@@ -42,7 +42,7 @@
                 <i class="fas fa-user text-[10px] text-white"></i>
               </div>
               <span class="text-[11px] font-black text-white/70 uppercase tracking-widest">
-                Xin chào, <span class="text-white">{{ user.username }}</span>
+                Xin chào, <span class="text-white">{{ user.fullName || user.username }}</span>
               </span>
             </div>
             <button 
@@ -151,10 +151,12 @@ const handleLogout = () => {
 onMounted(() => {
   checkUser()
   window.addEventListener('scroll', handleScroll)
+  window.addEventListener('storage', checkUser)
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('storage', checkUser)
 })
 
 watch(() => route.path, () => {
