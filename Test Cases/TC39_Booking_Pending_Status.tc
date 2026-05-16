@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description></description>
+   <name>TC39_Booking_Pending_Status</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>f8d95d2f-b9a3-4b12-bc4b-c753fc700658</testCaseGuid>
+</TestCaseEntity>

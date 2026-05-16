@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description></description>
+   <name>TC37_Show_Only_Available_Rooms</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>a48ee98a-4fd2-4300-ae71-911a7a4fb024</testCaseGuid>
+</TestCaseEntity>
