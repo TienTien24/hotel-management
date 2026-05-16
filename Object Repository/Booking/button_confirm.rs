@@ -6,12 +6,12 @@
    <elementGuidId>7fa9f402-483b-421f-8eb6-564e0ccca943</elementGuidId>
    <selectorCollection>
       <entry>
-         <key>XPATH</key>
-         <value>//button[contains(.,'Xác nhận')]</value>
-      </entry>
-      <entry>
          <key>CSS</key>
          <value>[type=&quot;submit&quot;]</value>
+      </entry>
+      <entry>
+         <key>XPATH</key>
+         <value>//button[@type='submit' and contains(.,'XÁC NHẬN BOOKING')]</value>
       </entry>
    </selectorCollection>
    <selectorMethod>XPATH</selectorMethod>
@@ -29,7 +29,7 @@
       <name>tag</name>
       <type>Main</type>
       <value>button</value>
-      <webElementGuid>270fae50-8dec-40ee-a4ee-08e204317cd7</webElementGuid>
+      <webElementGuid>5fa4613a-f7a6-4718-a6e7-ad3c671a793d</webElementGuid>
    </webElementProperties>
    <webElementProperties>
       <isSelected>true</isSelected>
@@ -37,7 +37,7 @@
       <name>type</name>
       <type>Main</type>
       <value>submit</value>
-      <webElementGuid>c012a514-a2e4-4978-83b8-86a4090e376f</webElementGuid>
+      <webElementGuid>0c50e1d7-4cac-4b27-8b41-34636f74d02d</webElementGuid>
    </webElementProperties>
    <webElementProperties>
       <isSelected>false</isSelected>
@@ -45,7 +45,7 @@
       <name>class</name>
       <type>Main</type>
       <value>w-full bg-emerald-800 text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-emerald-900 transition-all shadow-xl disabled:opacity-50</value>
-      <webElementGuid>a74a43e9-8def-41bf-a4b0-4b8c44cb2767</webElementGuid>
+      <webElementGuid>f73abccd-5b7f-4c94-87c6-1282db7e16f7</webElementGuid>
    </webElementProperties>
    <webElementProperties>
       <isSelected>true</isSelected>
@@ -53,7 +53,7 @@
       <name>text</name>
       <type>Main</type>
       <value>Xác nhận booking</value>
-      <webElementGuid>25e349f4-f80a-4290-82d4-f7563b5e4667</webElementGuid>
+      <webElementGuid>9a39e179-e4ec-416c-bad4-89cf187ae26a</webElementGuid>
    </webElementProperties>
    <webElementProperties>
       <isSelected>false</isSelected>
@@ -61,7 +61,7 @@
       <name>parent</name>
       <type>Main</type>
       <value>md5.v1-9079020a2e38f5631afdd3ace81c44b3</value>
-      <webElementGuid>f7fc7b90-90a8-4fa0-8894-83da35c44196</webElementGuid>
+      <webElementGuid>15b95b1c-855b-49b0-b591-1302b9172af0</webElementGuid>
    </webElementProperties>
    <webElementProperties>
       <isSelected>false</isSelected>
@@ -69,7 +69,7 @@
       <name>xpath</name>
       <type>Main</type>
       <value>//*[@type = 'submit']</value>
-      <webElementGuid>aacad8e7-2aa5-45f3-8520-e714bec9742f</webElementGuid>
+      <webElementGuid>c4aa223a-92b1-47fb-965d-40fcc53f6e3f</webElementGuid>
    </webElementProperties>
    <webElementXpaths>
       <isSelected>false</isSelected>
@@ -77,7 +77,7 @@
       <name>xpath:attributes</name>
       <type>Main</type>
       <value>//*[@type = 'submit']</value>
-      <webElementGuid>5c9e2502-799f-4ee2-9cdd-3bb54c14aef8</webElementGuid>
+      <webElementGuid>cb5cc9c5-16cf-4265-92ca-6a33bcdb5a6b</webElementGuid>
    </webElementXpaths>
    <webElementXpaths>
       <isSelected>false</isSelected>
@@ -85,6 +85,6 @@
       <name>xpath:customAttributes</name>
       <type>Main</type>
       <value>//button[@type = 'submit' and (text() = 'Xác nhận booking' or . = 'Xác nhận booking')]</value>
-      <webElementGuid>6a34fbd1-9705-46f7-8874-f10d0cd0741a</webElementGuid>
+      <webElementGuid>dfc8f9f9-9e4f-4c15-bf32-ac207b5c5c40</webElementGuid>
    </webElementXpaths>
 </WebElementEntity>

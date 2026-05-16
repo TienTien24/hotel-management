@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description></description>
+   <name>TC38_Booking_Invalid_Date</name>
+   <tag></tag>
+   <comment></comment>
+   <recordOption>OTHER</recordOption>
+   <testCaseGuid>4d5ecc52-0f6c-4288-8de3-fce083f0ac5e</testCaseGuid>
+</TestCaseEntity>
