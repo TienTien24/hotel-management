@@ -106,15 +106,14 @@ public class AuthService {
             throw new RuntimeException("Error: Email is already in use!");
         }
 
-        User user = new User(null,
-                signUpRequest.getUsername(),
-                passwordEncoder.encode(signUpRequest.getPassword()),
-                signUpRequest.getFullName(),
-                signUpRequest.getEmail(),
-                signUpRequest.getPhone(),
-                null,
-                RoleName.STAFF,
-                false);
+        User user = new User();
+        user.setUsername(signUpRequest.getUsername());
+        user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+        user.setFullName(signUpRequest.getFullName());
+        user.setEmail(signUpRequest.getEmail());
+        user.setPhone(signUpRequest.getPhone());
+        user.setRole(RoleName.STAFF);
+        user.setIsLocked(false);
 
         userRepository.save(user);
         System.out.println("Staff registered successfully: " + signUpRequest.getUsername());
