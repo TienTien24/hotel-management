@@ -47,13 +47,37 @@ public class HotelManagementApplication {
                 System.out.println("Đã tạo xong dữ liệu dịch vụ mẫu!");
             }
             if (!userRepository.existsByUsername("admin")) {
-                userRepository.save(new User(null, "admin", passwordEncoder.encode("password"), "System Admin", "admin@hotel.com", "0123456789", null, RoleName.ADMIN, false));
+                User admin = new User();
+                admin.setUsername("admin");
+                admin.setPassword(passwordEncoder.encode("password"));
+                admin.setFullName("System Admin");
+                admin.setEmail("admin@hotel.com");
+                admin.setPhone("0123456789");
+                admin.setRole(RoleName.ADMIN);
+                admin.setIsLocked(false);
+                userRepository.save(admin);
             }
             if (!userRepository.existsByUsername("staff")) {
-                userRepository.save(new User(null, "staff", passwordEncoder.encode("password"), "Hotel Staff", "staff@hotel.com", "0987654321", null, RoleName.STAFF, false));
+                User staff = new User();
+                staff.setUsername("staff");
+                staff.setPassword(passwordEncoder.encode("password"));
+                staff.setFullName("Hotel Staff");
+                staff.setEmail("staff@hotel.com");
+                staff.setPhone("0987654321");
+                staff.setRole(RoleName.STAFF);
+                staff.setIsLocked(false);
+                userRepository.save(staff);
             }
             if (!userRepository.existsByUsername("customer")) {
-                userRepository.save(new User(null, "customer", passwordEncoder.encode("password"), "John Doe", "john@gmail.com", "0111222333", null, RoleName.CUSTOMER, false));
+                User customer = new User();
+                customer.setUsername("customer");
+                customer.setPassword(passwordEncoder.encode("password"));
+                customer.setFullName("John Doe");
+                customer.setEmail("customer@hotel.com");
+                customer.setPhone("0111222333");
+                customer.setRole(RoleName.CUSTOMER);
+                customer.setIsLocked(false);
+                userRepository.save(customer);
             }
 
             // Trigger reset if current rooms use Unsplash (old logic) or if count is not 64

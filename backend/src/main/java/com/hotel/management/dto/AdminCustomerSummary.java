@@ -15,6 +15,7 @@ public class AdminCustomerSummary {
     private String username;
     private String email;
     private String phone;
+    private String citizenId;
     private Boolean isLocked;
     private long totalBookings;
     private long activeBookings;

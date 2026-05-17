@@ -33,7 +33,7 @@
 
       <div class="flex flex-col xl:flex-row gap-8">
         <!-- List Section -->
-        <div class="flex-1 space-y-6">
+        <div class="w-full space-y-6">
           <!-- Filters -->
           <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
             <div class="p-8 border-b border-slate-50 bg-slate-50/50">
@@ -53,7 +53,7 @@
                   <option v-for="s in services" :key="s.id" :value="s.id">{{ s.name }}</option>
                 </select>
                 <input type="date" v-model="filters.date" class="w-full lg:w-auto bg-white border-2 border-slate-100 rounded-xl px-5 py-3 outline-none focus:border-[#004d26] font-bold text-sm text-slate-600">
-                <button @click="openCreateModal" class="bg-[#004d26] text-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-[#003d1e] transition-all flex items-center gap-2">
+                <button @click="showCreateModal = true" class="bg-[#004d26] text-white px-6 py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-[#003d1e] transition-all flex items-center gap-2 ml-auto">
                   <i class="fas fa-plus"></i>
                   Thêm dịch vụ
                 </button>
@@ -123,61 +123,67 @@
             </div>
           </div>
         </div>
-
-        <!-- Create Panel (Right) -->
-        <aside class="w-full xl:w-96">
-          <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden sticky top-8">
-            <div class="p-8 border-b border-slate-50 bg-slate-50/50">
-              <h3 class="text-xl font-black text-slate-800">Thêm dịch vụ mới</h3>
-            </div>
-            <form @submit.prevent="handleCreateUsage" class="p-8 space-y-6">
-              <div class="space-y-2">
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Phòng <span class="text-rose-500">*</span></label>
-                <select v-model="form.bookingId" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3 outline-none focus:border-[#004d26] text-xs font-bold text-slate-800 transition-all">
-                  <option value="">-- Chọn phòng đang có khách --</option>
-                  <option v-for="b in occupiedBookings" :key="b.id" :value="b.id">
-                    {{ b.room?.roomNumber }} - {{ b.guestFullName || b.customer?.fullName }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="space-y-2">
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Loại dịch vụ <span class="text-rose-500">*</span></label>
-                <select v-model="form.serviceId" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3 outline-none focus:border-[#004d26] text-xs font-bold text-slate-800 transition-all">
-                  <option value="">-- Chọn loại dịch vụ --</option>
-                  <option v-for="s in services" :key="s.id" :value="s.id">
-                    {{ s.name }} ({{ formatCurrency(s.price) }})
-                  </option>
-                </select>
-              </div>
-
-              <div class="space-y-2">
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Số lượng <span class="text-rose-500">*</span></label>
-                <div class="flex items-center gap-4 bg-slate-50 rounded-xl p-1">
-                  <button type="button" @click="form.quantity > 1 && form.quantity--" class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-slate-400 hover:text-slate-800 transition-all">
-                    <i class="fas fa-minus text-[10px]"></i>
-                  </button>
-                  <input type="number" v-model.number="form.quantity" min="1" class="flex-1 bg-transparent border-0 text-center text-sm font-black text-slate-800 outline-none">
-                  <button type="button" @click="form.quantity++" class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-slate-400 hover:text-slate-800 transition-all">
-                    <i class="fas fa-plus text-[10px]"></i>
-                  </button>
-                </div>
-              </div>
-
-              <div class="space-y-2">
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Ghi chú</label>
-                <textarea v-model="form.note" rows="3" placeholder="Ví dụ: Đồ ăn không cay, giặt là gấp..." class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3 outline-none focus:border-[#004d26] text-xs font-bold text-slate-800 transition-all resize-none"></textarea>
-              </div>
-
-              <button type="submit" class="w-full bg-[#004d26] text-white py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-[#003d1e] transition-all shadow-xl shadow-green-50 flex items-center justify-center gap-3">
-                <i class="fas fa-plus-circle"></i>
-                Tạo yêu cầu
-              </button>
-            </form>
-          </div>
-        </aside>
       </div>
     </main>
+
+    <!-- Create Service Usage Modal -->
+    <div v-if="showCreateModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md">
+      <div class="bg-white rounded-[3.5rem] max-w-md w-full overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+        <div class="bg-[#004d26] p-10 text-white flex justify-between items-center">
+          <div>
+            <h3 class="text-2xl font-black uppercase tracking-tight">Thêm dịch vụ mới</h3>
+            <p class="text-green-100/60 text-[10px] font-bold uppercase tracking-widest mt-1">Ghi nhận dịch vụ cho khách</p>
+          </div>
+          <button @click="showCreateModal = false" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/10 text-white hover:bg-rose-500 transition-all">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form @submit.prevent="handleCreateUsage" class="p-10 space-y-6">
+          <div class="space-y-2">
+            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Phòng <span class="text-rose-500">*</span></label>
+            <select v-model="form.bookingId" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3 outline-none focus:border-[#004d26] text-xs font-bold text-slate-800 transition-all">
+              <option value="">-- Chọn phòng đang có khách --</option>
+              <option v-for="b in occupiedBookings" :key="b.id" :value="b.id">
+                {{ b.room?.roomNumber }} - {{ b.guestFullName || b.customer?.fullName }}
+              </option>
+            </select>
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Loại dịch vụ <span class="text-rose-500">*</span></label>
+            <select v-model="form.serviceId" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3 outline-none focus:border-[#004d26] text-xs font-bold text-slate-800 transition-all">
+              <option value="">-- Chọn loại dịch vụ --</option>
+              <option v-for="s in services" :key="s.id" :value="s.id">
+                {{ s.name }} ({{ formatCurrency(s.price) }})
+              </option>
+            </select>
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Số lượng <span class="text-rose-500">*</span></label>
+            <div class="flex items-center gap-4 bg-slate-50 rounded-xl p-1">
+              <button type="button" @click="form.quantity > 1 && form.quantity--" class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-slate-400 hover:text-slate-800 transition-all">
+                <i class="fas fa-minus text-[10px]"></i>
+              </button>
+              <input type="number" v-model.number="form.quantity" min="1" class="flex-1 bg-transparent border-0 text-center text-sm font-black text-slate-800 outline-none">
+              <button type="button" @click="form.quantity++" class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center text-slate-400 hover:text-slate-800 transition-all">
+                <i class="fas fa-plus text-[10px]"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Ghi chú</label>
+            <textarea v-model="form.note" rows="3" placeholder="Ví dụ: Đồ ăn không cay, giặt là gấp..." class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3 outline-none focus:border-[#004d26] text-xs font-bold text-slate-800 transition-all resize-none"></textarea>
+          </div>
+
+          <button type="submit" class="w-full bg-[#004d26] text-white py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-[#003d1e] transition-all shadow-xl shadow-green-50 flex items-center justify-center gap-3">
+            <i class="fas fa-plus-circle"></i>
+            Tạo yêu cầu
+          </button>
+        </form>
+      </div>
+    </div>
 
     <!-- Update Status Modal -->
     <div v-if="showStatusModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md">
@@ -215,6 +221,72 @@
         </div>
       </div>
     </div>
+
+    <!-- View Detail Modal -->
+    <div v-if="showViewModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md">
+      <div class="bg-white rounded-[3.5rem] max-w-md w-full overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+        <div class="bg-indigo-600 p-10 text-white flex justify-between items-center">
+          <div>
+            <h3 class="text-2xl font-black uppercase tracking-tight">Chi tiết yêu cầu</h3>
+            <p class="text-indigo-100/60 text-[10px] font-bold uppercase tracking-widest mt-1">Yêu cầu SV{{ String(selectedUsage?.id).padStart(8, '0') }}</p>
+          </div>
+          <button @click="showViewModal = false" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/10 text-white hover:bg-rose-500 transition-all">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="p-10 space-y-8">
+          <div class="flex items-center gap-6">
+            <div class="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 text-2xl shadow-sm border border-indigo-100">
+              <i :class="getServiceIcon(selectedUsage?.service?.name)"></i>
+            </div>
+            <div>
+              <h4 class="text-xl font-black text-slate-800">{{ selectedUsage?.service?.name }}</h4>
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Đơn giá: {{ formatCurrency(selectedUsage?.service?.price) }}</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-6 bg-slate-50 p-6 rounded-[2rem] border border-slate-100">
+            <div class="space-y-1">
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Phòng</p>
+              <p class="text-sm font-black text-slate-800">{{ selectedUsage?.booking?.room?.roomNumber }}</p>
+            </div>
+            <div class="space-y-1 text-right">
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Số lượng</p>
+              <p class="text-sm font-black text-slate-800">x{{ selectedUsage?.quantity }}</p>
+            </div>
+            <div class="space-y-1">
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tổng tiền</p>
+              <p class="text-sm font-black text-indigo-600">{{ formatCurrency(selectedUsage?.service?.price * selectedUsage?.quantity) }}</p>
+            </div>
+            <div class="space-y-1 text-right">
+              <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Trạng thái</p>
+              <span :class="getStatusClass(selectedUsage?.status)" class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest">
+                {{ formatStatus(selectedUsage?.status) }}
+              </span>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Thông tin khách hàng</p>
+            <div class="bg-white border-2 border-slate-50 p-5 rounded-2xl">
+              <p class="text-sm font-bold text-slate-800">{{ selectedUsage?.booking?.guestFullName || selectedUsage?.booking?.customer?.fullName }}</p>
+              <p class="text-xs font-bold text-slate-400 mt-1">{{ selectedUsage?.booking?.guestPhone || selectedUsage?.booking?.customer?.phone }}</p>
+            </div>
+          </div>
+
+          <div v-if="selectedUsage?.note" class="space-y-2">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Ghi chú đặc biệt</p>
+            <div class="bg-amber-50 border-2 border-amber-100 p-5 rounded-2xl">
+              <p class="text-xs font-bold text-amber-700 leading-relaxed italic">"{{ selectedUsage?.note }}"</p>
+            </div>
+          </div>
+
+          <button @click="showViewModal = false" class="w-full bg-slate-800 text-white py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-slate-900 transition-all shadow-xl shadow-slate-100">
+            Đóng cửa sổ
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -229,6 +301,8 @@ const services = ref([])
 const usages = ref([])
 const occupiedBookings = ref([])
 const showStatusModal = ref(false)
+const showCreateModal = ref(false)
+const showViewModal = ref(false)
 const selectedUsage = ref(null)
 
 const stats = ref({
@@ -281,14 +355,12 @@ const fetchOccupiedBookings = async () => {
 }
 
 const updateStats = () => {
-  const today = new Date().toISOString().substr(0, 10)
-  const todayUsages = usages.value.filter(u => u.usedDate?.startsWith(today))
-  
+  // Thống kê toàn bộ (không lọc theo ngày để Staff dễ theo dõi tổng quát)
   stats.value = {
-    total: todayUsages.length,
-    processing: todayUsages.filter(u => u.status === 'IN_PROGRESS' || u.status === 'PENDING').length,
-    completed: todayUsages.filter(u => u.status === 'COMPLETED').length,
-    revenue: todayUsages.filter(u => u.status === 'COMPLETED').reduce((sum, u) => sum + (u.service?.price * u.quantity), 0)
+    total: usages.value.length,
+    processing: usages.value.filter(u => u.status === 'IN_PROGRESS' || u.status === 'PENDING').length,
+    completed: usages.value.filter(u => u.status === 'COMPLETED').length,
+    revenue: usages.value.filter(u => u.status === 'COMPLETED').reduce((sum, u) => sum + (u.service?.price * u.quantity), 0)
   }
 }
 
@@ -318,11 +390,17 @@ const handleCreateUsage = async () => {
       }
     })
     form.value = { bookingId: '', serviceId: '', quantity: 1, note: '' }
+    showCreateModal.value = false
     fetchUsages()
     alert('Đã tạo yêu cầu dịch vụ!')
   } catch (error) {
     alert('Lỗi: ' + (error.response?.data?.message || 'Không thể tạo yêu cầu'))
   }
+}
+
+const openViewModal = (usage) => {
+  selectedUsage.value = usage
+  showViewModal.value = true
 }
 
 const openEditStatusModal = (usage) => {

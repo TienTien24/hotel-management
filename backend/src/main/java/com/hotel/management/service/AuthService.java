@@ -76,15 +76,19 @@ public class AuthService {
             throw new RuntimeException("Error: Email is already in use!");
         }
 
-        User user = new User(null,
-                signUpRequest.getUsername(),
-                passwordEncoder.encode(signUpRequest.getPassword()),
-                signUpRequest.getFullName(),
-                signUpRequest.getEmail(),
-                signUpRequest.getPhone(),
-                null,
-                RoleName.CUSTOMER,
-                false);
+        if (signUpRequest.getCitizenId() != null && userRepository.existsByCitizenId(signUpRequest.getCitizenId())) {
+            throw new RuntimeException("Error: CCCD đã được sử dụng!");
+        }
+
+        User user = new User();
+        user.setUsername(signUpRequest.getUsername());
+        user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+        user.setFullName(signUpRequest.getFullName());
+        user.setEmail(signUpRequest.getEmail());
+        user.setPhone(signUpRequest.getPhone());
+        user.setCitizenId(signUpRequest.getCitizenId());
+        user.setRole(RoleName.CUSTOMER);
+        user.setIsLocked(false);
 
         userRepository.save(user);
         System.out.println("User registered successfully: " + signUpRequest.getUsername());
@@ -162,6 +166,15 @@ public class AuthService {
         }
         if (request.getPhone() != null) {
             user.setPhone(request.getPhone());
+        }
+        if (request.getCitizenId() != null) {
+            // Kiểm tra xem citizenId đã được sử dụng bởi người khác chưa
+            userRepository.findByCitizenId(request.getCitizenId()).ifPresent(otherUser -> {
+                if (!otherUser.getId().equals(user.getId())) {
+                    throw new RuntimeException("CCCD đã được sử dụng bởi một tài khoản khác");
+                }
+            });
+            user.setCitizenId(request.getCitizenId());
         }
         if (request.getAvatar() != null) {
             user.setAvatar(request.getAvatar());

@@ -248,6 +248,11 @@
                 </td>
                 <td class="px-6 py-5">
                   <div class="flex items-center justify-center gap-2">
+                    <button @click="openDetail(booking)" 
+                      class="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all flex items-center justify-center border border-slate-100"
+                      title="Xem chi tiết">
+                      <i class="fas fa-eye text-[10px]"></i>
+                    </button>
                     <button v-if="booking.status === 'CONFIRMED'" @click="handleCheckIn(booking)" 
                       class="px-4 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-all text-[10px] font-black uppercase tracking-widest shadow-md shadow-indigo-100">
                       Check-in
@@ -321,50 +326,185 @@
               class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-indigo-400 transition-all text-sm font-bold shadow-sm">
           </div>
 
-          <!-- Hình ảnh giấy tờ -->
-          <div class="space-y-4">
-            <h5 class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Hình ảnh giấy tờ (Không bắt buộc)</h5>
-            
-            <div @click="triggerFileInput" class="border-2 border-dashed border-gray-100 rounded-[2rem] p-10 flex flex-col items-center justify-center gap-4 bg-gray-50 bg-opacity-50 group hover:border-indigo-200 transition-all cursor-pointer overflow-hidden relative">
-              <img v-if="idCardPreview" :src="idCardPreview" class="absolute inset-0 w-full h-full object-cover">
-              <div v-else class="flex flex-col items-center gap-4">
-                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-gray-300 group-hover:text-indigo-400 shadow-sm transition-all">
-                  <i class="far fa-id-card text-3xl"></i>
-                </div>
-                <span class="text-xs font-bold text-gray-400 group-hover:text-indigo-500 transition-all uppercase tracking-widest">Chọn cách thêm ảnh</span>
-              </div>
-            </div>
-
-            <input type="file" ref="fileInput" @change="onFileChange" accept="image/*" class="hidden">
-
-            <div class="grid grid-cols-2 gap-4">
-              <button @click="triggerFileInput" type="button" class="flex items-center justify-center gap-3 py-4 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all">
-                <i class="fas fa-upload text-sm"></i>
-                Upload ảnh
-              </button>
-              <button @click="startCamera" type="button" class="flex items-center justify-center gap-3 py-4 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all">
-                <i class="fas fa-camera text-sm"></i>
-                Chụp ảnh
-              </button>
-            </div>
-          </div>
-
-          <!-- Camera Modal (Hidden by default) -->
-          <div v-if="showCamera" class="fixed inset-0 z-[120] flex items-center justify-center bg-black bg-opacity-90 p-6">
-            <div class="max-w-md w-full space-y-4">
-              <video ref="video" autoplay playsinline class="w-full rounded-2xl shadow-2xl"></video>
-              <div class="flex gap-4">
-                <button @click="capturePhoto" class="flex-1 bg-white text-gray-900 py-4 rounded-xl font-bold">Chụp ảnh</button>
-                <button @click="stopCamera" class="flex-1 bg-gray-800 text-white py-4 rounded-xl font-bold">Hủy</button>
-              </div>
-            </div>
-          </div>
-
           <!-- Footer Action -->
           <button @click="submitCheckIn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-5 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-xs transition-all shadow-xl shadow-indigo-100 mt-4">
             Hoàn tất nhận phòng
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- Modal Chi tiết đặt phòng -->
+    <div v-if="showDetailModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900 bg-opacity-40 backdrop-blur-sm overflow-y-auto font-sans">
+      <div class="bg-white rounded-[2.5rem] max-w-2xl w-full shadow-2xl animate-in fade-in zoom-in duration-300 my-auto overflow-hidden border border-gray-100">
+        <!-- Modal Header -->
+        <div class="bg-slate-50 p-8 border-b border-gray-100 flex items-center justify-between sticky top-0 z-10">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm border border-gray-100">
+              <i class="fas fa-info-circle text-blue-500 text-xl"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-black text-gray-800 uppercase tracking-tight">Chi tiết đặt phòng</h3>
+              <p class="text-xs font-bold text-gray-400 mt-0.5">Mã số: BK{{ String(selectedBooking?.id).padStart(8, '0') }}</p>
+            </div>
+          </div>
+          <button @click="showDetailModal = false" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-gray-200 transition-all text-gray-400">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
+          <!-- Thông tin khách -->
+          <div class="space-y-4">
+            <h5 class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Thông tin khách hàng</h5>
+            <div class="grid grid-cols-2 gap-6 bg-gray-50 rounded-3xl p-6 border border-gray-100">
+              <div class="space-y-1">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Họ tên</span>
+                <p class="text-sm font-black text-gray-800">{{ selectedBooking?.guestFullName || selectedBooking?.customer?.fullName }}</p>
+              </div>
+              <div class="space-y-1">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Số điện thoại</span>
+                <p class="text-sm font-black text-gray-800">{{ selectedBooking?.guestPhone || selectedBooking?.customer?.phone }}</p>
+              </div>
+              <div class="space-y-1">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">CCCD / Passport</span>
+                <p class="text-sm font-black text-gray-800">{{ selectedBooking?.guestIdNumber || '--' }}</p>
+              </div>
+              <div class="space-y-1">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Trạng thái</span>
+                <span :class="getStatusStyles(selectedBooking?.status)" class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest">
+                  {{ formatStatus(selectedBooking?.status) }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dịch vụ đã sử dụng -->
+          <div v-if="selectedBooking?.status === 'CHECKED_IN' || selectedBooking?.status === 'COMPLETED'" class="space-y-4">
+            <div class="flex items-center justify-between">
+              <h5 class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Dịch vụ đã sử dụng</h5>
+              <button v-if="selectedBooking?.status === 'CHECKED_IN'" @click="showAddService = true" class="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline flex items-center gap-1.5">
+                <i class="fas fa-plus-circle"></i>
+                Thêm dịch vụ
+              </button>
+            </div>
+            
+            <div v-if="currentServices.length === 0" class="text-center py-8 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
+              <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Chưa sử dụng dịch vụ nào</p>
+            </div>
+            <div v-else class="space-y-3">
+              <div v-for="service in currentServices" :key="service.id" class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-blue-500 shadow-sm">
+                    <i class="fas fa-concierge-bell text-xs"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs font-black text-gray-800">{{ service.service?.name }}</p>
+                    <div class="flex items-center gap-2">
+                      <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{{ formatDateTime(service.usedDate) }}</p>
+                      <span :class="getStatusClass(service.status)" class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase">
+                        {{ formatStatus(service.status) }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-xs font-black text-gray-800">{{ formatCurrency(service.service?.price * service.quantity) }}</p>
+                  <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">SL: {{ service.quantity }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Thanh toán & Hóa đơn -->
+          <div class="space-y-4">
+            <h5 class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+              Thanh toán & Hóa đơn
+              <span v-if="selectedBooking?.paymentStatus === 'PAID'" class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[9px] font-black uppercase">Đã thanh toán</span>
+              <span v-else class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[9px] font-black uppercase">Chưa thanh toán</span>
+            </h5>
+            <div v-if="invoiceLoading" class="text-center text-xs text-gray-400 py-4">Đang tải hóa đơn...</div>
+            <div v-else class="bg-gray-50 rounded-3xl p-6 border border-gray-100 space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Phương thức</span>
+                <span class="text-sm font-black text-gray-800">{{ selectedBooking?.paymentMethod || 'Tiền mặt' }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tiền phòng</span>
+                <span class="text-sm font-black text-gray-800">{{ formatCurrency(invoice?.roomCharges) }}</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Dịch vụ (đã hoàn thành)</span>
+                <span class="text-sm font-black text-gray-800">{{ formatCurrency(invoice?.serviceCharges) }}</span>
+              </div>
+              <div class="flex justify-between items-center pt-3 border-t border-gray-200">
+                <span class="text-[11px] font-black text-gray-800 uppercase tracking-widest">Tổng thanh toán</span>
+                <span class="text-lg font-black text-emerald-600">{{ formatCurrency(invoice?.totalAmount ?? selectedBooking?.totalPrice) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="p-8 border-t border-gray-100 bg-slate-50 flex gap-4">
+          <button v-if="selectedBooking?.status === 'CONFIRMED'" @click="handleCheckIn(selectedBooking)" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-lg shadow-indigo-100">
+            Tiến hành Check-in
+          </button>
+          <button v-if="selectedBooking?.status === 'CHECKED_IN'" @click="handleCheckOut(selectedBooking)" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs transition-all shadow-lg shadow-emerald-100">
+            Tiến hành Check-out
+          </button>
+          <button @click="showDetailModal = false" class="px-8 bg-white border border-gray-200 text-gray-500 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-gray-50 transition-all">
+            Đóng
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Thêm dịch vụ (New Modal) -->
+    <div v-if="showAddService" class="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md font-sans">
+      <div class="bg-white rounded-[2.5rem] max-w-md w-full overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300 my-auto border border-gray-100">
+        <div class="bg-indigo-600 p-8 text-white flex justify-between items-center">
+          <div>
+            <h3 class="text-2xl font-black uppercase tracking-tight">Thêm dịch vụ</h3>
+            <p class="text-white/60 text-[10px] font-bold uppercase tracking-widest mt-1">Phòng {{ selectedBooking?.room?.roomNumber }}</p>
+          </div>
+          <button @click="showAddService = false" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/10 text-white hover:bg-rose-500 transition-all">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <form @submit.prevent="submitAddService" class="p-8 space-y-6">
+          <div class="space-y-2">
+            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Chọn dịch vụ</label>
+            <select v-model="serviceForm.serviceId" required class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-indigo-400 transition-all text-sm font-bold shadow-sm">
+              <option value="">-- Chọn dịch vụ --</option>
+              <option v-for="s in services" :key="s.id" :value="s.id">{{ s.name }} ({{ formatCurrency(s.price) }})</option>
+            </select>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Số lượng</label>
+            <div class="flex items-center gap-4 bg-gray-50 rounded-2xl p-2 border border-gray-100">
+              <button type="button" @click="serviceForm.quantity > 1 && serviceForm.quantity--" class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-gray-400 hover:text-indigo-600 transition-all">
+                <i class="fas fa-minus text-[10px]"></i>
+              </button>
+              <input type="number" v-model.number="serviceForm.quantity" min="1" class="flex-1 bg-transparent border-0 text-center text-sm font-black text-gray-800 outline-none">
+              <button type="button" @click="serviceForm.quantity++" class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-gray-400 hover:text-indigo-600 transition-all">
+                <i class="fas fa-plus text-[10px]"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Ghi chú</label>
+            <textarea v-model="serviceForm.note" rows="3" placeholder="Yêu cầu đặc biệt..." class="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 outline-none focus:border-indigo-400 transition-all text-sm font-bold shadow-sm resize-none"></textarea>
+          </div>
+
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-5 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-xs transition-all shadow-xl shadow-indigo-100 mt-4">
+            Xác nhận thêm
+          </button>
+        </form>
       </div>
     </div>
   </div>
@@ -384,7 +524,77 @@ const roomTypes = ref(['Deluxe Room', 'Superior Room', 'Suite Room', 'Standard R
 const showCheckInModal = ref(false)
 const showDetailModal = ref(false)
 const showVoucherModal = ref(false)
+const showAddService = ref(false)
 const selectedBooking = ref(null)
+const invoice = ref(null)
+const invoiceLoading = ref(false)
+const services = ref([])
+const currentServices = ref([])
+
+const serviceForm = ref({
+  serviceId: '',
+  quantity: 1,
+  note: ''
+})
+
+const fetchInvoice = async (bookingId) => {
+  invoiceLoading.value = true
+  invoice.value = null
+  try {
+    const response = await axios.get(`/invoices/booking/${bookingId}`)
+    invoice.value = response.data
+  } catch (error) {
+    console.error('Error fetching invoice:', error)
+  } finally {
+    invoiceLoading.value = false
+  }
+}
+
+const fetchServices = async () => {
+  try {
+    const response = await axios.get('/hotel-services')
+    services.value = response.data
+  } catch (error) {
+    console.error('Lỗi tải dịch vụ:', error)
+  }
+}
+
+const fetchCurrentServices = async (bookingId) => {
+  try {
+    const response = await axios.get(`/hotel-services/booking/${bookingId}`)
+    currentServices.value = response.data
+  } catch (error) {
+    console.error('Lỗi tải dịch vụ của khách:', error)
+  }
+}
+
+const submitAddService = async () => {
+  try {
+    await axios.post('/hotel-services/add-to-booking', null, {
+      params: {
+        bookingId: selectedBooking.value.id,
+        serviceId: serviceForm.value.serviceId,
+        quantity: serviceForm.value.quantity,
+        note: serviceForm.value.note
+      }
+    })
+    showAddService.value = false
+    serviceForm.value = { serviceId: '', quantity: 1, note: '' }
+    fetchCurrentServices(selectedBooking.value.id)
+    alert('Thêm dịch vụ thành công!')
+  } catch (error) {
+    alert('Lỗi: ' + (error.response?.data?.message || 'Không thể thêm dịch vụ'))
+  }
+}
+
+const formatDateTime = (dateStr) => {
+  if (!dateStr) return '--'
+  const d = new Date(dateStr)
+  return d.toLocaleString('vi-VN', { 
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  })
+}
 
 // Image & Camera Logic
 const fileInput = ref(null)
@@ -576,10 +786,13 @@ const getStatusStyles = (status) => {
 const handleCheckIn = (booking) => {
   selectedBooking.value = booking
   idCardPreview.value = null
+  // Ưu tiên lấy citizenId từ tài khoản khách hàng, nếu không có thì lấy guestIdNumber từ booking
+  const citizenId = booking.customer?.citizenId || booking.guestIdNumber || ''
+  
   checkInForm.value = {
     checkInDate: booking.checkInDate,
     checkInTime: '14:00',
-    guestIdNumber: booking.guestIdNumber || '',
+    guestIdNumber: citizenId,
     nationality: 'Việt Nam',
     address: booking.guestAddress || '',
     note: booking.note || '',
@@ -593,6 +806,8 @@ const handleCheckIn = (booking) => {
 const openDetail = (booking) => {
   selectedBooking.value = booking
   showDetailModal.value = true
+  fetchCurrentServices(booking.id)
+  fetchInvoice(booking.id)
 }
 
 const openVoucher = (booking) => {
@@ -601,6 +816,16 @@ const openVoucher = (booking) => {
 }
 
 const submitCheckIn = async () => {
+  if (!checkInForm.value.guestIdNumber) {
+    alert('Vui lòng nhập số CCCD/Passport')
+    return
+  }
+  
+  if (checkInForm.value.guestIdNumber.length !== 12) {
+    alert('Số CCCD phải bao gồm đúng 12 chữ số')
+    return
+  }
+
   try {
     const payload = {
       guestIdNumber: checkInForm.value.guestIdNumber,
@@ -619,6 +844,23 @@ const submitCheckIn = async () => {
 const formatCurrency = (amount) => {
   if (!amount) return '0 đ'
   return new Intl.NumberFormat('vi-VN').format(amount * 25000) + ' đ'
+}
+
+const getStatusClass = (status) => {
+  switch (status) {
+    case 'PENDING': return 'bg-amber-100 text-amber-700'
+    case 'IN_PROGRESS': return 'bg-blue-100 text-blue-700'
+    case 'COMPLETED': return 'bg-emerald-100 text-emerald-700'
+    default: return 'bg-gray-100 text-gray-700'
+  }
+}
+
+const getServiceIcon = (name) => {
+  const n = name?.toLowerCase() || ''
+  if (n.includes('breakfast') || n.includes('ăn')) return 'fas fa-utensils'
+  if (n.includes('laundry') || n.includes('giặt')) return 'fas fa-tshirt'
+  if (n.includes('drink') || n.includes('nước')) return 'fas fa-glass-martini-alt'
+  return 'fas fa-concierge-bell'
 }
 
 const fetchInvoiceForBooking = async (bookingId) => {
@@ -678,6 +920,7 @@ const downloadPDF = () => {
 
 onMounted(() => {
   fetchBookings()
+  fetchServices()
 })
 </script>
 
