@@ -75,6 +75,7 @@ public class AdminCustomerService {
                 customer.getUsername(),
                 customer.getEmail(),
                 customer.getPhone(),
+                customer.getCitizenId(),
                 customer.getIsLocked(),
                 customerBookings.size(),
                 activeBookings,

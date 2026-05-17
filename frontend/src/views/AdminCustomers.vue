@@ -50,6 +50,7 @@
             <thead>
               <tr class="bg-slate-50/50 text-left">
                 <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Khách hàng</th>
+                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">CCCD</th>
                 <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Liên hệ</th>
                 <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Booking</th>
                 <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Chi tiêu</th>
@@ -69,6 +70,10 @@
                       <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">@{{ customer.username }}</p>
                     </div>
                   </div>
+                </td>
+                <td class="px-8 py-6">
+                  <span v-if="customer.citizenId" class="text-sm font-black text-slate-700">{{ customer.citizenId }}</span>
+                  <span v-else class="text-[10px] font-bold text-slate-300 uppercase italic">Chưa cập nhật</span>
                 </td>
                 <td class="px-8 py-6">
                   <div class="space-y-1">

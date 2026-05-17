@@ -19,6 +19,31 @@
                 {{ unreadNotificationsCount }}
               </span>
             </button>
+            
+            <!-- Notification Dropdown -->
+            <div v-if="showNotifications" class="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 z-[60] overflow-hidden">
+              <div class="p-4 border-b border-gray-50 flex items-center justify-between bg-gray-50 bg-opacity-50">
+                <span class="font-bold text-sm text-gray-800">Thông báo</span>
+                <button @click="markAllAsRead" class="text-[10px] font-bold text-blue-600 hover:underline">Đánh dấu đã đọc</button>
+              </div>
+              <div class="max-h-96 overflow-y-auto">
+                <div v-for="(noti, index) in notifications" :key="index" 
+                  class="p-4 border-b border-gray-50 hover:bg-gray-50 transition-all cursor-pointer flex gap-3"
+                  :class="{'bg-blue-50': !noti.read}"
+                >
+                  <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                    <span class="text-sm">🔔</span>
+                  </div>
+                  <div>
+                    <p class="text-xs font-medium text-gray-800 leading-relaxed">{{ noti.message }}</p>
+                    <span class="text-[10px] text-gray-400 mt-1 block">{{ noti.time }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="p-3 text-center border-t border-gray-50">
+                <button class="text-[11px] font-bold text-gray-500 hover:text-gray-700">Xem tất cả thông báo</button>
+              </div>
+            </div>
           </div>
 
           <!-- Create Booking Button -->
@@ -157,7 +182,6 @@
           <div class="space-y-4">
             <div class="flex items-center justify-between">
               <h5 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Thông tin khách hàng</h5>
-              <button v-if="selectedBooking?.status !== 'CANCELLED'" @click="openUpdateModal(selectedBooking)" class="text-blue-600 font-bold text-[10px] hover:underline px-3 py-1 bg-blue-50 rounded-lg">Sửa</button>
             </div>
             <div class="grid grid-cols-2 gap-y-4 bg-gray-50 bg-opacity-50 p-6 rounded-2xl border border-gray-100">
               <div class="space-y-1">
@@ -185,7 +209,13 @@
 
           <!-- Section: Thông tin đặt phòng -->
           <div class="space-y-4">
-            <h5 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Thông tin đặt phòng</h5>
+            <div class="flex items-center justify-between">
+              <h5 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Thông tin đặt phòng</h5>
+              <button v-if="selectedBooking?.status === 'CHECKED_IN'" @click="showAddService = true" class="text-blue-600 font-bold text-[10px] hover:underline px-3 py-1 bg-blue-50 rounded-lg flex items-center gap-1.5">
+                <i class="fas fa-plus-circle"></i>
+                Thêm dịch vụ
+              </button>
+            </div>
             <div class="grid grid-cols-2 gap-x-8 gap-y-4 bg-gray-50 bg-opacity-50 p-6 rounded-2xl border border-gray-100">
               <div class="flex justify-between items-center border-b border-gray-100 pb-2 col-span-1">
                 <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Phòng</span>
@@ -218,6 +248,42 @@
               <div class="flex justify-between items-center pt-2 col-span-1">
                 <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tổng tiền phòng</span>
                 <span class="text-sm font-bold text-gray-800">{{ formatCurrency(selectedBooking?.totalPrice) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dịch vụ đã sử dụng -->
+          <div v-if="selectedBooking?.status === 'CHECKED_IN' || selectedBooking?.status === 'COMPLETED'" class="space-y-4">
+            <div class="flex items-center justify-between">
+              <h5 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Dịch vụ đã sử dụng</h5>
+              <button v-if="selectedBooking?.status === 'CHECKED_IN'" @click="showAddService = true" class="text-blue-600 font-bold text-[10px] hover:underline px-3 py-1 bg-blue-50 rounded-lg flex items-center gap-1.5">
+                <i class="fas fa-plus-circle"></i>
+                Thêm dịch vụ
+              </button>
+            </div>
+            <div v-if="currentServices.length === 0" class="text-center py-6 bg-gray-50 bg-opacity-50 rounded-2xl border border-dashed border-gray-200">
+              <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Chưa sử dụng dịch vụ</p>
+            </div>
+            <div v-else class="space-y-2">
+              <div v-for="service in currentServices" :key="service.id" class="flex justify-between items-center bg-gray-50 bg-opacity-50 p-4 rounded-2xl border border-gray-100">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-blue-500 shadow-sm border border-gray-100">
+                    <i class="fas fa-concierge-bell text-xs"></i>
+                  </div>
+                  <div>
+                    <p class="text-sm font-bold text-gray-800">{{ service.service?.name }}</p>
+                    <div class="flex items-center gap-2">
+                      <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">SL: {{ service.quantity }}</p>
+                      <span :class="getStatusClass(service.status)" class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase">
+                        {{ formatStatus(service.status) }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-sm font-bold text-gray-800">{{ formatCurrency(service.service?.price * service.quantity) }}</p>
+                  <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{{ formatDateTime(service.usedDate) }}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -415,6 +481,53 @@
         </form>
       </div>
     </div>
+
+    <!-- Modal Thêm dịch vụ (New Modal) -->
+    <div v-if="showAddService" class="fixed inset-0 z-[120] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md font-sans">
+      <div class="bg-white rounded-[2.5rem] max-w-md w-full overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300 my-auto border border-gray-100">
+        <div class="bg-[#3182ce] p-8 text-white flex justify-between items-center">
+          <div>
+            <h3 class="text-2xl font-bold uppercase tracking-tight">Thêm dịch vụ</h3>
+            <p class="text-white/60 text-[10px] font-bold uppercase tracking-widest mt-1">Phòng {{ selectedBooking?.room?.roomNumber }}</p>
+          </div>
+          <button @click="showAddService = false" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/10 text-white hover:bg-rose-500 transition-all">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <form @submit.prevent="submitAddService" class="p-8 space-y-6">
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Chọn dịch vụ</label>
+            <select v-model="serviceForm.serviceId" required class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-blue-400 transition-all text-sm font-bold shadow-sm">
+              <option value="">-- Chọn dịch vụ --</option>
+              <option v-for="s in services" :key="s.id" :value="s.id">{{ s.name }} ({{ formatCurrency(s.price) }})</option>
+            </select>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Số lượng</label>
+            <div class="flex items-center gap-4 bg-gray-50 rounded-xl p-2 border border-gray-100">
+              <button type="button" @click="serviceForm.quantity > 1 && serviceForm.quantity--" class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-gray-400 hover:text-blue-600 transition-all">
+                <i class="fas fa-minus text-[10px]"></i>
+              </button>
+              <input type="number" v-model.number="serviceForm.quantity" min="1" class="flex-1 bg-transparent border-0 text-center text-sm font-bold text-gray-800 outline-none">
+              <button type="button" @click="serviceForm.quantity++" class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-gray-400 hover:text-blue-600 transition-all">
+                <i class="fas fa-plus text-[10px]"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Ghi chú</label>
+            <textarea v-model="serviceForm.note" rows="3" placeholder="Yêu cầu đặc biệt..." class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-blue-400 transition-all text-sm font-bold shadow-sm resize-none"></textarea>
+          </div>
+
+          <button type="submit" class="w-full bg-[#3182ce] hover:bg-[#2b6cb0] text-white py-5 rounded-xl font-bold uppercase tracking-widest text-xs transition-all shadow-xl shadow-blue-100 mt-4">
+            Xác nhận thêm
+          </button>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -442,11 +555,58 @@ const availableRooms = ref([])
 const loading = ref(true)
 const showModal = ref(false)
 const showDetailModal = ref(false)
+const showAddService = ref(false)
 const isEditing = ref(false)
 const selectedBooking = ref(null)
 const invoice = ref(null)
 const invoiceLoading = ref(false)
 const showInvoiceModal = ref(false)
+const services = ref([])
+const currentServices = ref([])
+
+const serviceForm = ref({
+  serviceId: '',
+  quantity: 1,
+  note: ''
+})
+
+const fetchServices = async () => {
+  try {
+    const response = await axios.get('/hotel-services')
+    services.value = response.data
+  } catch (error) {
+    console.error('Lỗi tải dịch vụ:', error)
+  }
+}
+
+const fetchCurrentServices = async (bookingId) => {
+  try {
+    const response = await axios.get(`/hotel-services/booking/${bookingId}`)
+    currentServices.value = response.data
+  } catch (error) {
+    console.error('Lỗi tải dịch vụ của khách:', error)
+  }
+}
+
+const submitAddService = async () => {
+   try {
+     await axios.post('/hotel-services/add-to-booking', null, {
+       params: {
+         bookingId: selectedBooking.value.id,
+         serviceId: serviceForm.value.serviceId,
+         quantity: serviceForm.value.quantity,
+         note: serviceForm.value.note
+       }
+     })
+     showAddService.value = false
+     serviceForm.value = { serviceId: '', quantity: 1, note: '' }
+     fetchCurrentServices(selectedBooking.value.id)
+     fetchInvoice(selectedBooking.value.id)
+     alert('Thêm dịch vụ thành công!')
+   } catch (error) {
+     alert('Lỗi: ' + (error.response?.data?.message || 'Không thể thêm dịch vụ'))
+   }
+ }
 
 // Notifications Logic
 const showNotifications = ref(false)
@@ -536,6 +696,23 @@ const formatDateTime = (dateStr) => {
 const formatCurrency = (amount) => {
   if (!amount) return '0 đ'
   return new Intl.NumberFormat('vi-VN').format(amount * 25000) + ' đ'
+}
+
+const getStatusClass = (status) => {
+  switch (status) {
+    case 'PENDING': return 'bg-amber-100 text-amber-700'
+    case 'IN_PROGRESS': return 'bg-blue-100 text-blue-700'
+    case 'COMPLETED': return 'bg-emerald-100 text-emerald-700'
+    default: return 'bg-gray-100 text-gray-700'
+  }
+}
+
+const getServiceIcon = (name) => {
+  const n = name?.toLowerCase() || ''
+  if (n.includes('breakfast') || n.includes('ăn')) return 'fas fa-utensils'
+  if (n.includes('laundry') || n.includes('giặt')) return 'fas fa-tshirt'
+  if (n.includes('drink') || n.includes('nước')) return 'fas fa-glass-martini-alt'
+  return 'fas fa-concierge-bell'
 }
 
 const calculateNights = (checkIn, checkOut) => {
@@ -640,10 +817,11 @@ const fetchInvoice = async (bookingId) => {
 }
 
 const openDetailModal = (booking) => {
-  selectedBooking.value = booking
-  showDetailModal.value = true
-  fetchInvoice(booking.id)
-}
+     selectedBooking.value = booking
+     showDetailModal.value = true
+     fetchCurrentServices(booking.id)
+     fetchInvoice(booking.id)
+   }
 
 const fetchRooms = async () => {
   try {
@@ -789,6 +967,7 @@ const handleCancel = async (id) => {
 
 onMounted(() => {
   fetchBookings()
+  fetchServices()
 })
 </script>
 

@@ -171,6 +171,26 @@ public class BookingService {
         if (guestIdNumber == null || guestIdNumber.isBlank()) {
             throw new RuntimeException("Vui lòng nhập số CCCD/Passport");
         }
+
+        // Cập nhật CCCD cho tài khoản khách hàng nếu chưa có
+        User customer = booking.getCustomer();
+        if (customer != null) {
+            if (customer.getCitizenId() != null && !customer.getCitizenId().equals(guestIdNumber)) {
+                throw new RuntimeException("Tài khoản này đã được đăng ký với số CCCD: " + customer.getCitizenId() + ". Không thể sử dụng số CCCD khác.");
+            }
+            
+            // Kiểm tra xem số CCCD này đã được tài khoản khác sử dụng chưa
+            userRepository.findByCitizenId(guestIdNumber).ifPresent(otherUser -> {
+                if (!otherUser.getId().equals(customer.getId())) {
+                    throw new RuntimeException("Số CCCD này đã được sử dụng bởi một tài khoản khác (" + otherUser.getUsername() + ")");
+                }
+            });
+
+            if (customer.getCitizenId() == null) {
+                customer.setCitizenId(guestIdNumber);
+                userRepository.save(customer);
+            }
+        }
         
         Room room = booking.getRoom();
 
